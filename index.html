@@ -36,6 +36,8 @@
         const [selectedWorkout, setSelectedWorkout] = useState(null);
         const [showWorkoutModal, setShowWorkoutModal] = useState(false);
         const [showExerciseModal, setShowExerciseModal] = useState(false);
+        const [showStatsView, setShowStatsView] = useState(false);
+        const [selectedExerciseStats, setSelectedExerciseStats] = useState(null);
         const [workoutName, setWorkoutName] = useState('');
         const [exerciseName, setExerciseName] = useState('');
         const [sets, setSets] = useState([{ reps: '', weight: '' }]);
@@ -136,6 +138,177 @@
         const weekDays = getWeekDays(new Date(currentDate));
         const monthNames = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
         const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+        const getAllExercises = () => {
+          const exerciseMap = new Map();
+          Object.entries(workouts).forEach(([dateKey, dayWorkouts]) => {
+            dayWorkouts.forEach(workout => {
+              workout.exercises.forEach(exercise => {
+                if (!exerciseMap.has(exercise.name)) {
+                  exerciseMap.set(exercise.name, []);
+                }
+                exerciseMap.get(exercise.name).push({
+                  date: dateKey,
+                  sets: exercise.sets || [],
+                  workoutName: workout.name
+                });
+              });
+            });
+          });
+          return Array.from(exerciseMap.entries()).map(([name, history]) => ({
+            name,
+            history: history.sort((a, b) => new Date(a.date) - new Date(b.date)),
+            totalSessions: history.length
+          }));
+        };
+
+        const getExerciseStats = (exerciseName) => {
+          const exercises = getAllExercises().find(e => e.name === exerciseName);
+          if (!exercises) return null;
+          const stats = exercises.history.map(session => {
+            const maxWeight = Math.max(...session.sets.map(s => parseFloat(s.weight) || 0));
+            const totalVolume = session.sets.reduce((sum, s) => {
+              return sum + (parseFloat(s.reps) || 0) * (parseFloat(s.weight) || 0);
+            }, 0);
+            return {
+              date: session.date,
+              maxWeight,
+              totalVolume,
+              setsCount: session.sets.length,
+              workoutName: session.workoutName
+            };
+          });
+          return {
+            name: exerciseName,
+            sessions: stats,
+            maxWeightEver: Math.max(...stats.map(s => s.maxWeight)),
+            maxVolumeEver: Math.max(...stats.map(s => s.totalVolume)),
+            totalSessions: stats.length
+          };
+        };
+
+        if (selectedExerciseStats) {
+          const stats = getExerciseStats(selectedExerciseStats);
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+              <div className="max-w-md mx-auto bg-white rounded-3xl shadow-xl overflow-hidden">
+                <div className="bg-gradient-to-r from-purple-500 to-blue-500 p-6 text-white">
+                  <button onClick={() => setSelectedExerciseStats(null)} className="flex items-center gap-2 mb-4 hover:opacity-80">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    <span>Назад</span>
+                  </button>
+                  <h2 className="text-2xl font-bold">{stats.name}</h2>
+                  <p className="text-purple-100 mt-1">{stats.totalSessions} тренировок</p>
+                </div>
+                <div className="p-6">
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    <div className="bg-gradient-to-br from-purple-100 to-purple-50 rounded-2xl p-4 text-center">
+                      <p className="text-sm text-purple-600 mb-1">Макс. вес</p>
+                      <p className="text-2xl font-bold text-purple-700">{stats.maxWeightEver} кг</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-blue-100 to-blue-50 rounded-2xl p-4 text-center">
+                      <p className="text-sm text-blue-600 mb-1">Макс. объём</p>
+                      <p className="text-2xl font-bold text-blue-700">{stats.maxVolumeEver.toFixed(0)} кг</p>
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">История тренировок</h3>
+                  <div className="space-y-3">
+                    {stats.sessions.map((session, index) => {
+                      const date = new Date(session.date);
+                      const isImprovement = index > 0 && session.maxWeight > stats.sessions[index - 1].maxWeight;
+                      return (
+                        <div key={index} className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-4">
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <p className="font-semibold text-gray-800">{date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}</p>
+                              <p className="text-xs text-gray-500 mt-1">{session.workoutName}</p>
+                            </div>
+                            {isImprovement && (
+                              <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                  <polyline points="17 6 23 6 23 12"/>
+                                </svg>
+                                Прогресс
+                              </span>
+                            )}
+                          </div>
+                          <div className="grid grid-cols-3 gap-2">
+                            <div className="bg-white rounded-xl p-2 text-center">
+                              <p className="text-xs text-gray-500">Макс. вес</p>
+                              <p className="font-bold text-purple-600">{session.maxWeight} кг</p>
+                            </div>
+                            <div className="bg-white rounded-xl p-2 text-center">
+                              <p className="text-xs text-gray-500">Объём</p>
+                              <p className="font-bold text-blue-600">{session.totalVolume.toFixed(0)}</p>
+                            </div>
+                            <div className="bg-white rounded-xl p-2 text-center">
+                              <p className="text-xs text-gray-500">Подходов</p>
+                              <p className="font-bold text-pink-600">{session.setsCount}</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        if (showStatsView) {
+          const allExercises = getAllExercises();
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+              <div className="max-w-md mx-auto bg-white rounded-3xl shadow-xl overflow-hidden">
+                <div className="bg-gradient-to-r from-purple-500 to-blue-500 p-6 text-white">
+                  <button onClick={() => setShowStatsView(false)} className="flex items-center gap-2 mb-4 hover:opacity-80">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    <span>Назад</span>
+                  </button>
+                  <h2 className="text-2xl font-bold">Статистика</h2>
+                  <p className="text-purple-100 mt-1">Прогресс по упражнениям</p>
+                </div>
+                <div className="p-6">
+                  {allExercises.length === 0 ? (
+                    <div className="text-center py-12 text-gray-400">
+                      <svg width="48" height="48" className="mx-auto mb-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M3 3v18h18"/>
+                        <path d="M18 17V9"/>
+                        <path d="M13 17V5"/>
+                        <path d="M8 17v-3"/>
+                      </svg>
+                      <p>Нет данных</p>
+                      <p className="text-sm mt-2">Добавьте тренировки для отслеживания прогресса</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {allExercises.map(exercise => (
+                        <button key={exercise.name} onClick={() => setSelectedExerciseStats(exercise.name)}
+                          className="w-full bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-4 hover:shadow-md transition text-left">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <h4 className="font-semibold text-gray-800">{exercise.name}</h4>
+                              <p className="text-sm text-gray-500 mt-1">{exercise.totalSessions} {exercise.totalSessions === 1 ? 'тренировка' : 'тренировок'}</p>
+                            </div>
+                            <svg className="text-gray-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        }
 
         if (selectedWorkout) {
           const dateKey = formatDate(selectedDate);
@@ -351,6 +524,16 @@
                       </svg>
                     </button>
                   </div>
+                  <button onClick={() => setShowStatsView(true)}
+                    className="w-full bg-white bg-opacity-20 hover:bg-opacity-30 rounded-xl p-3 flex items-center justify-center gap-2 transition">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M3 3v18h18"/>
+                      <path d="M18 17V9"/>
+                      <path d="M13 17V5"/>
+                      <path d="M8 17v-3"/>
+                    </svg>
+                    <span className="font-semibold">Статистика</span>
+                  </button>
                 </div>
                 <div className="p-4">
                   <div className="grid grid-cols-7 gap-2 mb-2">
