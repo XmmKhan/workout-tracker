@@ -48,6 +48,10 @@
         const [workoutName, setWorkoutName] = useState('');
         const [exerciseName, setExerciseName] = useState('');
         const [sets, setSets] = useState([{ reps: '', weight: '' }]);
+        
+        // Хуки для графика - ВСЕГДА вызываем, не условно!
+        const chartRef = React.useRef(null);
+        const chartInstance = React.useRef(null);
 
         useEffect(() => {
           const saved = localStorage.getItem('workouts');
@@ -219,101 +223,98 @@
         const weekDays = getWeekDays(new Date(currentDate));
         const monthNames = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
         const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-
-        if (selectedExerciseStats) {
-          const stats = getExerciseStats(selectedExerciseStats);
-          const chartRef = React.useRef(null);
-          const chartInstance = React.useRef(null);
+        
+        // Подготовка данных для графика - делаем ВСЕГДА, не условно
+        const stats = selectedExerciseStats ? getExerciseStats(selectedExerciseStats) : null;
+        const chartData = stats ? stats.sessions.map((session) => {
+          const date = new Date(session.date);
+          return {
+            date: date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
+            weight: session.maxWeight,
+            volume: session.totalVolume
+          };
+        }) : [];
+        
+        const hasChart = typeof Chart !== 'undefined';
+        
+        // useEffect для графика - ВСЕГДА вызываем
+        React.useEffect(() => {
+          if (!selectedExerciseStats || !hasChart || !chartRef.current || chartData.length < 2) {
+            return;
+          }
           
-          const chartData = stats.sessions.map((session) => {
-            const date = new Date(session.date);
-            return {
-              date: date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
-              weight: session.maxWeight,
-              volume: session.totalVolume
-            };
-          });
+          console.log('Chart.js доступен:', hasChart);
+          console.log('Данных для графика:', chartData.length);
+          console.log('Данные:', chartData);
           
-          const hasChart = typeof Chart !== 'undefined';
+          if (chartInstance.current) {
+            chartInstance.current.destroy();
+          }
           
-          React.useEffect(() => {
-            console.log('Chart.js доступен:', hasChart);
-            console.log('Данных для графика:', chartData.length);
-            console.log('Данные:', chartData);
-            
-            if (!hasChart) {
-              console.error('Chart.js НЕ загружен!');
-              return;
-            }
-            
-            if (chartRef.current && chartData.length >= 2) {
-              if (chartInstance.current) {
-                chartInstance.current.destroy();
-              }
-              
-              try {
-                const ctx = chartRef.current.getContext('2d');
-                console.log('Создаю график...');
-                chartInstance.current = new Chart(ctx, {
-                  type: 'line',
-                  data: {
-                    labels: chartData.map(d => d.date),
-                    datasets: [{
-                      label: 'Макс. вес (кг)',
-                      data: chartData.map(d => d.weight),
-                      borderColor: '#9333ea',
-                      backgroundColor: 'rgba(147, 51, 234, 0.1)',
-                      borderWidth: 3,
-                      tension: 0.3,
-                      pointRadius: 5,
-                      pointBackgroundColor: '#9333ea',
-                      pointBorderColor: '#fff',
-                      pointBorderWidth: 2,
-                      pointHoverRadius: 7
-                    }]
-                  },
-                  options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                          font: { size: 12, weight: 'bold' },
-                          color: '#9333ea'
-                        }
-                      }
-                    },
-                    scales: {
-                      y: {
-                        beginAtZero: true,
-                        ticks: {
-                          font: { size: 11 },
-                          color: '#666'
-                        }
-                      },
-                      x: {
-                        ticks: {
-                          font: { size: 11 },
-                          color: '#666'
-                        }
-                      }
+          try {
+            const ctx = chartRef.current.getContext('2d');
+            console.log('Создаю график...');
+            chartInstance.current = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: chartData.map(d => d.date),
+                datasets: [{
+                  label: 'Макс. вес (кг)',
+                  data: chartData.map(d => d.weight),
+                  borderColor: '#9333ea',
+                  backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                  borderWidth: 3,
+                  tension: 0.3,
+                  pointRadius: 5,
+                  pointBackgroundColor: '#9333ea',
+                  pointBorderColor: '#fff',
+                  pointBorderWidth: 2,
+                  pointHoverRadius: 7
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                      font: { size: 12, weight: 'bold' },
+                      color: '#9333ea'
                     }
                   }
-                });
-                console.log('График создан успешно!');
-              } catch (error) {
-                console.error('Ошибка создания графика:', error);
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    ticks: {
+                      font: { size: 11 },
+                      color: '#666'
+                    }
+                  },
+                  x: {
+                    ticks: {
+                      font: { size: 11 },
+                      color: '#666'
+                    }
+                  }
+                }
               }
+            });
+            console.log('График создан успешно!');
+          } catch (error) {
+            console.error('Ошибка создания графика:', error);
+          }
+          
+          return () => {
+            if (chartInstance.current) {
+              chartInstance.current.destroy();
             }
-            
-            return () => {
-              if (chartInstance.current) {
-                chartInstance.current.destroy();
-              }
-            };
-          }, [chartData.length, hasChart]);
+          };
+        }, [selectedExerciseStats, chartData.length, hasChart]);
+
+        if (selectedExerciseStats && stats) {
           
           return (
             <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
