@@ -37,6 +37,7 @@
       const WorkoutTracker = () => {
         const [currentDate, setCurrentDate] = useState(new Date());
         const [workouts, setWorkouts] = useState({});
+        const [templates, setTemplates] = useState({});
         const [selectedDate, setSelectedDate] = useState(null);
         const [selectedWorkout, setSelectedWorkout] = useState(null);
         const [showWorkoutModal, setShowWorkoutModal] = useState(false);
@@ -46,6 +47,9 @@
         const [editingExercise, setEditingExercise] = useState(null);
         const [editingWorkout, setEditingWorkout] = useState(null);
         const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+        const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
+        const [templateToSave, setTemplateToSave] = useState(null);
+        const [templateName, setTemplateName] = useState('');
         const [workoutName, setWorkoutName] = useState('');
         const [exerciseName, setExerciseName] = useState('');
         const [sets, setSets] = useState([{ reps: '', weight: '' }]);
@@ -56,6 +60,8 @@
         useEffect(() => {
           const saved = localStorage.getItem('workouts');
           if (saved) setWorkouts(JSON.parse(saved));
+          const savedTemplates = localStorage.getItem('templates');
+          if (savedTemplates) setTemplates(JSON.parse(savedTemplates));
         }, []);
 
         useEffect(() => {
@@ -63,13 +69,17 @@
         }, [workouts]);
 
         useEffect(() => {
-          if (showWorkoutModal || showExerciseModal) {
+          localStorage.setItem('templates', JSON.stringify(templates));
+        }, [templates]);
+
+        useEffect(() => {
+          if (showWorkoutModal || showExerciseModal || showSaveTemplateModal) {
             document.body.classList.add('modal-open');
           } else {
             document.body.classList.remove('modal-open');
           }
           return () => document.body.classList.remove('modal-open');
-        }, [showWorkoutModal, showExerciseModal]);
+        }, [showWorkoutModal, showExerciseModal, showSaveTemplateModal]);
 
         useEffect(() => {
           window.scrollTo(0, 0);
@@ -140,22 +150,39 @@
           };
         };
 
-        const getAllWorkoutTemplates = () => {
-          const templateMap = new Map();
-          Object.entries(workouts).forEach(([dateKey, dayWorkouts]) => {
-            dayWorkouts.forEach(workout => {
-              if (!templateMap.has(workout.name)) {
-                templateMap.set(workout.name, {
-                  name: workout.name,
-                  exercises: workout.exercises,
-                  lastUsed: dateKey
-                });
-              }
-            });
+        const openSaveTemplateModal = (e, workout) => {
+          e.stopPropagation();
+          setTemplateToSave(workout);
+          setTemplateName(workout.name);
+          setShowSaveTemplateModal(true);
+        };
+
+        const saveAsTemplate = () => {
+          if (!templateName.trim() || !templateToSave) return;
+          const templateId = Date.now().toString();
+          setTemplates(prev => ({
+            ...prev,
+            [templateId]: {
+              id: templateId,
+              name: templateName,
+              exercises: templateToSave.exercises.map(ex => ({
+                name: ex.name,
+                sets: ex.sets.map(s => ({ ...s }))
+              })),
+              createdAt: new Date().toISOString()
+            }
+          }));
+          setShowSaveTemplateModal(false);
+          setTemplateToSave(null);
+          setTemplateName('');
+        };
+
+        const deleteTemplate = (templateId) => {
+          setTemplates(prev => {
+            const newTemplates = { ...prev };
+            delete newTemplates[templateId];
+            return newTemplates;
           });
-          return Array.from(templateMap.values()).sort((a, b) => 
-            new Date(b.lastUsed) - new Date(a.lastUsed)
-          );
         };
 
         const createWorkoutFromTemplate = (template) => {
@@ -504,121 +531,156 @@
           const currentWorkout = workouts[dateKey]?.find(w => w.id === selectedWorkout.id);
           
           return (
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-              <div className="max-w-md mx-auto bg-white rounded-3xl shadow-xl overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-500 to-blue-500 p-6 text-white">
-                  <button onClick={() => setSelectedWorkout(null)} className="flex items-center gap-2 mb-4">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="15 18 9 12 15 6"/>
-                    </svg>
-                    <span>Назад</span>
-                  </button>
-                  <h2 className="text-2xl font-bold">{currentWorkout?.name}</h2>
-                  <p className="text-purple-100 mt-1">{selectedDate.toLocaleDateString('ru-RU')}</p>
-                </div>
-                <div className="p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-800">Упражнения</h3>
-                    <button onClick={() => setShowExerciseModal(true)} className="bg-gradient-to-r from-purple-500 to-blue-500 text-white p-2 rounded-full hover:shadow-lg transition">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            <>
+              <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+                <div className="max-w-md mx-auto bg-white rounded-3xl shadow-xl overflow-hidden">
+                  <div className="bg-gradient-to-r from-purple-500 to-blue-500 p-6 text-white">
+                    <button onClick={() => setSelectedWorkout(null)} className="flex items-center gap-2 mb-4">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="15 18 9 12 15 6"/>
                       </svg>
+                      <span>Назад</span>
                     </button>
-                  </div>
-                  {currentWorkout?.exercises.length === 0 ? (
-                    <div className="text-center py-12 text-gray-400">
-                      <p>Нет упражнений</p>
-                      <p className="text-sm mt-2">Нажмите + чтобы добавить</p>
+                    <div className="flex justify-between items-center">
+                      <div className="flex-1">
+                        <h2 className="text-2xl font-bold">{currentWorkout?.name}</h2>
+                        <p className="text-purple-100 mt-1">{selectedDate.toLocaleDateString('ru-RU')}</p>
+                      </div>
+                      {currentWorkout?.exercises.length > 0 && (
+                        <button 
+                          onClick={(e) => openSaveTemplateModal(e, currentWorkout)}
+                          className="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 rounded-lg transition ml-2"
+                          title="Сохранить как шаблон">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                            <polyline points="17 21 17 13 7 13 7 21"/>
+                            <polyline points="7 3 7 8 15 8"/>
+                          </svg>
+                        </button>
+                      )}
                     </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {currentWorkout?.exercises.map(exercise => (
-                        <div key={exercise.id} className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-4">
-                          <div className="flex justify-between items-start mb-3">
-                            <h4 className="font-semibold text-gray-800 text-lg">{exercise.name}</h4>
-                            <div className="flex gap-2">
-                              <button onClick={() => startEditExercise(exercise)} className="text-blue-500 hover:text-blue-700">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                </svg>
-                              </button>
-                              <button onClick={() => deleteExercise(exercise.id)} className="text-red-400 hover:text-red-600">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                                </svg>
-                              </button>
+                  </div>
+                  <div className="p-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-semibold text-gray-800">Упражнения</h3>
+                      <button onClick={() => setShowExerciseModal(true)} className="bg-gradient-to-r from-purple-500 to-blue-500 text-white p-2 rounded-full hover:shadow-lg transition">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                      </button>
+                    </div>
+                    {currentWorkout?.exercises.length === 0 ? (
+                      <div className="text-center py-12 text-gray-400">
+                        <p>Нет упражнений</p>
+                        <p className="text-sm mt-2">Нажмите + чтобы добавить</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {currentWorkout?.exercises.map(exercise => (
+                          <div key={exercise.id} className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-4">
+                            <div className="flex justify-between items-start mb-3">
+                              <h4 className="font-semibold text-gray-800 text-lg">{exercise.name}</h4>
+                              <div className="flex gap-2">
+                                <button onClick={() => startEditExercise(exercise)} className="text-blue-500 hover:text-blue-700">
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                  </svg>
+                                </button>
+                                <button onClick={() => deleteExercise(exercise.id)} className="text-red-400 hover:text-red-600">
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                  </svg>
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                          <div className="space-y-2">
-                            {(exercise.sets && Array.isArray(exercise.sets) ? exercise.sets : []).map((set, index) => (
-                              <div key={index} className="bg-white rounded-xl p-3 flex items-center gap-3">
-                                <span className="text-sm font-semibold text-gray-500 w-8">#{index + 1}</span>
-                                <div className="flex-1 flex gap-3">
-                                  <div className="flex-1 text-center">
-                                    <p className="text-xs text-gray-500 mb-1">Повторы</p>
-                                    <p className="font-bold text-blue-600">{set.reps}</p>
-                                  </div>
-                                  <div className="flex-1 text-center">
-                                    <p className="text-xs text-gray-500 mb-1">Вес (кг)</p>
-                                    <p className="font-bold text-pink-600">{set.weight || '—'}</p>
+                            <div className="space-y-2">
+                              {(exercise.sets && Array.isArray(exercise.sets) ? exercise.sets : []).map((set, index) => (
+                                <div key={index} className="bg-white rounded-xl p-3 flex items-center gap-3">
+                                  <span className="text-sm font-semibold text-gray-500 w-8">#{index + 1}</span>
+                                  <div className="flex-1 flex gap-3">
+                                    <div className="flex-1 text-center">
+                                      <p className="text-xs text-gray-500 mb-1">Повторы</p>
+                                      <p className="font-bold text-blue-600">{set.reps}</p>
+                                    </div>
+                                    <div className="flex-1 text-center">
+                                      <p className="text-xs text-gray-500 mb-1">Вес (кг)</p>
+                                      <p className="font-bold text-pink-600">{set.weight || '—'}</p>
+                                    </div>
                                   </div>
                                 </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {showExerciseModal && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end z-50">
+                      <div className="bg-white w-full rounded-t-3xl p-6 max-h-[90vh] overflow-y-auto" style={{animation: 'slideUp 0.3s ease-out'}}>
+                        <h3 className="text-xl font-bold mb-4 text-gray-800">{editingExercise ? 'Редактировать упражнение' : 'Новое упражнение'}</h3>
+                        <input type="text" placeholder="Название упражнения" value={exerciseName} onChange={(e) => setExerciseName(e.target.value)}
+                          className="w-full p-3 border-2 border-gray-200 rounded-xl mb-4 focus:border-purple-500 outline-none" />
+                        <div className="mb-4">
+                          <div className="flex justify-between items-center mb-3">
+                            <h4 className="font-semibold text-gray-700">Подходы</h4>
+                            <button onClick={addSet} className="text-purple-600 hover:text-purple-700 font-semibold text-sm flex items-center gap-1">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                              </svg>
+                              Добавить подход
+                            </button>
+                          </div>
+                          <div className="space-y-2">
+                            {sets.map((set, index) => (
+                              <div key={index} className="flex items-center gap-1">
+                                <span className="text-xs font-semibold text-gray-500 w-5 flex-shrink-0">#{index + 1}</span>
+                                <input type="number" placeholder="Повт" value={set.reps} onChange={(e) => updateSet(index, 'reps', e.target.value)}
+                                  className="w-20 p-2 text-sm border-2 border-gray-200 rounded-xl focus:border-purple-500 outline-none" />
+                                <input type="number" placeholder="Вес" value={set.weight} onChange={(e) => updateSet(index, 'weight', e.target.value)}
+                                  className="w-20 p-2 text-sm border-2 border-gray-200 rounded-xl focus:border-purple-500 outline-none" />
+                                {sets.length > 1 && (
+                                  <button onClick={() => removeSet(index)} className="text-red-400 hover:text-red-600 flex-shrink-0 ml-1">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                                    </svg>
+                                  </button>
+                                )}
                               </div>
                             ))}
                           </div>
                         </div>
-                      ))}
+                        <div className="flex gap-3">
+                          <button onClick={() => { setShowExerciseModal(false); setExerciseName(''); setSets([{ reps: '', weight: '' }]); setEditingExercise(null); }}
+                            className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300">Отмена</button>
+                          <button onClick={addExercise} className="flex-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-xl font-semibold hover:shadow-lg">
+                            {editingExercise ? 'Сохранить' : 'Добавить'}
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
-                {showExerciseModal && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end z-50">
-                    <div className="bg-white w-full rounded-t-3xl p-6 max-h-[90vh] overflow-y-auto" style={{animation: 'slideUp 0.3s ease-out'}}>
-                      <h3 className="text-xl font-bold mb-4 text-gray-800">{editingExercise ? 'Редактировать упражнение' : 'Новое упражнение'}</h3>
-                      <input type="text" placeholder="Название упражнения" value={exerciseName} onChange={(e) => setExerciseName(e.target.value)}
-                        className="w-full p-3 border-2 border-gray-200 rounded-xl mb-4 focus:border-purple-500 outline-none" />
-                      <div className="mb-4">
-                        <div className="flex justify-between items-center mb-3">
-                          <h4 className="font-semibold text-gray-700">Подходы</h4>
-                          <button onClick={addSet} className="text-purple-600 hover:text-purple-700 font-semibold text-sm flex items-center gap-1">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                            Добавить подход
-                          </button>
-                        </div>
-                        <div className="space-y-2">
-                          {sets.map((set, index) => (
-                            <div key={index} className="flex items-center gap-1">
-                              <span className="text-xs font-semibold text-gray-500 w-5 flex-shrink-0">#{index + 1}</span>
-                              <input type="number" placeholder="Повт" value={set.reps} onChange={(e) => updateSet(index, 'reps', e.target.value)}
-                                className="w-20 p-2 text-sm border-2 border-gray-200 rounded-xl focus:border-purple-500 outline-none" />
-                              <input type="number" placeholder="Вес" value={set.weight} onChange={(e) => updateSet(index, 'weight', e.target.value)}
-                                className="w-20 p-2 text-sm border-2 border-gray-200 rounded-xl focus:border-purple-500 outline-none" />
-                              {sets.length > 1 && (
-                                <button onClick={() => removeSet(index)} className="text-red-400 hover:text-red-600 flex-shrink-0 ml-1">
-                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                  </svg>
-                                </button>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="flex gap-3">
-                        <button onClick={() => { setShowExerciseModal(false); setExerciseName(''); setSets([{ reps: '', weight: '' }]); setEditingExercise(null); }}
-                          className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300">Отмена</button>
-                        <button onClick={addExercise} className="flex-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-xl font-semibold hover:shadow-lg">
-                          {editingExercise ? 'Сохранить' : 'Добавить'}
-                        </button>
-                      </div>
+              </div>
+              
+              {showSaveTemplateModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end z-50">
+                  <div className="bg-white w-full rounded-t-3xl p-6" style={{animation: 'slideUp 0.3s ease-out'}}>
+                    <h3 className="text-xl font-bold mb-4 text-gray-800">Сохранить как шаблон</h3>
+                    <input type="text" placeholder="Название шаблона" value={templateName} onChange={(e) => setTemplateName(e.target.value)}
+                      className="w-full p-3 border-2 border-gray-200 rounded-xl mb-4 focus:border-purple-500 outline-none" />
+                    <div className="flex gap-3">
+                      <button onClick={() => { setShowSaveTemplateModal(false); setTemplateName(''); setTemplateToSave(null); }} 
+                        className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300">Отмена</button>
+                      <button onClick={saveAsTemplate} className="flex-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-xl font-semibold hover:shadow-lg">
+                        Сохранить
+                      </button>
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
+                </div>
+              )}
+            </>
           );
         }
 
@@ -721,35 +783,38 @@
                   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end z-50">
                     <div className="bg-white w-full rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto" style={{animation: 'slideUp 0.3s ease-out'}}>
                       <h3 className="text-xl font-bold mb-4 text-gray-800">Выберите шаблон</h3>
-                      {getAllWorkoutTemplates().length === 0 ? (
+                      {Object.keys(templates).length === 0 ? (
                         <div className="text-center py-8 text-gray-400">
-                          <p>Нет сохранённых тренировок</p>
-                          <p className="text-sm mt-2">Создайте первую тренировку вручную</p>
+                          <p>Нет сохранённых шаблонов</p>
+                          <p className="text-sm mt-2">Создайте тренировку с упражнениями и сохраните её как шаблон</p>
                         </div>
                       ) : (
                         <div className="space-y-3">
-                          {getAllWorkoutTemplates().map((template, index) => (
-                            <button key={index} onClick={() => createWorkoutFromTemplate(template)}
-                              className="w-full bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-4 hover:shadow-md transition text-left">
-                              <div className="flex justify-between items-start">
-                                <div className="flex-1">
-                                  <h4 className="font-semibold text-gray-800 mb-2">{template.name}</h4>
-                                  <div className="space-y-1">
-                                    {template.exercises.slice(0, 3).map((ex, i) => (
-                                      <p key={i} className="text-xs text-gray-600">
-                                        • {ex.name} ({ex.sets.length} {ex.sets.length === 1 ? 'подход' : 'подходов'})
-                                      </p>
-                                    ))}
-                                    {template.exercises.length > 3 && (
-                                      <p className="text-xs text-gray-500">+ ещё {template.exercises.length - 3}</p>
-                                    )}
-                                  </div>
-                                </div>
-                                <svg className="text-blue-500 flex-shrink-0 ml-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <polyline points="9 18 15 12 9 6"/>
-                                </svg>
+                          {Object.values(templates).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((template) => (
+                            <div key={template.id} className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-4">
+                              <div className="flex justify-between items-start mb-2">
+                                <h4 className="font-semibold text-gray-800">{template.name}</h4>
+                                <button onClick={() => deleteTemplate(template.id)} className="text-red-400 hover:text-red-600">
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                  </svg>
+                                </button>
                               </div>
-                            </button>
+                              <div className="space-y-1 mb-3">
+                                {template.exercises.slice(0, 3).map((ex, i) => (
+                                  <p key={i} className="text-xs text-gray-600">
+                                    • {ex.name} ({ex.sets.length} {ex.sets.length === 1 ? 'подход' : 'подходов'})
+                                  </p>
+                                ))}
+                                {template.exercises.length > 3 && (
+                                  <p className="text-xs text-gray-500">+ ещё {template.exercises.length - 3}</p>
+                                )}
+                              </div>
+                              <button onClick={() => createWorkoutFromTemplate(template)}
+                                className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-2 rounded-xl font-semibold hover:shadow-md transition">
+                                Использовать
+                              </button>
+                            </div>
                           ))}
                         </div>
                       )}
