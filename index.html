@@ -1,1184 +1,2293 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Трекер тренировок</title>
-    
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    
-    <style>
-        * { -webkit-tap-highlight-color: transparent; }
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            overflow-x: hidden;
-        }
-        body.modal-open {
-            overflow: hidden;
-            position: fixed;
-            width: 100%;
-        }
-        #root { min-height: 100vh; }
-        @keyframes slideUp { 
-            from { 
-                transform: translateY(100%); 
-                opacity: 0;
-            } 
-            to { 
-                transform: translateY(0); 
-                opacity: 1;
-            } 
-        }
-        
-        /* Плавные анимации для всех элементов */
-        button, input, .workout-card, .exercise-card, .stat-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        /* Анимация нажатия для кнопок */
-        button:active {
-            transform: scale(0.92);
-        }
-        
-        /* Для круглых кнопок */
-        .btn-circle {
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .btn-circle:hover {
-            transform: scale(1.05);
-        }
-        .btn-circle:active {
-            transform: scale(0.85);
-        }
-        
-        /* Для больших кнопок действий */
-        .btn-action {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-        }
-        .btn-action:active {
-            transform: translateY(0px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Анимация для карточек */
-        .workout-card, .exercise-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .workout-card:hover, .exercise-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(147, 51, 234, 0.2);
-        }
-        .workout-card:active, .exercise-card:active {
-            transform: translateY(-2px);
-        }
-        
-        /* Анимация для дней календаря */
-        .calendar-day {
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .calendar-day:hover {
-            transform: scale(1.08);
-        }
-        .calendar-day:active {
-            transform: scale(0.95);
-        }
-        
-        /* Плавное появление модальных окон */
-        .modal-overlay {
-            animation: fadeIn 0.3s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        /* Анимация для инпутов */
-        input:focus {
-            transform: scale(1.02);
-            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Скриншот с эффектами</title>
+<style>
+:root {
+  --bg: #E7E3EC;
+  --amb-a: #ff2d95;
+  --amb-b: #ff6a1a;
+  --amb-c: #3a7bff;
+  --amb-opacity: .55;
+  --img-opacity: .7;
+
+  --glass: rgba(26, 24, 30, .62);
+  --glass-strong: rgba(20, 18, 24, .78);
+  --stroke: rgba(255, 255, 255, .10);
+  --hi: rgba(255, 255, 255, .08);
+  --text: rgba(255, 255, 255, .94);
+  --muted: rgba(255, 255, 255, .55);
+  --faint: rgba(255, 255, 255, .28);
+  --fill: rgba(255, 255, 255, .07);
+  --fill-hover: rgba(255, 255, 255, .12);
+  --active: rgba(255, 255, 255, .18);
+  --primary-bg: rgba(255, 255, 255, .92);
+  --primary-text: #1a1720;
+  --checker: rgba(120, 110, 130, .16);
+  --stage-text: rgba(30, 26, 36, .6);
+  --drop: rgba(30, 26, 36, .35);
+
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --r-bar: 22px;
+  --r-pill: 999px;
+
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15121A;
+    --amb-opacity: .38;
+    --img-opacity: .42;
+    --checker: rgba(255, 255, 255, .05);
+    --stage-text: rgba(255, 255, 255, .55);
+    --drop: rgba(255, 255, 255, .35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15121A;
+  --amb-opacity: .38;
+  --img-opacity: .42;
+  --checker: rgba(255, 255, 255, .05);
+  --stage-text: rgba(255, 255, 255, .55);
+  --drop: rgba(255, 255, 255, .35);
+  color-scheme: dark;
+}
+html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; padding: 0; }
+button:disabled { cursor: default; }
+:focus-visible { outline: 2px solid rgba(255, 255, 255, .7); outline-offset: 2px; }
+svg.i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* ── Фон: размытая копия скриншота, как стекло поверх яркого контента ── */
+.ambient { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.ambient-base {
+  position: absolute; inset: -20%;
+  background:
+    radial-gradient(38% 42% at 28% 72%, var(--amb-a), transparent 70%),
+    radial-gradient(30% 34% at 52% 58%, var(--amb-b), transparent 70%),
+    radial-gradient(34% 40% at 82% 22%, var(--amb-c), transparent 70%);
+  filter: blur(70px);
+  opacity: var(--amb-opacity);
+}
+.ambient-img {
+  position: absolute; inset: -12%;
+  background-size: cover; background-position: center;
+  filter: blur(90px) saturate(1.6);
+  opacity: 0;
+  transition: opacity .7s ease;
+}
+.ambient-img.on { opacity: var(--img-opacity); }
+
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid var(--stroke);
+  box-shadow: inset 0 1px 0 var(--hi), 0 14px 40px rgba(10, 6, 20, .28);
+}
+
+/* ── Каркас ── */
+.app {
+  position: relative; z-index: 1;
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+}
+
+/* ── Верхняя панель: параметры инструмента ── */
+.topbar {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 10px;
+  min-height: 56px;
+  padding: 8px 8px 8px 8px;
+  border-radius: var(--r-bar);
+}
+.options {
+  flex: 1; min-width: 0;
+  display: flex; align-items: center; gap: 16px;
+  overflow-x: auto; scrollbar-width: none;
+  height: 40px; /* фиксированная высота: содержимое панели меняется, а холст не должен прыгать */
+  padding: 0 6px;
+  white-space: nowrap;
+}
+.options::-webkit-scrollbar { display: none; }
+.opt-title { font-weight: 600; font-size: 13.5px; letter-spacing: -.01em; }
+.opt-empty { color: var(--muted); }
+.vsep { width: 1px; height: 22px; background: var(--stroke); flex: none; }
+
+.ctl-slider { display: flex; align-items: center; gap: 10px; }
+.ctl-label { color: var(--muted); }
+.ctl-value { min-width: 38px; font-variant-numeric: tabular-nums; color: var(--text); }
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 108px; height: 18px; background: transparent; margin: 0; cursor: pointer;
+  --p: 50%;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px; border-radius: 4px;
+  background: linear-gradient(to right, rgba(255,255,255,.85) var(--p), rgba(255,255,255,.16) var(--p));
+}
+input[type="range"]::-moz-range-track { height: 4px; border-radius: 4px; background: rgba(255,255,255,.16); }
+input[type="range"]::-moz-range-progress { height: 4px; border-radius: 4px; background: rgba(255,255,255,.85); }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; margin-top: -6px; box-shadow: 0 1px 4px rgba(0,0,0,.4);
+}
+input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+
+.seg { display: flex; gap: 2px; padding: 3px; border-radius: var(--r-pill); background: var(--fill); }
+.seg button { padding: 5px 12px; border-radius: var(--r-pill); color: var(--muted); transition: background .15s, color .15s; }
+.seg button:hover { color: var(--text); }
+.seg button.on { background: var(--active); color: var(--text); }
+
+.colors { display: flex; align-items: center; gap: 8px; }
+.swatch {
+  position: relative; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--c); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
+  transition: transform .12s;
+}
+.swatch:hover { transform: scale(1.1); }
+.swatch.on { box-shadow: 0 0 0 2px rgba(20,18,24,.9), 0 0 0 3.5px #fff; }
+.swatch.custom { background: conic-gradient(from 0deg, #ff3b3b, #ffd23b, #3bff6e, #3bd5ff, #7a3bff, #ff3bd2, #ff3b3b); cursor: pointer; }
+.swatch.custom.on { background: var(--c); }
+.swatch.custom input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; border: 0; padding: 0; }
+.note { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+.note svg.i { width: 15px; height: 15px; }
+.btn-icon.opt-del { width: 32px; height: 32px; color: var(--muted); }
+.stepper { display: flex; align-items: center; gap: 2px; padding: 3px; border-radius: var(--r-pill); background: var(--fill); }
+.stepper button { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 16px; line-height: 1; }
+.stepper button:hover:not(:disabled) { background: var(--fill-hover); }
+.stepper button:disabled { color: var(--faint); }
+.stepper .val { min-width: 26px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+.next-num { color: var(--muted); }
+.next-num b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.btn-icon.opt-del:hover { color: var(--text); }
+
+.btn-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 38px; padding: 0 16px; border-radius: var(--r-pill);
+  background: var(--fill); transition: background .15s;
+  white-space: nowrap;
+}
+.btn-pill:hover { background: var(--fill-hover); }
+.btn-pill.sm { height: 32px; padding: 0 14px; }
+.crop-size { color: var(--muted); font-variant-numeric: tabular-nums; min-width: 92px; }
+.opt-spacer { flex: 1; min-width: 8px; }
+.btn-primary { background: var(--primary-bg); color: var(--primary-text); font-weight: 600; }
+.btn-primary:hover { background: #fff; }
+.btn-primary:disabled { background: var(--fill); color: var(--faint); }
+.kbd { font-size: 12px; opacity: .55; font-weight: 500; }
+.btn-icon {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center;
+  color: var(--text); transition: background .15s, color .15s;
+}
+.btn-icon:hover:not(:disabled) { background: var(--fill-hover); }
+.btn-icon:disabled { color: var(--faint); }
+.actions { display: flex; align-items: center; gap: 4px; flex: none; }
+
+/* ── Панель инструментов слева ── */
+.rail {
+  grid-column: 1; grid-row: 2;
+  align-self: start;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 6px;
+  border-radius: 26px;
+}
+.tool {
+  position: relative;
+  width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center;
+  color: var(--muted);
+  transition: background .15s, color .15s;
+}
+.tool svg.i { width: 20px; height: 20px; }
+.tool:hover:not(:disabled) { color: var(--text); background: var(--fill); }
+.tool.on { color: var(--text); background: var(--active); box-shadow: inset 0 1px 0 rgba(255,255,255,.12); }
+.tool:disabled { color: var(--faint); }
+.tool .tip {
+  position: absolute; left: calc(100% + 12px); top: 50%; transform: translate(-4px, -50%);
+  display: flex; gap: 10px; align-items: center;
+  padding: 7px 12px; border-radius: var(--r-pill);
+  background: var(--glass-strong); border: 1px solid var(--stroke);
+  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+  color: var(--text); white-space: nowrap; pointer-events: none;
+  opacity: 0; transition: opacity .12s, transform .12s; z-index: 5;
+}
+.tool:hover .tip, .tool:focus-visible .tip { opacity: 1; transform: translate(0, -50%); }
+.rail-sep { height: 1px; margin: 4px 8px; background: var(--stroke); }
+
+/* ── Холст по центру ── */
+.stage {
+  grid-column: 2; grid-row: 2;
+  position: relative;
+  display: grid; place-items: center;
+  min-height: 0; min-width: 0;
+  border-radius: 28px;
+  transition: box-shadow .15s;
+}
+.app.dragging .stage { box-shadow: inset 0 0 0 2px var(--drop); }
+.stage { overflow: hidden; touch-action: none; z-index: 1; }
+/* Панели всегда над холстом, иначе подсказки инструментов уходят под скриншот */
+.topbar, .rail, .layers { position: relative; z-index: 5; }
+.canvas-wrap { position: absolute; left: 0; top: 0; line-height: 0; will-change: transform; }
+.stage.pan-ready canvas, .stage.pan-ready { cursor: grab !important; }
+.stage.panning canvas, .stage.panning { cursor: grabbing !important; }
+.zoom-ctl { display: flex; align-items: center; gap: 2px; margin: -4px -8px -4px 0; }
+.zbtn { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: var(--text); font-size: 16px; line-height: 1; }
+.zbtn:hover { background: var(--fill-hover); }
+.zval { min-width: 48px; height: 26px; padding: 0 6px; border-radius: var(--r-pill); color: var(--muted); }
+.zval:hover { background: var(--fill-hover); color: var(--text); }
+canvas#canvas {
+  display: block;
+  touch-action: none;
+  background: repeating-conic-gradient(var(--checker) 0 25%, transparent 0 50%) 0 0 / 16px 16px;
+  border-radius: 6px;
+}
+.text-draft {
+  position: absolute; margin: 0; padding: 0; border: 0;
+  background: transparent;
+  outline: 1px dashed currentColor; outline-offset: 3px;
+  resize: none; overflow: hidden; white-space: pre;
+  display: block;
+}
+.text-draft::placeholder { color: currentColor; opacity: .45; }
+
+.empty {
+  width: min(400px, 100%);
+  padding: 32px 28px 28px;
+  border-radius: 28px;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.empty-icon { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; background: var(--fill); margin-bottom: 6px; }
+.empty-icon svg.i { width: 26px; height: 26px; }
+.empty h1 { margin: 0; font-size: 21px; font-weight: 650; letter-spacing: -.02em; }
+.empty p { margin: 0 0 12px; color: var(--muted); font-size: 14px; line-height: 1.45; max-width: 30ch; }
+
+.status {
+  position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px;
+  max-width: calc(100% - 24px);
+  padding: 8px 16px; border-radius: var(--r-pill);
+  color: var(--muted); font-size: 12.5px; white-space: nowrap;
+}
+.status #hint { color: var(--text); overflow: hidden; text-overflow: ellipsis; }
+.status .vsep { height: 14px; }
+.status .num { font-variant-numeric: tabular-nums; }
+
+/* ── Слои справа ── */
+.layers {
+  grid-column: 3; grid-row: 2;
+  align-self: start;
+  width: 232px; max-height: 100%;
+  display: flex; flex-direction: column;
+  border-radius: var(--r-bar);
+  overflow: hidden;
+}
+.layers-head { display: flex; align-items: center; gap: 8px; padding: 14px 16px 10px; font-weight: 600; font-size: 13.5px; }
+.layers-head .count { margin-left: auto; color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.layers-list { list-style: none; margin: 0; padding: 0 6px 6px; overflow-y: auto; }
+.layer {
+  display: flex; align-items: center; gap: 10px;
+  height: 36px; padding: 0 6px 0 10px; border-radius: 12px;
+}
+.layer { cursor: pointer; }
+.layer:hover { background: var(--fill); }
+.layer.on { background: var(--active); }
+.layer.base { cursor: default; }
+.layer.base:hover { background: none; }
+.layer .dot { width: 10px; height: 10px; border-radius: 3px; flex: none; background: var(--c); box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); }
+.layer .dot.round { border-radius: 50%; }
+.layer .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.layer .del { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); opacity: 0; transition: opacity .12s; }
+.layer .del svg.i { width: 15px; height: 15px; }
+.layer:hover .del, .layer .del:focus-visible { opacity: 1; }
+.layer .del:hover { color: var(--text); background: var(--fill-hover); }
+.layer.base { color: var(--muted); }
+.layers-empty { padding: 2px 16px 16px; color: var(--muted); font-size: 12.5px; line-height: 1.45; }
+
+.toast {
+  position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 84px);
+  transform: translate(-50%, -8px);
+  padding: 9px 16px; border-radius: var(--r-pill); z-index: 10;
+  opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+[hidden] { display: none !important; }
+
+@media (hover: none) { .layer .del { opacity: 1; } .tool .tip { display: none; } }
+
+@media (max-width: 1080px) { .layers { display: none; } .app { grid-template-columns: auto minmax(0, 1fr); } }
+
+@media (max-width: 720px) {
+  .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px; padding: 8px; }
+  .topbar { flex-wrap: wrap; padding: 6px; }
+  .options { order: 3; flex-basis: 100%; padding: 4px 6px 2px; }
+  .actions { margin-left: auto; }
+  .btn-pill .kbd { display: none; }
+  .stage { grid-column: 1; grid-row: 2; }
+  .rail { grid-column: 1; grid-row: 3; flex-direction: row; justify-self: center; align-self: center; }
+  .rail-sep { width: 1px; height: auto; margin: 8px 2px; }
+  .status #hint, .status #hint + .vsep { display: none; }
+  .status { bottom: 6px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
 </head>
 <body>
-    <div id="root"></div>
-    <script type="text/babel">
-      const { useState, useEffect } = React;
+<div class="ambient" aria-hidden="true">
+  <div class="ambient-base"></div>
+  <div class="ambient-img" id="ambientImg"></div>
+</div>
 
-      const WorkoutTracker = () => {
-        const [currentDate, setCurrentDate] = useState(new Date());
-        const [workouts, setWorkouts] = useState({});
-        const [templates, setTemplates] = useState({});
-        const [selectedDate, setSelectedDate] = useState(null);
-        const [selectedWorkout, setSelectedWorkout] = useState(null);
-        const [showWorkoutModal, setShowWorkoutModal] = useState(false);
-        const [showExerciseModal, setShowExerciseModal] = useState(false);
-        const [showStatsView, setShowStatsView] = useState(false);
-        const [selectedExerciseStats, setSelectedExerciseStats] = useState(null);
-        const [editingExercise, setEditingExercise] = useState(null);
-        const [editingWorkout, setEditingWorkout] = useState(null);
-        const [showTemplateSelector, setShowTemplateSelector] = useState(false);
-        const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
-        const [templateToSave, setTemplateToSave] = useState(null);
-        const [templateName, setTemplateName] = useState('');
-        const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-        const [deleteTarget, setDeleteTarget] = useState(null);
-        const [workoutName, setWorkoutName] = useState('');
-        const [exerciseName, setExerciseName] = useState('');
-        const [sets, setSets] = useState([{ reps: '', weight: '' }]);
-        const [showStopwatch, setShowStopwatch] = useState(false);
-        const [stopwatchTime, setStopwatchTime] = useState(0);
-        const [isStopwatchRunning, setIsStopwatchRunning] = useState(false);
-        
-        const chartRef = React.useRef(null);
-        const chartInstance = React.useRef(null);
-        const stopwatchInterval = React.useRef(null);
+<div class="app" id="app">
+  <header class="topbar glass">
+    <button class="btn-pill" id="openBtn" title="Открыть изображение">
+      <svg class="i" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+      <span>Открыть</span>
+    </button>
+    <div class="vsep"></div>
+    <div class="options" id="options"></div>
+    <div class="actions">
+      <button class="btn-icon" id="undoBtn" aria-label="Отменить"><svg class="i" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+      <button class="btn-icon" id="redoBtn" aria-label="Повторить"><svg class="i" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+      <button class="btn-icon" id="resetBtn" aria-label="Закрыть изображение и сбросить всё"><svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
+      <button class="btn-pill btn-primary" id="downloadBtn">
+        <span>Скачать</span><span class="kbd" id="saveKbd"></span>
+      </button>
+    </div>
+  </header>
 
-        useEffect(() => {
-          const saved = localStorage.getItem('workouts');
-          if (saved) setWorkouts(JSON.parse(saved));
-          const savedTemplates = localStorage.getItem('templates');
-          if (savedTemplates) setTemplates(JSON.parse(savedTemplates));
-        }, []);
+  <nav class="rail glass" id="rail" aria-label="Инструменты"></nav>
 
-        useEffect(() => {
-          localStorage.setItem('workouts', JSON.stringify(workouts));
-        }, [workouts]);
+  <main class="stage" id="stage">
+    <div class="empty glass" id="empty">
+      <div class="empty-icon"><svg class="i" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>
+      <h1>Скриншот с эффектами</h1>
+      <p id="emptyText">Перетащите изображение сюда или вставьте его из буфера</p>
+      <button class="btn-pill btn-primary" id="emptyOpenBtn">Выбрать файл</button>
+    </div>
+    <div class="canvas-wrap" id="canvasWrap" hidden>
+      <canvas id="canvas"></canvas>
+    </div>
+    <div class="status glass" id="status" hidden>
+      <span id="hint"></span>
+      <span class="vsep"></span>
+      <span class="zoom-ctl">
+        <button class="zbtn" id="zoomOut" aria-label="Уменьшить">−</button>
+        <button class="num zval" id="zoom"></button>
+        <button class="zbtn" id="zoomIn" aria-label="Увеличить">+</button>
+      </span>
+      <span class="vsep"></span>
+      <span class="num" id="dims"></span>
+    </div>
+  </main>
 
-        useEffect(() => {
-          localStorage.setItem('templates', JSON.stringify(templates));
-        }, [templates]);
+  <aside class="layers glass" id="layers" hidden>
+    <div class="layers-head">
+      <svg class="i" viewBox="0 0 24 24"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg>
+      Слои <span class="count" id="layerCount"></span>
+    </div>
+    <ul class="layers-list" id="layerList"></ul>
+  </aside>
+</div>
 
-        useEffect(() => {
-          if (showWorkoutModal || showExerciseModal || showSaveTemplateModal || showDeleteConfirm) {
-            document.body.classList.add('modal-open');
-          } else {
-            document.body.classList.remove('modal-open');
-          }
-          return () => document.body.classList.remove('modal-open');
-        }, [showWorkoutModal, showExerciseModal, showSaveTemplateModal, showDeleteConfirm]);
+<div class="toast glass" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="fileInput" accept="image/*" hidden>
 
-        useEffect(() => {
-          window.scrollTo(0, 0);
-        }, [selectedDate, selectedWorkout]);
+<script>
+(() => {
+  // ─── Константы ────────────────────────────────────────────
+  const PALETTE = ['#0ECE55', '#9FA5AD', '#24A8FB'];
+  const SELECT_COLOR = '#24A8FB';
+  const FONT_FAMILY = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  const IS_MAC = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
+  const MOD = IS_MAC ? '⌘' : 'Ctrl+';
 
-        useEffect(() => {
-          if (isStopwatchRunning) {
-            stopwatchInterval.current = setInterval(() => {
-              setStopwatchTime(prev => prev + 10);
-            }, 10);
-          } else {
-            if (stopwatchInterval.current) {
-              clearInterval(stopwatchInterval.current);
-            }
-          }
-          return () => {
-            if (stopwatchInterval.current) {
-              clearInterval(stopwatchInterval.current);
-            }
-          };
-        }, [isStopwatchRunning]);
+  const svg = (inner) => `<svg class="i" viewBox="0 0 24 24">${inner}</svg>`;
+  const ICONS = {
+    select: svg('<path d="M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z"/>'),
+    crop: svg('<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/>'),
+    highlight: svg('<path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/>'),
+    blur: svg('<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/>'),
+    focus: svg('<circle cx="12" cy="12" r="3"/><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>'),
+    arrow: svg('<path d="M7 17 17 7"/><path d="M7 7h10v10"/>'),
+    box: svg('<rect width="18" height="18" x="3" y="3" rx="2"/>'),
+    marker: svg('<circle cx="12" cy="12" r="9"/><path d="M10.5 9.5 12.5 8v8"/>'),
+    text: svg('<polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/>'),
+    x: svg('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'),
+    trash: svg('<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'),
+    info: svg('<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>'),
+  };
 
-        const getWeekDays = (date) => {
-          const day = date.getDay();
-          const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-          const monday = new Date(date.setDate(diff));
-          const week = [];
-          for (let i = 0; i < 7; i++) {
-            const weekDay = new Date(monday);
-            weekDay.setDate(monday.getDate() + i);
-            week.push(weekDay);
-          }
-          return week;
-        };
+  const TOOLS = [
+    { id: 'select',    label: 'Выбор',     key: 'V', code: 'KeyV', hint: 'Кликните по слою, чтобы выделить. Двойной клик по тексту — править' },
+    { id: 'crop',      label: 'Кадрирование', key: 'C', code: 'KeyC', hint: 'Тяните углы и края рамки. Enter — применить, Esc — отмена' },
+    { id: 'highlight', label: 'Подсветка', key: 'H', code: 'KeyH', hint: 'Выделите область, чтобы подсветить её' },
+    { id: 'blur',      label: 'Скрытие',   key: 'B', code: 'KeyB', hint: 'Выделите область, чтобы скрыть её' },
+    { id: 'focus',     label: 'Фокус',     key: 'F', code: 'KeyF', hint: 'Выделите, что показать, — остальное затемнится. Областей может быть несколько' },
+    { id: 'arrow',     label: 'Стрелка',   key: 'A', code: 'KeyA', hint: 'Ведите от начала к острию стрелки' },
+    { id: 'box',       label: 'Рамка',     key: 'R', code: 'KeyR', hint: 'Растяните рамку вокруг нужного места' },
+    { id: 'marker',    label: 'Маркер',    key: 'N', code: 'KeyN', hint: 'Кликните, чтобы поставить номер. Можно сразу тянуть на место' },
+    { id: 'text',      label: 'Текст',     key: 'T', code: 'KeyT', hint: 'Кликните и пишите. Enter — готово, Shift+Enter — новая строка' },
+  ];
 
-        const formatDate = (date) => {
-          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-        };
+  const TYPE_LABEL = { highlight: 'Подсветка', blur: 'Скрытие', focus: 'Фокус', arrow: 'Стрелка', box: 'Рамка', marker: 'Маркер', text: 'Текст' };
+  const FX_DEFAULTS = { radius: 20, shadowBlur: 40, shadowOpacity: 0.3, padding: 60 };
 
-        const getAllExercises = () => {
-          const exerciseMap = new Map();
-          Object.entries(workouts).forEach(([dateKey, dayWorkouts]) => {
-            dayWorkouts.forEach(workout => {
-              workout.exercises.forEach(exercise => {
-                if (!exerciseMap.has(exercise.name)) {
-                  exerciseMap.set(exercise.name, []);
-                }
-                exerciseMap.get(exercise.name).push({
-                  date: dateKey,
-                  sets: exercise.sets || [],
-                  workoutName: workout.name
-                });
-              });
-            });
-          });
-          return Array.from(exerciseMap.entries()).map(([name, history]) => ({
-            name,
-            history: history.sort((a, b) => new Date(a.date) - new Date(b.date)),
-            totalSessions: history.length
-          }));
-        };
+  // ─── Состояние ────────────────────────────────────────────
+  const S = {
+    image: null,
+    imageId: 0,
+    mode: 'select',
+    fx: { ...FX_DEFAULTS },
+    highlight: { color: '#0ECE55', opacity: 0.4 },
+    blur: { variant: 'pixelate', strength: 12 },
+    focus: { tone: 'dark', opacity: 0.55, blur: 0, radius: 12 },
+    arrow: { style: 'curved', bend: 0.3, color: '#0ECE55', thickness: 3 },
+    box: { style: 'solid', color: '#0ECE55', thickness: 3, cornerRadius: 8 },
+    marker: { style: 'filled', color: '#0ECE55', size: 22 },
+    text: { variant: 'plain', color: '#0ECE55', size: 32, bold: true },
+    annotations: [],
+    undo: [],        // снимки списка слоёв до каждого действия
+    redo: [],
+    crop: null,       // область изображения после кадрирования { x, y, w, h } или null
+    cropDraft: null,  // рамка, которую двигают в режиме кадрирования
+    cropAspect: null,
+    liveBase: null,  // снимок до начала непрерывной правки (перетаскивание, ползунок)
+    selectedId: null,
+    hiddenId: null,  // слой, который сейчас правится в поле ввода
+    current: null,
+    draft: null,
+    scale: 1,
+  };
 
-        const getExerciseStats = (exerciseName) => {
-          const exercises = getAllExercises().find(e => e.name === exerciseName);
-          if (!exercises) return null;
-          const stats = exercises.history.map(session => {
-            const maxWeight = Math.max(...session.sets.map(s => parseFloat(s.weight) || 0));
-            const totalVolume = session.sets.reduce((sum, s) => {
-              return sum + (parseFloat(s.reps) || 0) * (parseFloat(s.weight) || 0);
-            }, 0);
-            return {
-              date: session.date,
-              maxWeight,
-              totalVolume,
-              setsCount: session.sets.length,
-              workoutName: session.workoutName
-            };
-          });
-          return {
-            name: exerciseName,
-            sessions: stats,
-            maxWeightEver: Math.max(...stats.map(s => s.maxWeight)),
-            maxVolumeEver: Math.max(...stats.map(s => s.totalVolume)),
-            totalSessions: stats.length
-          };
-        };
+  let lastId = 0;
+  const newId = () => ++lastId;
 
-        const openSaveTemplateModal = (e, workout) => {
-          e.stopPropagation();
-          setTemplateToSave(workout);
-          setTemplateName(workout.name);
-          setShowSaveTemplateModal(true);
-        };
+  const pct = (v) => Math.round(v * 100) + '%';
+  const px = (v) => v + 'px';
 
-        const saveAsTemplate = () => {
-          if (!templateName.trim() || !templateToSave) return;
-          const templateId = Date.now().toString();
-          setTemplates(prev => ({
-            ...prev,
-            [templateId]: {
-              id: templateId,
-              name: templateName,
-              exercises: templateToSave.exercises.map(ex => ({
-                name: ex.name,
-                sets: ex.sets.map(s => ({ ...s }))
-              })),
-              createdAt: new Date().toISOString()
-            }
-          }));
-          setShowSaveTemplateModal(false);
-          setTemplateToSave(null);
-          setTemplateName('');
-        };
+  // Параметры: для инструмента по умолчанию и для выделенного слоя того же типа
+  const OPTIONS = {
+    fx: [
+      { t: 'slider', key: 'radius', label: 'Скругление', min: 0, max: 100, fmt: px },
+      { t: 'slider', key: 'shadowBlur', label: 'Тень', min: 0, max: 100, fmt: px },
+      { t: 'slider', key: 'shadowOpacity', label: 'Плотность тени', min: 0, max: 1, step: 0.05, fmt: pct },
+      { t: 'slider', key: 'padding', label: 'Отступы', min: 0, max: 200, fmt: px },
+    ],
+    highlight: [
+      { t: 'color', key: 'color' },
+      { t: 'slider', key: 'opacity', label: 'Плотность', min: 0.1, max: 0.8, step: 0.05, fmt: pct },
+    ],
+    blur: [
+      { t: 'seg', key: 'variant', options: [['pixelate', 'Пикселизация'], ['blur', 'Размытие']] },
+      { t: 'slider', key: 'strength', label: (get) => (get('variant') === 'blur' ? 'Сила' : 'Размер пикселя'), min: 5, max: 30, fmt: px },
+      { t: 'note', text: 'Для паролей и личных данных надёжнее пикселизация' },
+    ],
+    focus: [
+      { t: 'seg', key: 'tone', options: [['dark', 'Тёмный'], ['light', 'Светлый']] },
+      { t: 'slider', key: 'opacity', label: 'Затемнение', min: 0.1, max: 0.9, step: 0.05, fmt: pct },
+      { t: 'slider', key: 'blur', label: 'Размытие фона', min: 0, max: 20, fmt: px },
+      { t: 'slider', key: 'radius', label: 'Углы', min: 0, max: 60, fmt: px },
+    ],
+    arrow: [
+      { t: 'seg', key: 'style', options: [['straight', 'Прямая'], ['curved', 'Кривая'], ['dotted', 'С точкой']] },
+      { t: 'color', key: 'color' },
+      { t: 'slider', key: 'bend', label: 'Изгиб', min: -1, max: 1, step: 0.05, fmt: pct, when: (get) => get('style') === 'curved' },
+      { t: 'slider', key: 'thickness', label: 'Толщина', min: 2, max: 40, fmt: px },
+    ],
+    box: [
+      { t: 'seg', key: 'style', options: [['solid', 'Сплошная'], ['dashed', 'Пунктир']] },
+      { t: 'slider', key: 'cornerRadius', label: 'Скругление', min: 0, max: 60, fmt: px },
+      { t: 'color', key: 'color' },
+      { t: 'slider', key: 'thickness', label: 'Толщина', min: 1, max: 40, fmt: px },
+    ],
+    marker: [
+      { t: 'stepper', key: 'num', label: 'Номер', layerOnly: true },
+      { t: 'next', toolOnly: true },
+      { t: 'seg', key: 'style', options: [['filled', 'Заливка'], ['outline', 'Контур']] },
+      { t: 'color', key: 'color' },
+      { t: 'slider', key: 'size', label: 'Размер', min: 10, max: 80, fmt: px },
+    ],
+    text: [
+      { t: 'seg', key: 'variant', options: [['plain', 'Без фона'], ['label', 'Плашка'], ['callout', 'Выноска']] },
+      { t: 'slider', key: 'size', label: 'Размер', min: 12, max: 120, fmt: px },
+      { t: 'color', key: 'color' },
+      { t: 'seg', key: 'bold', options: [[false, 'Обычный'], [true, 'Жирный']] },
+    ],
+  };
 
-        const openDeleteConfirm = (type, data) => {
-          setDeleteTarget({ type, ...data });
-          setShowDeleteConfirm(true);
-        };
+  // ─── DOM ──────────────────────────────────────────────────
+  const $ = (id) => document.getElementById(id);
+  const app = $('app'), canvas = $('canvas'), ctx = canvas.getContext('2d');
+  const stage = $('stage'), canvasWrap = $('canvasWrap'), fileInput = $('fileInput');
 
-        const confirmDelete = () => {
-          if (!deleteTarget) return;
-          
-          if (deleteTarget.type === 'template') {
-            setTemplates(prev => {
-              const newTemplates = { ...prev };
-              delete newTemplates[deleteTarget.id];
-              return newTemplates;
-            });
-          } else if (deleteTarget.type === 'workout') {
-            setWorkouts(prev => ({ 
-              ...prev, 
-              [deleteTarget.dateKey]: prev[deleteTarget.dateKey].filter(w => w.id !== deleteTarget.id) 
-            }));
-            setSelectedWorkout(null);
-          } else if (deleteTarget.type === 'exercise') {
-            const dateKey = formatDate(selectedDate);
-            setWorkouts(prev => ({
-              ...prev,
-              [dateKey]: prev[dateKey].map(w => 
-                w.id === selectedWorkout.id 
-                  ? { ...w, exercises: w.exercises.filter(e => e.id !== deleteTarget.id) } 
-                  : w
-              )
-            }));
-          }
-          
-          setShowDeleteConfirm(false);
-          setDeleteTarget(null);
-        };
+  const el = (tag, cls, text) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  };
 
-        const createWorkoutFromTemplate = (template) => {
-          if (!selectedDate) return;
-          const dateKey = formatDate(selectedDate);
-          const newWorkout = {
-            id: Date.now(),
-            name: template.name,
-            exercises: template.exercises.map(ex => ({
-              ...ex,
-              id: Date.now() + Math.random(),
-              sets: ex.sets.map(s => ({ ...s }))
-            }))
-          };
-          setWorkouts(prev => ({
-            ...prev,
-            [dateKey]: [...(prev[dateKey] || []), newWorkout]
-          }));
-          setShowTemplateSelector(false);
-        };
+  $('saveKbd').textContent = MOD + 'S';
+  $('undoBtn').title = `Отменить (${MOD}Z)`;
+  $('redoBtn').title = `Повторить (${IS_MAC ? '⇧⌘Z' : 'Ctrl+Y'})`;
+  $('resetBtn').title = 'Сбросить всё';
+  $('emptyText').textContent = `Перетащите изображение сюда или вставьте его из буфера (${MOD}V)`;
 
-        const createWorkout = () => {
-          if (!workoutName.trim() || !selectedDate) return;
-          const dateKey = formatDate(selectedDate);
-          
-          if (editingWorkout) {
-            setWorkouts(prev => ({
-              ...prev,
-              [dateKey]: prev[dateKey].map(w => 
-                w.id === editingWorkout.id ? { ...w, name: workoutName } : w
-              )
-            }));
-            setEditingWorkout(null);
-          } else {
-            const newWorkout = { id: Date.now(), name: workoutName, exercises: [] };
-            setWorkouts(prev => ({ ...prev, [dateKey]: [...(prev[dateKey] || []), newWorkout] }));
-          }
-          
-          setWorkoutName('');
-          setShowWorkoutModal(false);
-        };
+  // ─── Геометрия ────────────────────────────────────────────
+  const toRect = (start, end) => ({
+    x: Math.round(Math.min(start.x, end.x)),
+    y: Math.round(Math.min(start.y, end.y)),
+    width: Math.round(Math.abs(end.x - start.x)),
+    height: Math.round(Math.abs(end.y - start.y)),
+  });
 
-        const startEditWorkout = (e, workout) => {
-          e.stopPropagation();
-          setEditingWorkout(workout);
-          setWorkoutName(workout.name);
-          setShowWorkoutModal(true);
-        };
+  const roundRectPath = (c, x, y, w, h, radius) => {
+    const r = Math.max(0, Math.min(radius, w / 2, h / 2));
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.lineTo(x + w - r, y);
+    c.quadraticCurveTo(x + w, y, x + w, y + r);
+    c.lineTo(x + w, y + h - r);
+    c.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    c.lineTo(x + r, y + h);
+    c.quadraticCurveTo(x, y + h, x, y + h - r);
+    c.lineTo(x, y + r);
+    c.quadraticCurveTo(x, y, x + r, y);
+    c.closePath();
+  };
 
-        const addExercise = () => {
-          if (!exerciseName.trim() || !selectedWorkout) return;
-          const dateKey = formatDate(selectedDate);
-          const filteredSets = sets.filter(set => set.reps || set.weight);
-          if (filteredSets.length === 0) return;
-          
-          if (editingExercise) {
-            setWorkouts(prev => ({
-              ...prev,
-              [dateKey]: prev[dateKey].map(w => 
-                w.id === selectedWorkout.id 
-                  ? { ...w, exercises: w.exercises.map(e => 
-                      e.id === editingExercise.id 
-                        ? { ...e, name: exerciseName, sets: filteredSets }
-                        : e
-                    )}
-                  : w
-              )
-            }));
-            setEditingExercise(null);
-          } else {
-            const newExercise = { id: Date.now(), name: exerciseName, sets: filteredSets };
-            setWorkouts(prev => ({
-              ...prev,
-              [dateKey]: prev[dateKey].map(w => 
-                w.id === selectedWorkout.id ? { ...w, exercises: [...w.exercises, newExercise] } : w
-              )
-            }));
-          }
-          
-          setExerciseName('');
-          setSets([{ reps: '', weight: '' }]);
-          setShowExerciseModal(false);
-        };
+  const hexToRgba = (hex, a) => {
+    const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
+  };
 
-        const startEditExercise = (exercise) => {
-          setEditingExercise(exercise);
-          setExerciseName(exercise.name);
-          setSets(exercise.sets && exercise.sets.length > 0 ? exercise.sets : [{ reps: '', weight: '' }]);
-          setShowExerciseModal(true);
-        };
+  const textFont = (size, bold) => `${bold ? 'bold ' : ''}${size}px ${FONT_FAMILY}`;
 
-        const addSet = () => setSets([...sets, { reps: '', weight: '' }]);
-        const removeSet = (index) => { if (sets.length > 1) setSets(sets.filter((_, i) => i !== index)); };
-        const updateSet = (index, field, value) => {
-          const newSets = [...sets];
-          newSets[index][field] = value;
-          setSets(newSets);
-        };
+  // bend — сила дуги: смещение контрольной точки поперёк стрелки в долях её длины.
+  // Знак выбирает сторону, 0 — прямая
+  const DEFAULT_BEND = 0.3;
+  const bendOf = (a) => (a.bend == null ? DEFAULT_BEND : a.bend);
+  const curveControl = (start, end, bend = DEFAULT_BEND) => ({
+    x: start.x + (end.x - start.x) / 2 - (end.y - start.y) * bend,
+    y: start.y + (end.y - start.y) / 2 + (end.x - start.x) * bend,
+  });
+  // Точка на середине дуги — за неё тянут, чтобы менять изгиб
+  const arrowMid = (a) => {
+    const b = a.style === 'curved' ? bendOf(a) : 0;
+    return bezierAt(a.start, curveControl(a.start, a.end, b), a.end, 0.5);
+  };
+  // Обратная задача: какой изгиб даст дугу, проходящую через точку p
+  const bendFromPoint = (a, p) => {
+    const dx = a.end.x - a.start.x, dy = a.end.y - a.start.y;
+    const len2 = dx * dx + dy * dy;
+    if (!len2) return 0;
+    const mx = (a.start.x + a.end.x) / 2, my = (a.start.y + a.end.y) / 2;
+    const b = (2 * ((p.x - mx) * -dy + (p.y - my) * dx)) / len2;
+    return Math.max(-1.5, Math.min(1.5, Math.round(b * 100) / 100));
+  };
+  const bezierAt = (start, c, end, t) => ({
+    x: (1 - t) ** 2 * start.x + 2 * (1 - t) * t * c.x + t * t * end.x,
+    y: (1 - t) ** 2 * start.y + 2 * (1 - t) * t * c.y + t * t * end.y,
+  });
 
-        const changeWeek = (direction) => {
-          const newDate = new Date(currentDate);
-          newDate.setDate(currentDate.getDate() + (direction * 7));
-          setCurrentDate(newDate);
-        };
+  // ─── Отрисовка аннотаций ──────────────────────────────────
+  const drawHighlight = (c, { start, end, color, opacity }) => {
+    const { x, y, width, height } = toRect(start, end);
+    c.fillStyle = hexToRgba(color, opacity);
+    c.fillRect(x, y, width, height);
+  };
 
-        const formatStopwatchTime = (milliseconds) => {
-          const minutes = Math.floor(milliseconds / 60000);
-          const seconds = Math.floor((milliseconds % 60000) / 1000);
-          const centiseconds = Math.floor((milliseconds % 1000) / 10);
-          return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')},${String(centiseconds).padStart(2, '0')}`;
-        };
+  const drawBlur = (c, { start, end, strength, variant }) => {
+    const { x, y, width, height } = toRect(start, end);
+    if (width < 2 || height < 2) return;
 
-        const toggleStopwatch = () => {
-          setIsStopwatchRunning(!isStopwatchRunning);
-        };
+    if (variant === 'pixelate') {
+      const sw = Math.max(1, Math.ceil(width / strength));
+      const sh = Math.max(1, Math.ceil(height / strength));
+      const tmp = document.createElement('canvas');
+      tmp.width = sw; tmp.height = sh;
+      tmp.getContext('2d').drawImage(c.canvas, x, y, width, height, 0, 0, sw, sh);
+      c.save();
+      c.imageSmoothingEnabled = false;
+      c.drawImage(tmp, 0, 0, sw, sh, x, y, width, height);
+      c.restore();
+      return;
+    }
 
-        const resetStopwatch = () => {
-          setIsStopwatchRunning(false);
-          setStopwatchTime(0);
-        };
+    // Берём область с запасом, чтобы по краям не было светлой каймы
+    const margin = strength * 2;
+    const sx = Math.max(0, x - margin), sy = Math.max(0, y - margin);
+    const sw = Math.min(c.canvas.width, x + width + margin) - sx;
+    const sh = Math.min(c.canvas.height, y + height + margin) - sy;
+    if (sw <= 0 || sh <= 0) return;
+    const snap = document.createElement('canvas');
+    snap.width = sw; snap.height = sh;
+    snap.getContext('2d').drawImage(c.canvas, sx, sy, sw, sh, 0, 0, sw, sh);
+    c.save();
+    c.beginPath();
+    c.rect(x, y, width, height);
+    c.clip();
+    c.filter = `blur(${strength}px)`;
+    c.drawImage(snap, sx, sy);
+    c.restore();
+  };
 
-        const weekDays = getWeekDays(new Date(currentDate));
-        const monthNames = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
-        const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-        
-        const stats = selectedExerciseStats ? getExerciseStats(selectedExerciseStats) : null;
-        const chartData = stats ? stats.sessions.map((session) => {
-          const date = new Date(session.date);
-          return {
-            date: date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
-            weight: session.maxWeight,
-            volume: session.totalVolume
-          };
-        }) : [];
-        
-        const hasChart = typeof Chart !== 'undefined';
-        
-        React.useEffect(() => {
-          if (!selectedExerciseStats || !hasChart || !chartRef.current || chartData.length < 2) {
-            return;
-          }
-          
-          if (chartInstance.current) {
-            chartInstance.current.destroy();
-          }
-          
-          try {
-            const ctx = chartRef.current.getContext('2d');
-            chartInstance.current = new Chart(ctx, {
-              type: 'line',
-              data: {
-                labels: chartData.map(d => d.date),
-                datasets: [{
-                  label: 'Макс. вес (кг)',
-                  data: chartData.map(d => d.weight),
-                  borderColor: '#9333ea',
-                  backgroundColor: 'rgba(147, 51, 234, 0.1)',
-                  borderWidth: 3,
-                  tension: 0.3,
-                  pointRadius: 5,
-                  pointBackgroundColor: '#9333ea',
-                  pointBorderColor: '#fff',
-                  pointBorderWidth: 2,
-                  pointHoverRadius: 7
-                }]
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                      font: { size: 12, weight: 'bold' },
-                      color: '#9333ea'
-                    }
-                  }
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    ticks: {
-                      font: { size: 11 },
-                      color: '#666'
-                    }
-                  },
-                  x: {
-                    ticks: {
-                      font: { size: 11 },
-                      color: '#666'
-                    }
-                  }
-                }
-              }
-            });
-          } catch (error) {
-            console.error('Ошибка создания графика:', error);
-          }
-          
-          return () => {
-            if (chartInstance.current) {
-              chartInstance.current.destroy();
-            }
-          };
-        }, [selectedExerciseStats, chartData.length, hasChart]);
+  const drawBox = (c, { start, end, color, thickness, style, cornerRadius }) => {
+    const { x, y, width, height } = toRect(start, end);
+    c.save();
+    c.strokeStyle = color;
+    c.lineWidth = thickness;
+    c.lineCap = 'round';
+    c.lineJoin = 'round';
+    // Шаг пунктира растёт с толщиной; с круглыми концами штрих визуально длиннее на толщину
+    c.setLineDash(style === 'dashed' ? [Math.max(4, thickness * 2.5), thickness + Math.max(5, thickness * 1.5)] : []);
+    roundRectPath(c, x, y, width, height, cornerRadius || 0);
+    c.stroke();
+    c.restore();
+  };
 
-        // Глобальное модальное окно удаления
-        const DeleteConfirmModal = () => {
-          if (!showDeleteConfirm) return null;
-          
-          return (
-            <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-              <div className="bg-white rounded-3xl p-6 max-w-sm w-full" style={{animation: 'slideUp 0.3s ease-out'}}>
-                <div className="text-center mb-6">
-                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2">
-                      <polyline points="3 6 5 6 21 6"/>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                      <line x1="10" y1="11" x2="10" y2="17"/>
-                      <line x1="14" y1="11" x2="14" y2="17"/>
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Удалить?</h3>
-                  <p className="text-gray-600">
-                    {deleteTarget?.type === 'template' && 'Шаблон будет удален безвозвратно'}
-                    {deleteTarget?.type === 'workout' && 'Тренировка и все упражнения будут удалены'}
-                    {deleteTarget?.type === 'exercise' && 'Упражнение будет удалено безвозвратно'}
-                  </p>
-                </div>
-                <div className="flex gap-3">
-                  <button onClick={() => { setShowDeleteConfirm(false); setDeleteTarget(null); }} 
-                    className="btn-action flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300">
-                    Отмена
-                  </button>
-                  <button onClick={confirmDelete} 
-                    className="btn-action flex-1 bg-red-500 text-white py-3 rounded-xl font-semibold hover:bg-red-600">
-                    Удалить
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        }
+  const drawArrowHead = (c, end, angle, len) => {
+    c.beginPath();
+    c.moveTo(end.x, end.y);
+    c.lineTo(end.x - len * Math.cos(angle - Math.PI / 6), end.y - len * Math.sin(angle - Math.PI / 6));
+    c.lineTo(end.x - len * Math.cos(angle + Math.PI / 6), end.y - len * Math.sin(angle + Math.PI / 6));
+    c.closePath();
+    c.fill();
+  };
 
-        if (showStopwatch) {
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-              <div className="max-w-md mx-auto">
-                <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-                  <div className="bg-gradient-to-r from-purple-500 to-blue-500 p-6 text-white">
-                    <button onClick={() => setShowStopwatch(false)} className="flex items-center gap-2 mb-4">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="15 18 9 12 15 6"/>
-                      </svg>
-                      <span>Назад</span>
-                    </button>
-                    <h2 className="text-2xl font-bold">Секундомер</h2>
-                    <p className="text-purple-100 mt-1">Отслеживайте время тренировки</p>
-                  </div>
-                  
-                  <div className="p-8">
-                    <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-12 mb-8 flex items-center justify-center">
-                      <div className="text-6xl font-semibold text-gray-800 font-mono tracking-tight text-center">
-                        {formatStopwatchTime(stopwatchTime)}
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-4 mb-4">
-                      <button 
-                        onClick={toggleStopwatch}
-                        className={`btn-action flex-1 py-4 rounded-2xl font-bold text-lg transition ${
-                          isStopwatchRunning 
-                            ? 'bg-red-500 hover:bg-red-600 text-white' 
-                            : 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white'
-                        }`}>
-                        {isStopwatchRunning ? '⏸ Стоп' : '▶ Старт'}
-                      </button>
-                    </div>
-                    
-                    <button 
-                      onClick={resetStopwatch}
-                      className="btn-action w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-2xl font-semibold">
-                      Сбросить
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        };
+  const headLength = (thickness) => 15 + thickness * 2;
 
-        if (selectedExerciseStats && stats) {
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-              <div className="max-w-md mx-auto bg-white rounded-3xl shadow-xl overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-500 to-blue-500 p-6 text-white">
-                  <button onClick={() => setSelectedExerciseStats(null)} className="flex items-center gap-2 mb-4">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="15 18 9 12 15 6"/>
-                    </svg>
-                    <span>Назад</span>
-                  </button>
-                  <h2 className="text-2xl font-bold">{stats.name}</h2>
-                  <p className="text-purple-100 mt-1">{stats.totalSessions} тренировок</p>
-                </div>
-                <div className="p-6">
-                  <div className="grid grid-cols-2 gap-3 mb-6">
-                    <div className="bg-gradient-to-br from-purple-100 to-purple-50 rounded-2xl p-4 text-center">
-                      <p className="text-sm text-purple-600 mb-1">Макс. вес</p>
-                      <p className="text-2xl font-bold text-purple-700">{stats.maxWeightEver} кг</p>
-                    </div>
-                    <div className="bg-gradient-to-br from-blue-100 to-blue-50 rounded-2xl p-4 text-center">
-                      <p className="text-sm text-blue-600 mb-1">Макс. объём</p>
-                      <p className="text-2xl font-bold text-blue-700">{stats.maxVolumeEver.toFixed(0)} кг</p>
-                    </div>
-                  </div>
-                  
-                  {chartData.length >= 2 && hasChart ? (
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-4">График прогресса</h3>
-                      <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4">
-                        <div style={{position: 'relative', height: '250px', width: '100%'}}>
-                          <canvas ref={chartRef}></canvas>
-                        </div>
-                      </div>
-                    </div>
-                  ) : chartData.length < 2 ? (
-                    <div className="mb-6 bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 text-center">
-                      <p className="text-blue-800 text-sm">📊 График появится после 2+ тренировок</p>
-                    </div>
-                  ) : null}
-                  
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">История тренировок</h3>
-                  <div className="space-y-3">
-                    {stats.sessions.map((session, index) => {
-                      const date = new Date(session.date);
-                      const isImprovement = index > 0 && session.maxWeight > stats.sessions[index - 1].maxWeight;
-                      return (
-                        <div key={index} className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-4">
-                          <div className="flex justify-between items-start mb-3">
-                            <div>
-                              <p className="font-semibold text-gray-800">{date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}</p>
-                              <p className="text-xs text-gray-500 mt-1">{session.workoutName}</p>
-                            </div>
-                            {isImprovement && (
-                              <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                                  <polyline points="17 6 23 6 23 12"/>
-                                </svg>
-                                Прогресс
-                              </span>
-                            )}
-                          </div>
-                          <div className="grid grid-cols-3 gap-2">
-                            <div className="bg-white rounded-xl p-2 text-center">
-                              <p className="text-xs text-gray-500">Макс. вес</p>
-                              <p className="font-bold text-purple-600">{session.maxWeight} кг</p>
-                            </div>
-                            <div className="bg-white rounded-xl p-2 text-center">
-                              <p className="text-xs text-gray-500">Объём</p>
-                              <p className="font-bold text-blue-600">{session.totalVolume.toFixed(0)}</p>
-                            </div>
-                            <div className="bg-white rounded-xl p-2 text-center">
-                              <p className="text-xs text-gray-500">Подходов</p>
-                              <p className="font-bold text-pink-600">{session.setsCount}</p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        }
+  const drawArrow = (c, { start, end, color, thickness, style, bend }) => {
+    const dx = end.x - start.x, dy = end.y - start.y;
+    const distance = Math.hypot(dx, dy);
+    if (distance < 2) return;
+    const headLen = headLength(thickness);
 
-        if (showStatsView) {
-          const allExercises = getAllExercises();
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-              <div className="max-w-md mx-auto bg-white rounded-3xl shadow-xl overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-500 to-blue-500 p-6 text-white">
-                  <button onClick={() => setShowStatsView(false)} className="flex items-center gap-2 mb-4">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="15 18 9 12 15 6"/>
-                    </svg>
-                    <span>Назад</span>
-                  </button>
-                  <h2 className="text-2xl font-bold">Статистика</h2>
-                  <p className="text-purple-100 mt-1">Прогресс по упражнениям</p>
-                </div>
-                <div className="p-6">
-                  {allExercises.length === 0 ? (
-                    <div className="text-center py-12 text-gray-400">
-                      <svg width="48" height="48" className="mx-auto mb-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M3 3v18h18"/>
-                        <path d="M18 17V9"/>
-                        <path d="M13 17V5"/>
-                        <path d="M8 17v-3"/>
-                      </svg>
-                      <p>Нет данных</p>
-                      <p className="text-sm mt-2">Добавьте тренировки для отслеживания прогресса</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {allExercises.map(exercise => (
-                        <button key={exercise.name} onClick={() => setSelectedExerciseStats(exercise.name)}
-                          className="w-full bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-4 hover:shadow-md transition text-left">
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <h4 className="font-semibold text-gray-800">{exercise.name}</h4>
-                              <p className="text-sm text-gray-500 mt-1">{exercise.totalSessions} {exercise.totalSessions === 1 ? 'тренировка' : 'тренировок'}</p>
-                            </div>
-                            <svg className="text-gray-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <polyline points="9 18 15 12 9 6"/>
-                            </svg>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        }
+    c.save();
+    c.strokeStyle = color;
+    c.fillStyle = color;
+    c.lineWidth = thickness;
+    c.lineCap = 'round';
+    c.lineJoin = 'round';
 
-        if (selectedWorkout) {
-          const dateKey = formatDate(selectedDate);
-          const currentWorkout = workouts[dateKey]?.find(w => w.id === selectedWorkout.id);
-          
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-              <DeleteConfirmModal />
-              <div className="max-w-md mx-auto bg-white rounded-3xl shadow-xl overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-500 to-blue-500 p-6 text-white">
-                  <button onClick={() => setSelectedWorkout(null)} className="flex items-center gap-2 mb-4">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="15 18 9 12 15 6"/>
-                    </svg>
-                    <span>Назад</span>
-                  </button>
-                  <div className="flex justify-between items-center">
-                    <div className="flex-1">
-                      <h2 className="text-2xl font-bold">{currentWorkout?.name}</h2>
-                      <p className="text-purple-100 mt-1">{selectedDate.toLocaleDateString('ru-RU')}</p>
-                    </div>
-                    {currentWorkout?.exercises.length > 0 && (
-                      <button 
-                        onClick={(e) => openSaveTemplateModal(e, currentWorkout)}
-                        className="btn-circle bg-white bg-opacity-20 hover:bg-opacity-30 p-2 rounded-lg transition ml-2"
-                        title="Сохранить как шаблон">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                          <polyline points="17 21 17 13 7 13 7 21"/>
-                          <polyline points="7 3 7 8 15 8"/>
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                </div>
-                <div className="p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-800">Упражнения</h3>
-                    <button onClick={() => setShowExerciseModal(true)} className="btn-circle bg-gradient-to-r from-purple-500 to-blue-500 text-white p-2 rounded-full hover:shadow-lg transition">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                      </svg>
-                    </button>
-                  </div>
-                  {currentWorkout?.exercises.length === 0 ? (
-                    <div className="text-center py-12 text-gray-400">
-                      <p>Нет упражнений</p>
-                      <p className="text-sm mt-2">Нажмите + чтобы добавить</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {currentWorkout?.exercises.map(exercise => (
-                        <div key={exercise.id} className="exercise-card bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-4">
-                          <div className="flex justify-between items-start mb-3">
-                            <h4 className="font-semibold text-gray-800 text-lg">{exercise.name}</h4>
-                            <div className="flex gap-2">
-                              <button onClick={() => startEditExercise(exercise)} className="text-blue-500 hover:text-blue-700">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                </svg>
-                              </button>
-                              <button onClick={() => openDeleteConfirm('exercise', { id: exercise.id })} className="text-red-400 hover:text-red-600">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                                </svg>
-                              </button>
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            {(exercise.sets && Array.isArray(exercise.sets) ? exercise.sets : []).map((set, index) => (
-                              <div key={index} className="bg-white rounded-xl p-3 flex items-center gap-3">
-                                <span className="text-sm font-semibold text-gray-500 w-8">#{index + 1}</span>
-                                <div className="flex-1 flex gap-3">
-                                  <div className="flex-1 text-center">
-                                    <p className="text-xs text-gray-500 mb-1">Повторы</p>
-                                    <p className="font-bold text-blue-600">{set.reps}</p>
-                                  </div>
-                                  <div className="flex-1 text-center">
-                                    <p className="text-xs text-gray-500 mb-1">Вес (кг)</p>
-                                    <p className="font-bold text-pink-600">{set.weight || '—'}</p>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                {showExerciseModal && (
-                  <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-end z-50">
-                    <div className="bg-white w-full rounded-t-3xl p-6 max-h-[90vh] overflow-y-auto" style={{animation: 'slideUp 0.3s ease-out'}}>
-                      <h3 className="text-xl font-bold mb-4 text-gray-800">{editingExercise ? 'Редактировать упражнение' : 'Новое упражнение'}</h3>
-                      <input type="text" placeholder="Название упражнения" value={exerciseName} onChange={(e) => setExerciseName(e.target.value)}
-                        className="w-full p-3 border-2 border-gray-200 rounded-xl mb-4 focus:border-purple-500 outline-none" />
-                      <div className="mb-4">
-                        <div className="flex justify-between items-center mb-3">
-                          <h4 className="font-semibold text-gray-700">Подходы</h4>
-                          <button onClick={addSet} className="text-purple-600 hover:text-purple-700 font-semibold text-sm flex items-center gap-1">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                            Добавить подход
-                          </button>
-                        </div>
-                        <div className="space-y-2">
-                          {sets.map((set, index) => (
-                            <div key={index} className="flex items-center gap-1">
-                              <span className="text-xs font-semibold text-gray-500 w-5 flex-shrink-0">#{index + 1}</span>
-                              <input type="number" placeholder="Повт" value={set.reps} onChange={(e) => updateSet(index, 'reps', e.target.value)}
-                                className="w-20 p-2 text-sm border-2 border-gray-200 rounded-xl focus:border-purple-500 outline-none" />
-                              <input type="number" placeholder="Вес" value={set.weight} onChange={(e) => updateSet(index, 'weight', e.target.value)}
-                                className="w-20 p-2 text-sm border-2 border-gray-200 rounded-xl focus:border-purple-500 outline-none" />
-                              {sets.length > 1 && (
-                                <button onClick={() => removeSet(index)} className="text-red-400 hover:text-red-600 flex-shrink-0 ml-1">
-                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                  </svg>
-                                </button>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="flex gap-3">
-                        <button onClick={() => { setShowExerciseModal(false); setExerciseName(''); setSets([{ reps: '', weight: '' }]); setEditingExercise(null); }}
-                          className="btn-action flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300">Отмена</button>
-                        <button onClick={addExercise} className="btn-action flex-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-xl font-semibold hover:shadow-lg">
-                          {editingExercise ? 'Сохранить' : 'Добавить'}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {showSaveTemplateModal && (
-                  <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-end z-50">
-                    <div className="bg-white w-full rounded-t-3xl p-6" style={{animation: 'slideUp 0.3s ease-out'}}>
-                      <h3 className="text-xl font-bold mb-4 text-gray-800">Сохранить как шаблон</h3>
-                      <input type="text" placeholder="Название шаблона" value={templateName} onChange={(e) => setTemplateName(e.target.value)}
-                        className="w-full p-3 border-2 border-gray-200 rounded-xl mb-4 focus:border-purple-500 outline-none" />
-                      <div className="flex gap-3">
-                        <button onClick={() => { setShowSaveTemplateModal(false); setTemplateName(''); setTemplateToSave(null); }} 
-                          className="btn-action flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300">Отмена</button>
-                        <button onClick={saveAsTemplate} className="btn-action flex-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-xl font-semibold hover:shadow-lg">
-                          Сохранить
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        }
+    if (style === 'curved') {
+      const cp = curveControl(start, end, bend == null ? DEFAULT_BEND : bend);
+      const before = bezierAt(start, cp, end, 0.99);
+      const angle = Math.atan2(end.y - before.y, end.x - before.x);
+      const lineEnd = bezierAt(start, cp, end, Math.max(0, 1 - (headLen * 0.6) / distance));
+      c.beginPath();
+      c.moveTo(start.x, start.y);
+      c.quadraticCurveTo(cp.x, cp.y, lineEnd.x, lineEnd.y);
+      c.stroke();
+      drawArrowHead(c, end, angle, headLen);
+    } else {
+      const angle = Math.atan2(dy, dx);
+      let from = start;
+      if (style === 'dotted') {
+        const dotR = 5 + thickness;
+        c.beginPath();
+        c.arc(start.x, start.y, dotR, 0, Math.PI * 2);
+        c.fill();
+        from = { x: start.x + dotR * Math.cos(angle), y: start.y + dotR * Math.sin(angle) };
+      }
+      c.beginPath();
+      c.moveTo(from.x, from.y);
+      c.lineTo(end.x - headLen * 0.5 * Math.cos(angle), end.y - headLen * 0.5 * Math.sin(angle));
+      c.stroke();
+      drawArrowHead(c, end, angle, headLen);
+    }
+    c.restore();
+  };
 
-        if (selectedDate && !selectedWorkout) {
-          const dateKey = formatDate(selectedDate);
-          const dateWorkouts = workouts[dateKey] || [];
-          
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-              <DeleteConfirmModal />
-              <div className="max-w-md mx-auto bg-white rounded-3xl shadow-xl overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-500 to-blue-500 p-6 text-white">
-                  <button onClick={() => setSelectedDate(null)} className="flex items-center gap-2 mb-4">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="15 18 9 12 15 6"/>
-                    </svg>
-                    <span>Назад</span>
-                  </button>
-                  <h2 className="text-2xl font-bold">{selectedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</h2>
-                </div>
-                <div className="p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-800">Тренировки</h3>
-                    <div className="flex gap-2">
-                      <button onClick={() => setShowTemplateSelector(true)} 
-                        className="btn-circle bg-blue-500 text-white p-2 rounded-full hover:shadow-lg transition"
-                        title="Создать из шаблона">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                          <polyline points="14 2 14 8 20 8"/>
-                          <line x1="12" y1="18" x2="12" y2="12"/>
-                          <line x1="9" y1="15" x2="15" y2="15"/>
-                        </svg>
-                      </button>
-                      <button onClick={() => setShowWorkoutModal(true)} 
-                        className="btn-circle bg-gradient-to-r from-purple-500 to-blue-500 text-white p-2 rounded-full hover:shadow-lg transition"
-                        title="Создать новую">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                  {dateWorkouts.length === 0 ? (
-                    <div className="text-center py-12 text-gray-400">
-                      <svg width="48" height="48" className="mx-auto mb-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-                      </svg>
-                      <p>Нет тренировок</p>
-                      <p className="text-sm mt-2">Нажмите + чтобы добавить</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {dateWorkouts.map(workout => (
-                        <div key={workout.id}
-                          className="workout-card bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-4 cursor-pointer">
-                          <div className="flex justify-between items-center">
-                            <div onClick={() => setSelectedWorkout(workout)} className="flex-1">
-                              <h4 className="font-semibold text-gray-800">{workout.name}</h4>
-                              <p className="text-sm text-gray-500 mt-1">{workout.exercises.length} {workout.exercises.length === 1 ? 'упражнение' : 'упражнений'}</p>
-                            </div>
-                            <div className="flex gap-2">
-                              <button onClick={(e) => startEditWorkout(e, workout)} className="text-blue-500 hover:text-blue-700">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                </svg>
-                              </button>
-                              <button onClick={(e) => { e.stopPropagation(); openDeleteConfirm('workout', { dateKey, id: workout.id }); }} className="text-red-400 hover:text-red-600">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                                </svg>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                {showWorkoutModal && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end z-50">
-                    <div className="bg-white w-full rounded-t-3xl p-6" style={{animation: 'slideUp 0.3s ease-out'}}>
-                      <h3 className="text-xl font-bold mb-4 text-gray-800">
-                        {editingWorkout ? 'Редактировать тренировку' : 'Новая тренировка'}
-                      </h3>
-                      <input type="text" placeholder="Название тренировки" value={workoutName} onChange={(e) => setWorkoutName(e.target.value)}
-                        className="w-full p-3 border-2 border-gray-200 rounded-xl mb-4 focus:border-purple-500 outline-none" />
-                      <div className="flex gap-3">
-                        <button onClick={() => { setShowWorkoutModal(false); setWorkoutName(''); setEditingWorkout(null); }} 
-                          className="btn-action flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300">Отмена</button>
-                        <button onClick={createWorkout} className="btn-action flex-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-xl font-semibold hover:shadow-lg">
-                          {editingWorkout ? 'Сохранить' : 'Создать'}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                
-                {showTemplateSelector && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end z-50">
-                    <div className="bg-white w-full rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto" style={{animation: 'slideUp 0.3s ease-out'}}>
-                      <h3 className="text-xl font-bold mb-4 text-gray-800">Выберите шаблон</h3>
-                      {Object.keys(templates).length === 0 ? (
-                        <div className="text-center py-8 text-gray-400">
-                          <p>Нет сохранённых шаблонов</p>
-                          <p className="text-sm mt-2">Создайте тренировку с упражнениями и сохраните её как шаблон</p>
-                        </div>
-                      ) : (
-                        <div className="space-y-3">
-                          {Object.values(templates).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((template) => (
-                            <div key={template.id} className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-4">
-                              <div className="flex justify-between items-start mb-2">
-                                <h4 className="font-semibold text-gray-800">{template.name}</h4>
-                                <button onClick={() => openDeleteConfirm('template', { id: template.id })} className="text-red-400 hover:text-red-600">
-                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                                  </svg>
-                                </button>
-                              </div>
-                              <div className="space-y-1 mb-3">
-                                {template.exercises.slice(0, 3).map((ex, i) => (
-                                  <p key={i} className="text-xs text-gray-600">
-                                    • {ex.name} ({ex.sets.length} {ex.sets.length === 1 ? 'подход' : 'подходов'})
-                                  </p>
-                                ))}
-                                {template.exercises.length > 3 && (
-                                  <p className="text-xs text-gray-500">+ ещё {template.exercises.length - 3}</p>
-                                )}
-                              </div>
-                              <button onClick={() => createWorkoutFromTemplate(template)}
-                                className="btn-action w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-2 rounded-xl font-semibold hover:shadow-md transition">
-                                Использовать
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      <button onClick={() => setShowTemplateSelector(false)} 
-                        className="w-full mt-4 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300">
-                        Отмена
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        }
+  // ─── Текст: обычный, плашка, выноска ──────────────────────
+  const LINE = 1.2; // межстрочный интервал относительно кегля
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const hasAnyWorkouts = Object.keys(workouts).length > 0;
+  const textMetrics = (a) => {
+    ctx.save();
+    ctx.font = textFont(a.size, a.bold);
+    const lines = String(a.text).split('\n');
+    const w = Math.max(0, ...lines.map((l) => ctx.measureText(l).width));
+    ctx.restore();
+    const lh = a.size * LINE;
+    return { lines, w, lh, h: (lines.length - 1) * lh + a.size * 1.15 };
+  };
 
-        return (
-          <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4 pb-24">
-            <DeleteConfirmModal />
-            <div className="max-w-md mx-auto">
-              <div className="bg-white rounded-3xl shadow-xl overflow-hidden mb-4">
-                <div className="bg-gradient-to-r from-purple-500 to-blue-500 p-6 text-white">
-                  <div className="flex justify-between items-center mb-4">
-                    <button onClick={() => changeWeek(-1)} className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="15 18 9 12 15 6"/>
-                      </svg>
-                    </button>
-                    <div className="text-center">
-                      <h2 className="text-xl font-bold">
-                        {weekDays[0].getMonth() === weekDays[6].getMonth() 
-                          ? `${weekDays[0].getDate()} - ${weekDays[6].getDate()} ${monthNames[weekDays[3].getMonth()]}`
-                          : `${weekDays[0].getDate()} ${monthNames[weekDays[0].getMonth()].slice(0, -1)} - ${weekDays[6].getDate()} ${monthNames[weekDays[6].getMonth()]}`
-                        }
-                      </h2>
-                      <p className="text-sm text-purple-100 mt-1">{weekDays[0].getFullYear()}</p>
-                    </div>
-                    <button onClick={() => changeWeek(1)} className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="9 18 15 12 9 6"/>
-                      </svg>
-                    </button>
-                  </div>
-                  <button onClick={() => setShowStatsView(true)}
-                    className="w-full bg-white bg-opacity-20 hover:bg-opacity-30 rounded-xl p-3 flex items-center justify-center gap-2 transition">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M3 3v18h18"/>
-                      <path d="M18 17V9"/>
-                      <path d="M13 17V5"/>
-                      <path d="M8 17v-3"/>
-                    </svg>
-                    <span className="font-semibold">Статистика</span>
-                  </button>
-                </div>
-                <div className="p-4">
-                  {!hasAnyWorkouts && (
-                    <div className="bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 mb-4 text-center">
-                      <p className="text-purple-800 font-semibold mb-2">👇 Нажмите на день</p>
-                      <p className="text-purple-600 text-sm">Выберите дату, чтобы добавить тренировку</p>
-                    </div>
-                  )}
-                  <div className="grid grid-cols-7 gap-2 mb-2">
-                    {dayNames.map(day => (
-                      <div key={day} className="text-center text-xs font-semibold text-gray-500 py-1">{day}</div>
-                    ))}
-                  </div>
-                  <div className="grid grid-cols-7 gap-2">
-                    {weekDays.map((date, index) => {
-                      const dateKey = formatDate(date);
-                      const dateWorkouts = workouts[dateKey] || [];
-                      const hasWorkout = dateWorkouts.length > 0;
-                      const isToday = date.toDateString() === today.toDateString();
-                      
-                      return (
-                        <button key={index} onClick={() => setSelectedDate(date)}
-                          className={`calendar-day rounded-xl p-2 text-center min-h-[60px] flex flex-col justify-center items-center relative
-                            ${isToday ? 'ring-2 ring-purple-500' : ''}
-                            ${hasWorkout ? 'bg-gradient-to-br from-purple-500 to-blue-500 text-white' : 'bg-gray-50 hover:bg-purple-100 text-gray-700 hover:ring-2 hover:ring-purple-300'}`}>
-                          <span className="font-bold text-sm">{date.getDate()}</span>
-                          {!hasWorkout && !hasAnyWorkouts && (
-                            <svg width="16" height="16" className="mt-1 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <line x1="12" y1="5" x2="12" y2="19"/>
-                              <line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-3">
-                {weekDays.map((date) => {
-                  const dateKey = formatDate(date);
-                  const dateWorkouts = workouts[dateKey] || [];
-                  const isToday = date.toDateString() === today.toDateString();
-                  if (dateWorkouts.length === 0) return null;
-                  
-                  return (
-                    <div key={dateKey} className="bg-white rounded-2xl shadow-lg overflow-hidden">
-                      <div className={`p-4 ${isToday ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white' : 'bg-gray-100 text-gray-800'}`}>
-                        <div className="font-semibold">{dayNames[date.getDay() === 0 ? 6 : date.getDay() - 1]}, {date.getDate()} {monthNames[date.getMonth()]}</div>
-                      </div>
-                      <div className="p-4 space-y-2">
-                        {dateWorkouts.map(workout => (
-                          <button key={workout.id} onClick={() => { setSelectedDate(date); setSelectedWorkout(workout); }}
-                            className="w-full bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-4 hover:shadow-md transition text-left">
-                            <div className="font-semibold text-gray-800">{workout.name}</div>
-                            <div className="text-sm text-gray-500 mt-1">{workout.exercises.length} {workout.exercises.length === 1 ? 'упражнение' : 'упражнений'}</div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              
-              <button onClick={() => setShowStopwatch(true)}
-                className="btn-circle fixed bottom-6 left-6 bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-4 rounded-full shadow-2xl hover:shadow-blue-500/50 transition-all hover:scale-110 z-50"
-                style={{boxShadow: '0 10px 40px rgba(59, 130, 246, 0.4)'}}
-                title="Секундомер">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <circle cx="12" cy="13" r="8"/>
-                  <path d="M12 9v4l2 2"/>
-                  <path d="M9 2h6"/>
-                  <path d="M12 2v2"/>
-                </svg>
-              </button>
-              
-              <button onClick={() => setSelectedDate(today)}
-                className="btn-circle fixed bottom-6 right-6 bg-gradient-to-r from-purple-500 to-blue-500 text-white p-4 rounded-full shadow-2xl hover:shadow-purple-500/50 transition-all hover:scale-110 z-50"
-                style={{boxShadow: '0 10px 40px rgba(147, 51, 234, 0.4)'}}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19"/>
-                  <line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-        );
+  const platePad = (a) => ({ px: a.size * 0.55, py: a.size * 0.38, r: a.size * 0.42 });
+  const hasPlate = (a) => a.variant === 'label' || a.variant === 'callout';
+
+  const plateRect = (a, m = textMetrics(a)) => {
+    const { px, py } = platePad(a);
+    return { x: a.x - px, y: a.y - py, width: m.w + px * 2, height: m.h + py * 2 };
+  };
+
+  // Кончик хвоста выноски; если его ещё не двигали — под плашкой слева
+  const tailOf = (a) => {
+    if (a.tail) return a.tail;
+    const r = plateRect(a);
+    return { x: r.x + Math.min(r.width * 0.25, a.size * 2), y: r.y + r.height + a.size * 1.3 };
+  };
+
+  // Треугольник хвоста: основание на ближайшей к кончику стороне плашки
+  function tailTriangle(r, tip, size, radius) {
+    const clamp = (v, lo, hi) => (lo > hi ? (lo + hi) / 2 : Math.max(lo, Math.min(hi, v)));
+    let side;
+    if (tip.y > r.y + r.height) side = 'bottom';
+    else if (tip.y < r.y) side = 'top';
+    else side = tip.x < r.x ? 'left' : 'right';
+    const horizontal = side === 'top' || side === 'bottom';
+    const len = horizontal ? r.width : r.height;
+    const half = Math.min(size * 0.55, len * 0.3);
+    const inset = 1.5; // основание чуть внутри плашки, чтобы не было шва
+    if (horizontal) {
+      const cx = clamp(tip.x, r.x + radius + half, r.x + r.width - radius - half);
+      const y = side === 'bottom' ? r.y + r.height - inset : r.y + inset;
+      return [{ x: cx - half, y }, { x: cx + half, y }, tip];
+    }
+    const cy = clamp(tip.y, r.y + radius + half, r.y + r.height - radius - half);
+    const x = side === 'right' ? r.x + r.width - inset : r.x + inset;
+    return [{ x, y: cy - half }, { x, y: cy + half }, tip];
+  }
+
+  const drawText = (c, a) => {
+    const m = textMetrics(a);
+    c.save();
+    let ink = a.color;
+    if (hasPlate(a)) {
+      const r = plateRect(a, m);
+      const { r: radius } = platePad(a);
+      roundRectPath(c, r.x, r.y, r.width, r.height, radius);
+      if (a.variant === 'callout') {
+        let tri = tailTriangle(r, tailOf(a), a.size, radius);
+        // Направление обхода как у плашки, иначе при заливке место стыка станет дыркой
+        const area = (tri[1].x - tri[0].x) * (tri[2].y - tri[0].y) - (tri[2].x - tri[0].x) * (tri[1].y - tri[0].y);
+        if (area < 0) tri = [tri[1], tri[0], tri[2]];
+        c.moveTo(tri[0].x, tri[0].y);
+        c.lineTo(tri[1].x, tri[1].y);
+        c.lineTo(tri[2].x, tri[2].y);
+        c.closePath();
+      }
+      c.shadowColor = 'rgba(0, 0, 0, 0.25)';
+      c.shadowBlur = a.size * 0.5;
+      c.shadowOffsetY = a.size * 0.12;
+      c.fillStyle = a.color;
+      c.fill('nonzero');
+      c.shadowColor = 'transparent';
+      ink = readableOn(a.color);
+    }
+    c.font = textFont(a.size, a.bold);
+    c.fillStyle = ink;
+    c.textBaseline = 'top';
+    m.lines.forEach((line, i) => c.fillText(line, a.x, a.y + i * m.lh));
+    c.restore();
+  };
+
+  // Фокус: все области фокуса рисуются одним слоем, чтобы пересекающиеся
+  // или соседние области не затемняли друг друга. Затемняется только сам скриншот
+  function drawFocus(c, list) {
+    if (!list.length) return;
+    const f = list[0];
+    const W = c.canvas.width, H = c.canvas.height;
+    const { padding, radius } = S.fx;
+    const { w: iw, h: ih } = region();
+
+    const cutHoles = (x) => {
+      x.globalCompositeOperation = 'destination-out';
+      x.fillStyle = '#000';
+      list.forEach((a) => {
+        const r = toRect(a.start, a.end);
+        if (r.width < 2 || r.height < 2) return;
+        roundRectPath(x, r.x, r.y, r.width, r.height, a.radius);
+        x.fill();
+      });
+      x.globalCompositeOperation = 'source-over';
+    };
+    const layer = () => {
+      const cv = document.createElement('canvas');
+      cv.width = W; cv.height = H;
+      return cv;
+    };
+
+    if (f.blur > 0) {
+      const b = layer(), bc = b.getContext('2d');
+      roundRectPath(bc, padding, padding, iw, ih, radius);
+      bc.clip();
+      bc.filter = `blur(${f.blur}px)`;
+      bc.drawImage(c.canvas, 0, 0);
+      bc.filter = 'none';
+      cutHoles(bc);
+      c.drawImage(b, 0, 0);
+    }
+
+    const d = layer(), dc = d.getContext('2d');
+    dc.fillStyle = f.tone === 'light' ? `rgba(255, 255, 255, ${f.opacity})` : `rgba(12, 10, 16, ${f.opacity})`;
+    roundRectPath(dc, padding, padding, iw, ih, radius);
+    dc.fill();
+    cutHoles(dc);
+    c.drawImage(d, 0, 0);
+  }
+
+  // Контрастный цвет цифры: тёмный на светлой заливке, белый на тёмной
+  const readableOn = (hex) => {
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.62 ? '#16141a' : '#ffffff';
+  };
+
+  const drawMarker = (c, { x, y, num, color, size, style }) => {
+    const label = String(num);
+    c.save();
+    c.beginPath();
+    c.arc(x, y, size, 0, Math.PI * 2);
+    c.shadowColor = 'rgba(0, 0, 0, 0.28)';
+    c.shadowBlur = size * 0.35;
+    c.shadowOffsetY = size * 0.1;
+    if (style === 'outline') {
+      c.fillStyle = '#ffffff';
+      c.fill();
+      c.shadowColor = 'transparent';
+      c.lineWidth = Math.max(2, size * 0.16);
+      c.strokeStyle = color;
+      c.stroke();
+      c.fillStyle = color;
+    } else {
+      c.fillStyle = color;
+      c.fill();
+      c.shadowColor = 'transparent';
+      c.fillStyle = readableOn(color);
+    }
+    const fontSize = size * (label.length > 1 ? 0.92 : 1.12);
+    c.font = textFont(fontSize, true);
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+    c.fillText(label, x, y + size * 0.05);
+    c.restore();
+  };
+
+  const DRAW = { highlight: drawHighlight, blur: drawBlur, box: drawBox, arrow: drawArrow, marker: drawMarker, text: drawText };
+  const drawAnnotation = (c, a) => DRAW[a.type] && DRAW[a.type](c, a);
+
+  // ─── Попадание по слоям ───────────────────────────────────
+  const textBox = (a) => {
+    const m = textMetrics(a);
+    return hasPlate(a) ? plateRect(a, m) : { x: a.x, y: a.y, width: m.w, height: m.h };
+  };
+
+  const inRect = (r, p, t = 0) =>
+    p.x >= r.x - t && p.x <= r.x + r.width + t && p.y >= r.y - t && p.y <= r.y + r.height + t;
+
+  const distToSeg = (p, a, b) => {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = dx * dx + dy * dy;
+    const t = len ? Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len)) : 0;
+    return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy);
+  };
+
+  const arrowPath = (a) => {
+    if (a.style !== 'curved') return [a.start, a.end];
+    const cp = curveControl(a.start, a.end, bendOf(a));
+    return Array.from({ length: 25 }, (_, i) => bezierAt(a.start, cp, a.end, i / 24));
+  };
+
+  function hitLayer(a, p, tol) {
+    switch (a.type) {
+      case 'highlight':
+      case 'blur':
+      case 'focus':
+        return inRect(toRect(a.start, a.end), p, tol);
+      case 'box': {
+        // Рамку берём только за контур, чтобы клики внутри доходили до того, что в ней
+        const r = toRect(a.start, a.end);
+        const t = tol + a.thickness / 2;
+        const inner = { x: r.x + t, y: r.y + t, width: r.width - 2 * t, height: r.height - 2 * t };
+        return inRect(r, p, t) && !(inner.width > 0 && inner.height > 0 && inRect(inner, p));
+      }
+      case 'arrow': {
+        const pts = arrowPath(a);
+        const reach = tol + a.thickness / 2;
+        for (let i = 1; i < pts.length; i++) if (distToSeg(p, pts[i - 1], pts[i]) <= reach) return true;
+        return Math.hypot(p.x - a.end.x, p.y - a.end.y) <= headLength(a.thickness) + tol;
+      }
+      case 'text':
+        return inRect(textBox(a), p, tol);
+      case 'marker':
+        return Math.hypot(p.x - a.x, p.y - a.y) <= a.size + tol;
+      default:
+        return false;
+    }
+  }
+
+  const hitTest = (p, tol, filter = () => true) => {
+    for (let i = S.annotations.length - 1; i >= 0; i--) {
+      const a = S.annotations[i];
+      if (a.id !== S.hiddenId && filter(a) && hitLayer(a, p, tol)) return a;
+    }
+    return null;
+  };
+
+  function handlesOf(a) {
+    if (a.type === 'arrow') {
+      const hs = [{ id: 'start', ...a.start }, { id: 'end', ...a.end }];
+      // Ручка изгиба: у кривой и у прямой (потянув её, прямую можно изогнуть)
+      if (a.style !== 'dotted') hs.push({ id: 'mid', ...arrowMid(a), small: true });
+      return hs;
+    }
+    if (a.type === 'text') return a.variant === 'callout' ? [{ id: 'tail', ...tailOf(a) }] : [];
+    if (a.type === 'marker') return [];
+    const r = toRect(a.start, a.end);
+    return [
+      { id: 'nw', x: r.x, y: r.y },
+      { id: 'ne', x: r.x + r.width, y: r.y },
+      { id: 'sw', x: r.x, y: r.y + r.height },
+      { id: 'se', x: r.x + r.width, y: r.y + r.height },
+    ];
+  }
+
+  const hitHandle = (a, p, tol) =>
+    handlesOf(a).find((h) => Math.hypot(p.x - h.x, p.y - h.y) <= tol * 1.5) || null;
+
+  const HANDLE_CURSOR = { nw: 'nwse-resize', se: 'nwse-resize', ne: 'nesw-resize', sw: 'nesw-resize', start: 'move', end: 'move', tail: 'move', mid: 'grab' };
+
+  // Сдвиг слоя на dx, dy относительно исходного состояния
+  const translated = (a, dx, dy) =>
+    a.type === 'text' || a.type === 'marker'
+      ? { x: a.x + dx, y: a.y + dy, ...(a.tail ? { tail: { x: a.tail.x + dx, y: a.tail.y + dy } } : {}) }
+      : { start: { x: a.start.x + dx, y: a.start.y + dy }, end: { x: a.end.x + dx, y: a.end.y + dy } };
+
+  // Тянем угол прямоугольника: противоположный угол остаётся на месте
+  function resizedRect(orig, handle, p) {
+    const r = toRect(orig.start, orig.end);
+    const fixed = {
+      nw: { x: r.x + r.width, y: r.y + r.height },
+      ne: { x: r.x, y: r.y + r.height },
+      sw: { x: r.x + r.width, y: r.y },
+      se: { x: r.x, y: r.y },
+    }[handle];
+    return { start: fixed, end: { x: p.x, y: p.y } };
+  }
+
+  // Новый маркер получает номер на единицу больше максимального
+  const nextMarkerNum = () =>
+    S.annotations.reduce((m, a) => (a.type === 'marker' ? Math.max(m, a.num) : m), 0) + 1;
+
+  // ─── Выделение ────────────────────────────────────────────
+  const selected = () => (S.selectedId == null ? null : S.annotations.find((a) => a.id === S.selectedId) || null);
+
+  function select(id) {
+    if (S.selectedId === id || S.mode === 'crop') return;
+    S.selectedId = id;
+    redraw();
+    renderLayers();
+    renderOptions();
+    updateStatus();
+  }
+  const deselect = () => select(null);
+
+  function drawSelection(c) {
+    const a = selected();
+    if (!a || a.id === S.hiddenId) return;
+    const z = V.zoom || 1;
+    c.save();
+    c.strokeStyle = SELECT_COLOR;
+    c.lineWidth = 1.5 / z;
+    if (a.type !== 'arrow') {
+      const r = a.type === 'text' ? textBox(a)
+        : a.type === 'marker' ? { x: a.x - a.size, y: a.y - a.size, width: a.size * 2, height: a.size * 2 }
+        : toRect(a.start, a.end);
+      const pad = (a.type === 'box' ? a.thickness / 2 : 0) + 3 / z;
+      c.setLineDash(a.type === 'text' ? [4 / z, 3 / z] : []);
+      c.strokeRect(r.x - pad, r.y - pad, r.width + pad * 2, r.height + pad * 2);
+      c.setLineDash([]);
+    }
+    handlesOf(a).forEach((h) => {
+      c.beginPath();
+      c.arc(h.x, h.y, (h.small ? 4.5 : 5.5) / z, 0, Math.PI * 2);
+      c.fillStyle = h.small ? SELECT_COLOR : '#fff'; // ручка изгиба — синяя, чтобы не путать с концами
+      c.fill();
+      c.strokeStyle = h.small ? '#fff' : SELECT_COLOR;
+      c.stroke();
+    });
+    c.restore();
+  }
+
+  // ─── Холст ────────────────────────────────────────────────
+  // Какая часть исходного изображения сейчас на холсте. В режиме кадрирования
+  // показываем всё изображение, чтобы рамку можно было и расширить
+  const fullRegion = () => ({ x: 0, y: 0, w: S.image.naturalWidth, h: S.image.naturalHeight });
+  const region = () => (S.mode === 'crop' || !S.crop ? fullRegion() : S.crop);
+  // Слои хранятся в координатах кадрированного холста; в режиме кадрирования сдвигаем их
+  const annotationOffset = () => (S.mode === 'crop' && S.crop ? { x: S.crop.x, y: S.crop.y } : { x: 0, y: 0 });
+
+  let rounded = { key: null, canvas: null };
+  const getRoundedImage = () => {
+    const r = region();
+    const key = `${S.imageId}|${S.fx.radius}|${r.x},${r.y},${r.w},${r.h}`;
+    if (rounded.key !== key) {
+      const c = document.createElement('canvas');
+      c.width = r.w;
+      c.height = r.h;
+      const t = c.getContext('2d');
+      roundRectPath(t, 0, 0, c.width, c.height, S.fx.radius);
+      t.clip();
+      t.drawImage(S.image, r.x, r.y, r.w, r.h, 0, 0, r.w, r.h);
+      rounded = { key, canvas: c };
+    }
+    return rounded.canvas;
+  };
+
+  // Рисует итоговое изображение (без рамки выделения) в любой контекст
+  function paint(c, withCurrent) {
+    const { padding, shadowBlur, shadowOpacity } = S.fx;
+    c.save();
+    c.shadowColor = `rgba(0, 0, 0, ${shadowOpacity})`;
+    c.shadowBlur = shadowBlur;
+    c.shadowOffsetX = 0;
+    c.shadowOffsetY = shadowBlur / 4;
+    c.drawImage(getRoundedImage(), padding, padding);
+    c.restore();
+    const cur = withCurrent ? S.current : null;
+    const o = annotationOffset();
+    const shift = (a) => (o.x || o.y ? { ...a, ...translated(a, o.x, o.y) } : a);
+    const layers = S.annotations.filter((a) => a.id !== S.hiddenId).map(shift);
+    const focuses = layers.filter((a) => a.type === 'focus');
+    if (cur && cur.type === 'focus') focuses.push(cur);
+    let focusDone = false;
+    for (const a of layers) {
+      if (a.type === 'focus') {
+        if (!focusDone) { drawFocus(c, focuses); focusDone = true; }
+        continue;
+      }
+      drawAnnotation(c, a);
+    }
+    if (cur) {
+      if (cur.type !== 'focus') drawAnnotation(c, cur);
+      else if (!focusDone) drawFocus(c, focuses);
+    }
+  }
+
+  const exportSize = () => ({
+    w: region().w + S.fx.padding * 2,
+    h: region().h + S.fx.padding * 2,
+  });
+
+  function redraw() {
+    if (!S.image) return;
+    const { w, h } = exportSize();
+    const resized = canvas.width !== w || canvas.height !== h;
+    if (resized) { canvas.width = w; canvas.height = h; } else ctx.clearRect(0, 0, w, h);
+    paint(ctx, true);
+    if (S.mode === 'crop') drawCropOverlay(ctx);
+    else drawSelection(ctx);
+    if (resized) fit();
+  }
+
+  let rafId = 0;
+  const scheduleRedraw = () => {
+    if (rafId) return;
+    rafId = requestAnimationFrame(() => { rafId = 0; redraw(); });
+  };
+
+  // ─── Вид: масштаб и сдвиг ─────────────────────────────────
+  const V = { zoom: 1, x: 0, y: 0, fitted: true };
+  const ZMIN = 0.05, ZMAX = 8;
+  const clampZoom = (z) => Math.min(ZMAX, Math.max(ZMIN, z));
+  const statusRoom = () => ($('status').offsetParent ? 64 : 16);
+
+  function applyView() {
+    const zoomChanged = S.scale !== V.zoom;
+    S.scale = V.zoom;
+    canvas.style.width = canvas.width * V.zoom + 'px';
+    canvas.style.height = canvas.height * V.zoom + 'px';
+    canvasWrap.style.transform = `translate(${Math.round(V.x)}px, ${Math.round(V.y)}px)`;
+    if (S.draft) positionDraft(S.draft);
+    if (zoomChanged && S.selectedId != null) scheduleRedraw(); // ручки выделения всегда одного экранного размера
+    updateStatus();
+  }
+
+  // Вписывает холст, пока пользователь сам не менял масштаб или положение
+  function fit() {
+    if (!S.image) return;
+    if (!V.fitted) { applyView(); return; }
+    const r = stage.getBoundingClientRect();
+    const room = statusRoom();
+    const aw = Math.max(40, r.width - 48);
+    const ah = Math.max(40, r.height - 24 - room);
+    V.zoom = Math.min(1, aw / canvas.width, ah / canvas.height) || 1;
+    V.x = (r.width - canvas.width * V.zoom) / 2;
+    V.y = (r.height - room + 16 - canvas.height * V.zoom) / 2;
+    applyView();
+  }
+  new ResizeObserver(fit).observe(stage);
+
+  const fitView = () => { V.fitted = true; fit(); };
+
+  function zoomTo(nz, cx, cy) {
+    if (!S.image) return;
+    const r = stage.getBoundingClientRect();
+    if (cx == null) { cx = r.width / 2; cy = (r.height - statusRoom() + 16) / 2; }
+    nz = clampZoom(nz);
+    V.x = cx - (cx - V.x) * (nz / V.zoom);
+    V.y = cy - (cy - V.y) * (nz / V.zoom);
+    V.zoom = nz;
+    V.fitted = false;
+    applyView();
+  }
+  const zoomStep = (dir, cx, cy) => zoomTo(V.zoom * (dir > 0 ? 1.25 : 0.8), cx, cy);
+
+  function updateStatus() {
+    const sel = selected();
+    const tool = TOOLS.find((t) => t.id === S.mode);
+    $('hint').textContent = sel
+      ? 'Тяните слой или его углы. Delete удаляет, Esc снимает выделение'
+      : tool.hint;
+    $('zoom').textContent = Math.round(S.scale * 100) + '%';
+    $('zoom').title = `Вписать в окно (${MOD}0)`;
+    $('dims').textContent = S.image ? `${canvas.width} × ${canvas.height}` : '';
+  }
+
+  // ─── История ──────────────────────────────────────────────
+  // Любое изменение слоёв идёт через commit: сохраняем снимок «до»,
+  // чтобы отменялось само действие — добавление, удаление, правка
+  const HISTORY_LIMIT = 200;
+
+  // Запись истории: слои и кадрирование вместе, чтобы отмена кадрирования
+  // возвращала и слои на их места
+  function pushHistory(annotations) {
+    S.undo.push({ annotations, crop: S.crop });
+    if (S.undo.length > HISTORY_LIMIT) S.undo.shift();
+    S.redo = [];
+  }
+
+  function commit(update) {
+    endLiveEdit();
+    const next = update(S.annotations);
+    if (next === S.annotations) return;
+    pushHistory(S.annotations);
+    S.annotations = next;
+    changed();
+  }
+
+  // Непрерывная правка (перетаскивание, ползунок): много промежуточных
+  // состояний, но в историю попадает одно действие
+  function liveEdit(target, patch) {
+    if (!S.liveBase) S.liveBase = S.annotations;
+    const match = typeof target === 'function' ? target : (a) => a.id === target;
+    S.annotations = S.annotations.map((a) => (match(a) ? { ...a, ...patch } : a));
+    scheduleRedraw();
+  }
+
+  function endLiveEdit() {
+    const base = S.liveBase;
+    if (!base) return;
+    S.liveBase = null;
+    if (base !== S.annotations) { pushHistory(base); changed(); }
+  }
+
+  const pushAnnotation = (a) => commit((list) => [...list, a]);
+
+  function restore(from, to) {
+    endLiveEdit();
+    if (S.mode === 'crop') cancelCrop();
+    if (!from.length) return;
+    to.push({ annotations: S.annotations, crop: S.crop });
+    const e = from.pop();
+    const cropChanged = e.crop !== S.crop;
+    S.annotations = e.annotations;
+    S.crop = e.crop;
+    changed();
+    if (cropChanged) fitView();
+  }
+  const undo = () => restore(S.undo, S.redo);
+  const redo = () => restore(S.redo, S.undo);
+
+  function deleteSelected() {
+    const id = S.selectedId;
+    if (id == null) return;
+    S.selectedId = null;
+    commit((list) => list.filter((a) => a.id !== id));
+  }
+
+  function duplicateSelected() {
+    const a = selected();
+    if (!a) return;
+    const copy = { ...a, ...translated(a, 20, 20), id: newId() };
+    S.selectedId = copy.id;
+    commit((list) => {
+      const i = list.findIndex((x) => x.id === a.id);
+      return [...list.slice(0, i + 1), copy, ...list.slice(i + 1)];
+    });
+  }
+
+  function changed() {
+    if (S.selectedId != null && !selected()) S.selectedId = null; // слой мог исчезнуть после отмены
+    redraw();
+    renderLayers();
+    renderOptions(false);
+    updateButtons();
+    updateStatus();
+  }
+
+  // ─── Панель инструментов ──────────────────────────────────
+  function renderRail() {
+    const rail = $('rail');
+    rail.textContent = '';
+    TOOLS.forEach((t, i) => {
+      if (i === 2) rail.append(el('div', 'rail-sep'));
+      const b = el('button', 'tool' + (S.mode === t.id ? ' on' : ''));
+      b.innerHTML = ICONS[t.id];
+      b.setAttribute('aria-label', `${t.label} (${t.key})`);
+      b.setAttribute('aria-pressed', S.mode === t.id);
+      b.disabled = !S.image;
+      const tip = el('span', 'tip');
+      tip.append(el('span', null, t.label), el('span', 'kbd', t.key));
+      b.append(tip);
+      b.addEventListener('click', () => switchMode(t.id));
+      rail.append(b);
+    });
+  }
+
+  // ─── Верхняя панель параметров ────────────────────────────
+  // Цель правки: выделенный слой, настройки инструмента или оформление
+  function optionsTarget() {
+    const sel = selected();
+    if (sel) {
+      return {
+        title: TYPE_LABEL[sel.type],
+        type: sel.type,
+        layer: true,
+        get: (k) => (selected() || sel)[k],
+        set: (k, v, final) => {
+          if (k !== 'num') S[sel.type][k] = v; // следующие слои этого типа будут такими же
+          if (S.draft && S.draft.editId === sel.id) { S.draft[k] = v; positionDraft(S.draft); }
+          // Затемнение, тон и размытие общие для всех областей фокуса
+          const shared = sel.type === 'focus' && ['tone', 'opacity', 'blur'].includes(k);
+          liveEdit(shared ? (a) => a.type === 'focus' : sel.id, { [k]: v });
+          if (final) endLiveEdit();
+        },
       };
+    }
+    if (S.mode === 'select') {
+      return {
+        title: 'Оформление', type: 'fx',
+        get: (k) => S.fx[k],
+        set: (k, v) => { S.fx[k] = v; scheduleRedraw(); },
+      };
+    }
+    const tool = TOOLS.find((t) => t.id === S.mode);
+    return {
+      title: tool.label, type: S.mode,
+      get: (k) => S[S.mode][k],
+      set: (k, v) => {
+        S[S.mode][k] = v;
+        if (S.mode === 'text' && S.draft) { S.draft[k] = v; positionDraft(S.draft); }
+      },
+    };
+  }
 
-      ReactDOM.createRoot(document.getElementById('root')).render(<WorkoutTracker />);
-    </script>
+  function buildSlider(c, T) {
+    const wrap = el('label', 'ctl-slider');
+    const label = typeof c.label === 'function' ? c.label(T.get) : c.label;
+    const input = document.createElement('input');
+    input.type = 'range';
+    input.min = c.min; input.max = c.max; input.step = c.step || 1;
+    input.value = T.get(c.key);
+    input.setAttribute('aria-label', label);
+    const val = el('span', 'ctl-value', c.fmt(T.get(c.key)));
+    const fill = () => input.style.setProperty('--p', ((input.value - c.min) / (c.max - c.min)) * 100 + '%');
+    fill();
+    input.addEventListener('input', () => {
+      const v = Number(input.value);
+      T.set(c.key, v, false);
+      val.textContent = c.fmt(v);
+      fill();
+    });
+    input.addEventListener('change', () => T.set(c.key, Number(input.value), true));
+    wrap.append(el('span', 'ctl-label', label), input, val);
+    return wrap;
+  }
+
+  function buildSeg(c, T) {
+    const wrap = el('div', 'seg');
+    wrap.setAttribute('role', 'group');
+    c.options.forEach(([value, label]) => {
+      const on = T.get(c.key) === value;
+      const b = el('button', on ? 'on' : '', label);
+      b.setAttribute('aria-pressed', on);
+      b.addEventListener('click', () => { T.set(c.key, value, true); renderOptions(true); });
+      wrap.append(b);
+    });
+    return wrap;
+  }
+
+  function buildStepper(c, T) {
+    const wrap = el('div', 'ctl-slider');
+    const box = el('div', 'stepper');
+    const v = T.get(c.key);
+    const minus = el('button', null, '−');
+    const plus = el('button', null, '+');
+    minus.setAttribute('aria-label', 'Уменьшить номер');
+    plus.setAttribute('aria-label', 'Увеличить номер');
+    minus.disabled = v <= 1;
+    plus.disabled = v >= 99;
+    minus.addEventListener('click', () => { T.set(c.key, Math.max(1, T.get(c.key) - 1), true); renderOptions(true); });
+    plus.addEventListener('click', () => { T.set(c.key, Math.min(99, T.get(c.key) + 1), true); renderOptions(true); });
+    box.append(minus, el('span', 'val', String(v)), plus);
+    wrap.append(el('span', 'ctl-label', c.label), box);
+    return wrap;
+  }
+
+  function buildColor(c, T) {
+    const wrap = el('div', 'colors');
+    const swatches = [];
+    PALETTE.forEach((col) => {
+      const b = el('button', 'swatch');
+      b.style.setProperty('--c', col);
+      b.dataset.color = col.toLowerCase();
+      b.setAttribute('aria-label', 'Цвет ' + col);
+      b.addEventListener('click', () => { T.set(c.key, col, true); mark(); });
+      swatches.push(b);
+      wrap.append(b);
+    });
+    const custom = el('label', 'swatch custom');
+    custom.title = 'Свой цвет';
+    const input = document.createElement('input');
+    input.type = 'color';
+    input.value = T.get(c.key);
+    input.setAttribute('aria-label', 'Свой цвет');
+    input.addEventListener('input', () => { T.set(c.key, input.value, false); mark(); });
+    input.addEventListener('change', () => { T.set(c.key, input.value, true); mark(); });
+    custom.append(input);
+    wrap.append(custom);
+
+    function mark() {
+      const v = String(T.get(c.key)).toLowerCase();
+      const inPalette = PALETTE.some((p) => p.toLowerCase() === v);
+      swatches.forEach((b) => b.classList.toggle('on', b.dataset.color === v));
+      custom.classList.toggle('on', !inPalette);
+      custom.style.setProperty('--c', v);
+    }
+    mark();
+    return wrap;
+  }
+
+  // Подпись текущего состояния панели: перестраиваем её, только когда оно изменилось,
+  // чтобы не сбивать ползунок, который пользователь сейчас тянет
+  let optionsSig = null;
+  function currentOptionsSig() {
+    if (!S.image) return 'empty';
+    if (S.mode === 'crop') return `crop|${S.cropAspect}`;
+    const T = optionsTarget();
+    const vals = OPTIONS[T.type].map((c) => (c.key ? T.get(c.key) : '')).join('|');
+    return `${S.mode}|${S.selectedId}|${vals}`;
+  }
+
+  function renderOptions(force = true) {
+    const sig = currentOptionsSig();
+    if (!force && sig === optionsSig) return;
+    optionsSig = sig;
+
+    const root = $('options');
+    root.textContent = '';
+    if (!S.image) {
+      root.append(el('span', 'opt-empty', 'Откройте скриншот, чтобы начать'));
+      return;
+    }
+    if (S.mode === 'crop') { renderCropOptions(root); return; }
+    const T = optionsTarget();
+    root.append(el('span', 'opt-title', T.title));
+    OPTIONS[T.type].forEach((c) => {
+      if (c.when && !c.when(T.get)) return;
+      if (c.layerOnly && !T.layer) return;
+      if (c.toolOnly && T.layer) return;
+      root.append(el('div', 'vsep'));
+      if (c.t === 'slider') root.append(buildSlider(c, T));
+      else if (c.t === 'seg') root.append(buildSeg(c, T));
+      else if (c.t === 'color') root.append(buildColor(c, T));
+      else if (c.t === 'stepper') root.append(buildStepper(c, T));
+      else if (c.t === 'next') {
+        const n = el('span', 'next-num', 'Следующий номер ');
+        n.append(el('b', null, String(nextMarkerNum())));
+        root.append(n);
+      }
+      else if (c.t === 'note') {
+        const n = el('span', 'note');
+        n.innerHTML = ICONS.info;
+        n.append(el('span', null, c.text));
+        root.append(n);
+      }
+    });
+    if (T.layer) {
+      root.append(el('div', 'vsep'));
+      const del = el('button', 'btn-icon opt-del');
+      del.innerHTML = ICONS.trash;
+      del.title = 'Удалить слой (Delete)';
+      del.setAttribute('aria-label', 'Удалить слой');
+      del.addEventListener('click', deleteSelected);
+      root.append(del);
+    }
+  }
+
+  // Пока вводится текст, клики по цвету и начертанию не должны закрывать поле
+  $('options').addEventListener('mousedown', (e) => {
+    if (S.draft && e.target.closest('button')) e.preventDefault();
+  });
+
+  // ─── Слои ─────────────────────────────────────────────────
+  const layerName = (a) => (a.type === 'text'
+    ? `«${a.text.split('\n')[0]}${a.text.includes('\n') ? '…' : ''}»`
+    : a.type === 'marker' ? `Маркер ${a.num}`
+    : a.type === 'blur' ? (a.variant === 'pixelate' ? 'Пикселизация' : 'Размытие') : TYPE_LABEL[a.type]);
+
+  function renderLayers() {
+    const list = $('layerList');
+    list.textContent = '';
+    $('layerCount').textContent = S.annotations.length || '';
+
+    for (let i = S.annotations.length - 1; i >= 0; i--) {
+      const a = S.annotations[i];
+      const li = el('li', 'layer' + (a.id === S.selectedId ? ' on' : ''));
+      const dot = el('span', 'dot' + (a.type === 'arrow' || a.type === 'text' || a.type === 'marker' ? ' round' : ''));
+      dot.style.setProperty('--c', a.type === 'blur' ? '#8a8591' : a.type === 'focus' ? '#3a3540' : a.color);
+      const del = el('button', 'del');
+      del.innerHTML = ICONS.x;
+      del.setAttribute('aria-label', 'Удалить слой ' + layerName(a));
+      del.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (S.selectedId === a.id) S.selectedId = null;
+        commit((l) => l.filter((x) => x.id !== a.id));
+      });
+      li.addEventListener('click', () => select(a.id));
+      li.append(dot, el('span', 'name', layerName(a)), del);
+      list.append(li);
+    }
+
+    if (!S.annotations.length) {
+      list.append(el('li', 'layers-empty', 'Нарисуйте стрелку, рамку или добавьте текст — всё появится здесь'));
+    }
+    const base = el('li', 'layer base');
+    const dot = el('span', 'dot');
+    dot.style.setProperty('--c', 'rgba(255,255,255,.3)');
+    base.append(dot, el('span', 'name', 'Скриншот'));
+    list.append(base);
+  }
+
+  function updateButtons() {
+    $('undoBtn').disabled = !S.undo.length;
+    $('redoBtn').disabled = !S.redo.length;
+    $('downloadBtn').disabled = !S.image;
+    $('resetBtn').disabled = !S.image;
+  }
+
+  // ─── Текстовое поле ───────────────────────────────────────
+  function positionDraft(d) {
+    const inp = d.el;
+    const z = S.scale;
+    const m = textMetrics({ text: inp.value || 'Текст', size: d.size, bold: d.bold });
+    const plate = hasPlate(d);
+    const { px: padX, py: padY, r } = platePad(d);
+    const px_ = plate ? padX : 0, py_ = plate ? padY : 0;
+    // Поле повторяет будущий слой: та же плашка, отступы и межстрочный интервал
+    const lead = d.size * (LINE - 1) / 2; // textarea добавляет половину интерлиньяжа сверху
+    inp.style.left = (d.x - px_) * z + 'px';
+    inp.style.top = (d.y - py_ - lead) * z + 'px';
+    inp.style.padding = `${py_ * z}px ${px_ * z}px`;
+    inp.style.width = (m.w + px_ * 2) * z + 4 + 'px';
+    inp.style.height = ((m.lines.length * m.lh) + py_ * 2) * z + 'px';
+    inp.style.font = textFont(d.size * z, d.bold);
+    inp.style.lineHeight = m.lh * z + 'px';
+    inp.style.background = plate ? d.color : 'transparent';
+    inp.style.color = plate ? readableOn(d.color) : d.color;
+    inp.style.borderRadius = plate ? r * z + 'px' : '0';
+    inp.style.outline = plate ? `1.5px solid ${SELECT_COLOR}` : '1px dashed currentColor';
+  }
+
+  // edit — существующий текстовый слой, который правим
+  function openDraft(p, edit) {
+    const src = edit || S.text;
+    const d = {
+      x: edit ? edit.x : p.x,
+      y: edit ? edit.y : p.y,
+      variant: src.variant || 'plain',
+      color: src.color, size: src.size, bold: src.bold,
+      editId: edit ? edit.id : null,
+      original: edit ? edit.text : '',
+    };
+    const inp = el('textarea', 'text-draft');
+    inp.placeholder = 'Текст';
+    inp.spellcheck = false;
+    inp.rows = 1;
+    inp.wrap = 'off';
+    inp.value = d.original;
+    d.el = inp;
+    inp.addEventListener('input', () => positionDraft(d));
+    inp.addEventListener('keydown', (e) => {
+      // Enter — готово, Shift+Enter — новая строка
+      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); commitText(true); }
+      if (e.key === 'Escape') { e.preventDefault(); cancelText(); }
+    });
+    inp.addEventListener('blur', () => commitText(false));
+    S.draft = d;
+    if (edit) { S.hiddenId = edit.id; S.selectedId = edit.id; redraw(); renderLayers(); renderOptions(false); }
+    canvasWrap.append(inp);
+    positionDraft(d);
+    setTimeout(() => { inp.focus(); if (edit) inp.select(); }, 0);
+  }
+
+  // Безопасно вызывать несколько раз. selectAfter — выделить слой после ввода
+  function commitText(selectAfter) {
+    const d = S.draft;
+    if (!d) return;
+    S.draft = null;
+    S.hiddenId = null;
+    // Убираем пустые строки по краям, но сохраняем переносы внутри
+    const text = d.el.value.replace(/\s+$/, '').replace(/^\s*\n/, '');
+    d.el.remove();
+
+    if (d.editId != null) {
+      if (!text.trim()) { S.selectedId = null; commit((l) => l.filter((a) => a.id !== d.editId)); return; }
+      const patch = { text, variant: d.variant, color: d.color, size: d.size, bold: d.bold };
+      commit((l) => l.map((a) => (a.id === d.editId ? { ...a, ...patch } : a)));
+      redraw();
+      return;
+    }
+    if (!text.trim()) return;
+    const id = newId();
+    if (selectAfter) S.selectedId = id;
+    pushAnnotation({ type: 'text', id, x: d.x, y: d.y, text, variant: d.variant, color: d.color, size: d.size, bold: d.bold });
+  }
+
+  function cancelText() {
+    const d = S.draft;
+    if (!d) return;
+    S.draft = null;
+    S.hiddenId = null;
+    d.el.remove();
+    redraw();
+  }
+
+  // ─── Ввод указателем на холсте ────────────────────────────
+  let drawing = false;
+  let drag = null; // { kind: 'move' | 'handle', id, handle, from, orig }
+
+  const getPoint = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (e.clientX - rect.left) * (canvas.width / rect.width),
+      y: (e.clientY - rect.top) * (canvas.height / rect.height),
+    };
+  };
+  const tolerance = () => 8 / (V.zoom || 1);
+
+  function startDrag(e, kind, a, handle, p) {
+    canvas.setPointerCapture(e.pointerId);
+    drag = { kind, id: a.id, handle, from: p, orig: a };
+    if (S.selectedId !== a.id) select(a.id);
+  }
+
+  canvas.addEventListener('pointerdown', (e) => {
+    if (!S.image || e.button > 0) return;
+    const p = getPoint(e);
+
+    if (S.mode === 'crop') {
+      const hit = cropHitAt(p);
+      canvas.setPointerCapture(e.pointerId);
+      cropDrag = { ...hit, from: toImagePx(p), orig: { ...S.cropDraft } };
+      return;
+    }
+    const tol = tolerance();
+    const sel = selected();
+
+    // Текст: клик по готовому тексту открывает его на правку
+    if (S.mode === 'text') {
+      e.preventDefault(); // не отдаём фокус холсту
+      if (S.draft) { commitText(false); return; }
+      // По готовому тексту: потянул — переместить, просто кликнул — править
+      const t = hitTest(p, tol, (a) => a.type === 'text');
+      if (t) {
+        startDrag(e, 'move', t, null, p);
+        drag.editOnClick = true;
+        drag.screen = { x: e.clientX, y: e.clientY };
+        return;
+      }
+    }
+
+    // Ручки и тело выделенного слоя работают в любом инструменте
+    if (sel) {
+      const h = hitHandle(sel, p, tol);
+      if (h) { startDrag(e, 'handle', sel, h.id, p); return; }
+      if (hitLayer(sel, p, tol)) { startDrag(e, 'move', sel, null, p); return; }
+    }
+
+    if (S.mode === 'select') {
+      const hit = hitTest(p, tol);
+      if (hit) startDrag(e, 'move', hit, null, p);
+      else deselect();
+      return;
+    }
+
+    if (S.mode === 'marker') {
+      // Клик по существующему маркеру — перетащить его, иначе поставить новый
+      const hit = hitTest(p, tol, (a) => a.type === 'marker');
+      if (hit) { startDrag(e, 'move', hit, null, p); return; }
+      const m = { type: 'marker', id: newId(), ...S.marker, x: p.x, y: p.y, num: nextMarkerNum() };
+      // Установка и перетаскивание сразу после неё — один шаг истории
+      endLiveEdit();
+      S.liveBase = S.annotations;
+      S.annotations = [...S.annotations, m];
+      S.selectedId = m.id;
+      canvas.setPointerCapture(e.pointerId);
+      drag = { kind: 'move', id: m.id, handle: null, from: p, orig: m };
+      redraw();
+      renderLayers();
+      renderOptions(false);
+      updateStatus();
+      return;
+    }
+
+    if (sel) deselect();
+
+    if (S.mode === 'text') { openDraft(p); return; }
+
+    canvas.setPointerCapture(e.pointerId);
+    drawing = true;
+    S.current = { type: S.mode, ...S[S.mode], id: newId(), start: p, end: p };
+    scheduleRedraw();
+  });
+
+  canvas.addEventListener('dblclick', (e) => {
+    if (!S.image || S.draft || S.mode === 'crop') return;
+    const t = hitTest(getPoint(e), tolerance(), (a) => a.type === 'text');
+    if (t) openDraft(null, t);
+  });
+
+  function hoverCursor(p) {
+    const tol = tolerance();
+    const sel = selected();
+    if (sel) {
+      const h = hitHandle(sel, p, tol);
+      if (h) return HANDLE_CURSOR[h.id];
+      if (hitLayer(sel, p, tol)) return 'move';
+    }
+    if (S.mode === 'text' && hitTest(p, tol, (a) => a.type === 'text')) return 'move';
+    if (S.mode === 'marker' && hitTest(p, tol, (a) => a.type === 'marker')) return 'move';
+    if (S.mode === 'select') return hitTest(p, tol) ? 'move' : 'grab';
+    return S.mode === 'text' ? 'text' : 'crosshair';
+  }
+
+  canvas.addEventListener('pointermove', (e) => {
+    if (!S.image) return;
+    const p = getPoint(e);
+
+    if (S.mode === 'crop') {
+      if (cropDrag) {
+        const ip = toImagePx(p);
+        const o = cropDrag.orig;
+        const { w: W, h: H } = fullRegion();
+        if (cropDrag.kind === 'move') {
+          S.cropDraft = { ...o, x: clampN(o.x + ip.x - cropDrag.from.x, 0, W - o.w), y: clampN(o.y + ip.y - cropDrag.from.y, 0, H - o.h) };
+        } else if (cropDrag.kind === 'handle') {
+          S.cropDraft = resizeCrop(o, cropDrag.id, ip);
+        } else {
+          S.cropDraft = newCrop(cropDrag.from, ip);
+        }
+        updateCropSize();
+        scheduleRedraw();
+      } else if (e.pointerType === 'mouse') {
+        const h = cropHitAt(p);
+        canvas.style.cursor = h.kind === 'handle' ? CROP_CURSOR[h.id] : h.kind === 'move' ? 'move' : 'crosshair';
+      }
+      return;
+    }
+
+    if (drag) {
+      if (drag.editOnClick) {
+        // Пока указатель почти не сдвинулся, это ещё клик, а не перетаскивание
+        if (Math.hypot(e.clientX - drag.screen.x, e.clientY - drag.screen.y) < 4) return;
+        drag.editOnClick = false;
+      }
+      const dx = p.x - drag.from.x, dy = p.y - drag.from.y;
+      const o = drag.orig;
+      let patch;
+      if (drag.kind === 'move') patch = translated(o, dx, dy);
+      else if (drag.handle === 'tail') patch = { tail: { x: p.x, y: p.y } };
+      else if (drag.handle === 'mid') patch = { style: 'curved', bend: bendFromPoint(o, p) };
+      else if (o.type === 'arrow') patch = { [drag.handle]: { x: p.x, y: p.y } };
+      else patch = resizedRect(o, drag.handle, p);
+      liveEdit(drag.id, patch);
+      return;
+    }
+    if (drawing && S.current) {
+      S.current.end = p;
+      scheduleRedraw();
+      return;
+    }
+    if (e.pointerType === 'mouse') canvas.style.cursor = hoverCursor(p);
+  });
+
+  const endPointerOnCanvas = () => {
+    if (cropDrag) { cropDrag = null; return; }
+    if (drag) {
+      const clickToEdit = drag.editOnClick ? drag.orig : null;
+      drag = null;
+      endLiveEdit();
+      if (clickToEdit) openDraft(null, selected() || clickToEdit);
+      return;
+    }
+    if (!drawing) return;
+    drawing = false;
+    const cur = S.current;
+    S.current = null;
+    if (cur) {
+      const { width, height } = toRect(cur.start, cur.end);
+      const bigEnough = cur.type === 'arrow' ? Math.hypot(width, height) > 5 : width > 3 && height > 3;
+      if (bigEnough) {
+        S.selectedId = cur.id; // только что нарисованное сразу можно поправить
+        pushAnnotation(cur);
+        return;
+      }
+    }
+    redraw();
+  };
+  canvas.addEventListener('pointerup', endPointerOnCanvas);
+  canvas.addEventListener('pointercancel', endPointerOnCanvas);
+
+  function switchMode(m) {
+    commitText(false);
+    const wasCrop = S.mode === 'crop';
+    if (wasCrop && m !== 'crop') applyCropDraft(); // уход из кадрирования применяет рамку
+    S.mode = m;
+    S.selectedId = null;
+    if (m === 'crop' && !wasCrop) { S.cropDraft = { ...(S.crop || fullRegion()) }; S.cropAspect = null; }
+    canvas.style.cursor = m === 'select' ? 'grab' : m === 'text' ? 'text' : 'crosshair';
+    if (wasCrop !== (m === 'crop')) V.fitted = true; // размер холста меняется — вписываем заново
+    redraw();
+    fit();
+    updateButtons();
+    renderRail();
+    renderLayers();
+    renderOptions(true);
+    updateStatus();
+  }
+
+  // ─── Кадрирование ─────────────────────────────────────────
+  const CROP_MIN = 16;
+  const ASPECTS = [[null, 'Свободно'], [1, '1:1'], [4 / 3, '4:3'], [16 / 9, '16:9']];
+  let cropDrag = null;
+  const clampN = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const toImagePx = (p) => ({ x: p.x - S.fx.padding, y: p.y - S.fx.padding });
+
+  function cropHandles(d) {
+    const pad = S.fx.padding;
+    const l = pad + d.x, t = pad + d.y, r = l + d.w, b = t + d.h, cx = l + d.w / 2, cy = t + d.h / 2;
+    const all = [
+      { id: 'nw', x: l, y: t }, { id: 'n', x: cx, y: t }, { id: 'ne', x: r, y: t }, { id: 'e', x: r, y: cy },
+      { id: 'se', x: r, y: b }, { id: 's', x: cx, y: b }, { id: 'sw', x: l, y: b }, { id: 'w', x: l, y: cy },
+    ];
+    // С фиксированными пропорциями тянуть можно только за углы
+    return S.cropAspect ? all.filter((h) => h.id.length === 2) : all;
+  }
+
+  const CROP_CURSOR = { nw: 'nwse-resize', se: 'nwse-resize', ne: 'nesw-resize', sw: 'nesw-resize', n: 'ns-resize', s: 'ns-resize', e: 'ew-resize', w: 'ew-resize' };
+
+  function cropHitAt(p) {
+    const d = S.cropDraft;
+    const tol = tolerance() * 1.6;
+    const h = cropHandles(d).find((q) => Math.hypot(p.x - q.x, p.y - q.y) <= tol);
+    if (h) return { kind: 'handle', id: h.id };
+    const ip = toImagePx(p);
+    if (ip.x >= d.x && ip.x <= d.x + d.w && ip.y >= d.y && ip.y <= d.y + d.h) return { kind: 'move' };
+    return { kind: 'new' };
+  }
+
+  // Подгоняем пропорции, не выходя за уже заданную ширину и высоту
+  function fitToAspect(w, h, aspect) {
+    if (!aspect) return [w, h];
+    return w / h > aspect ? [h * aspect, h] : [w, w / aspect];
+  }
+
+  function resizeCrop(o, id, ip) {
+    const { w: W, h: H } = fullRegion();
+    const px_ = clampN(ip.x, 0, W), py_ = clampN(ip.y, 0, H);
+    let l = o.x, t = o.y, r = o.x + o.w, b = o.y + o.h;
+    if (id.includes('w')) l = Math.min(px_, r - CROP_MIN);
+    if (id.includes('e')) r = Math.max(px_, l + CROP_MIN);
+    if (id.includes('n')) t = Math.min(py_, b - CROP_MIN);
+    if (id.includes('s')) b = Math.max(py_, t + CROP_MIN);
+    if (S.cropAspect) {
+      const [w, h] = fitToAspect(r - l, b - t, S.cropAspect);
+      if (id.includes('w')) l = r - w; else r = l + w;
+      if (id.includes('n')) t = b - h; else b = t + h;
+    }
+    return { x: l, y: t, w: r - l, h: b - t };
+  }
+
+  function newCrop(start, ip) {
+    const { w: W, h: H } = fullRegion();
+    const ex = clampN(ip.x, 0, W), ey = clampN(ip.y, 0, H);
+    let [w, h] = fitToAspect(Math.max(CROP_MIN, Math.abs(ex - start.x)), Math.max(CROP_MIN, Math.abs(ey - start.y)), S.cropAspect);
+    const x = ex < start.x ? start.x - w : start.x;
+    const y = ey < start.y ? start.y - h : start.y;
+    return { x: clampN(x, 0, W - w), y: clampN(y, 0, H - h), w: Math.min(w, W), h: Math.min(h, H) };
+  }
+
+  function setAspect(aspect) {
+    S.cropAspect = aspect;
+    if (aspect) {
+      const d = S.cropDraft;
+      const [w, h] = fitToAspect(d.w, d.h, aspect);
+      S.cropDraft = { x: d.x + (d.w - w) / 2, y: d.y + (d.h - h) / 2, w, h };
+    }
+    redraw();
+    renderOptions(true);
+  }
+
+  function drawCropOverlay(c) {
+    const d = S.cropDraft;
+    if (!d) return;
+    const pad = S.fx.padding;
+    const { w: iw, h: ih } = fullRegion();
+    const z = V.zoom || 1;
+    const x = pad + d.x, y = pad + d.y;
+    c.save();
+    // Затемняем всё за пределами рамки
+    c.beginPath();
+    c.rect(pad, pad, iw, ih);
+    c.rect(x, y, d.w, d.h);
+    c.fillStyle = 'rgba(8, 6, 12, 0.6)';
+    c.fill('evenodd');
+    // Сетка третей
+    c.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+    c.lineWidth = 1 / z;
+    c.beginPath();
+    for (let i = 1; i < 3; i++) {
+      c.moveTo(x + (d.w * i) / 3, y); c.lineTo(x + (d.w * i) / 3, y + d.h);
+      c.moveTo(x, y + (d.h * i) / 3); c.lineTo(x + d.w, y + (d.h * i) / 3);
+    }
+    c.stroke();
+    c.strokeStyle = '#fff';
+    c.lineWidth = 1.5 / z;
+    c.strokeRect(x, y, d.w, d.h);
+    // Ручки
+    const hs = 5 / z;
+    cropHandles(d).forEach((h) => {
+      c.fillStyle = '#fff';
+      c.strokeStyle = 'rgba(0, 0, 0, 0.35)';
+      c.lineWidth = 1 / z;
+      c.fillRect(h.x - hs, h.y - hs, hs * 2, hs * 2);
+      c.strokeRect(h.x - hs, h.y - hs, hs * 2, hs * 2);
+    });
+    c.restore();
+  }
+
+  const updateCropSize = () => {
+    const e = document.getElementById('cropSize');
+    if (e && S.cropDraft) e.textContent = `${Math.round(S.cropDraft.w)} × ${Math.round(S.cropDraft.h)}`;
+  };
+
+  // Применяет рамку: слои сдвигаются, чтобы остаться на тех же местах изображения
+  function applyCropDraft() {
+    const d = S.cropDraft;
+    S.cropDraft = null;
+    if (!d || !S.image) return;
+    const full = fullRegion();
+    const r = { x: Math.round(d.x), y: Math.round(d.y), w: Math.round(d.w), h: Math.round(d.h) };
+    const next = r.x === 0 && r.y === 0 && r.w === full.w && r.h === full.h ? null : r;
+    const cur = S.crop;
+    const same = (cur === null && next === null) ||
+      (cur && next && cur.x === next.x && cur.y === next.y && cur.w === next.w && cur.h === next.h);
+    if (same) return;
+    endLiveEdit();
+    pushHistory(S.annotations);
+    const dx = (cur ? cur.x : 0) - (next ? next.x : 0);
+    const dy = (cur ? cur.y : 0) - (next ? next.y : 0);
+    if (dx || dy) S.annotations = S.annotations.map((a) => ({ ...a, ...translated(a, dx, dy) }));
+    S.crop = next;
+  }
+
+  function cancelCrop() {
+    if (S.mode !== 'crop') return;
+    S.cropDraft = null; // без рамки нечего применять
+    switchMode('select');
+  }
+
+  function renderCropOptions(root) {
+    root.append(el('span', 'opt-title', 'Кадрирование'));
+    root.append(el('div', 'vsep'));
+    const seg = el('div', 'seg');
+    ASPECTS.forEach(([value, label]) => {
+      const on = S.cropAspect === value;
+      const b = el('button', on ? 'on' : '', label);
+      b.setAttribute('aria-pressed', on);
+      b.addEventListener('click', () => setAspect(value));
+      seg.append(b);
+    });
+    root.append(seg);
+    root.append(el('span', 'crop-size'));
+    root.lastChild.id = 'cropSize';
+    root.append(el('span', 'opt-spacer'));
+    const resetB = el('button', 'btn-pill sm', 'Всё изображение');
+    resetB.addEventListener('click', () => { S.cropAspect = null; S.cropDraft = fullRegion(); redraw(); renderOptions(true); });
+    const cancelB = el('button', 'btn-pill sm', 'Отмена');
+    cancelB.addEventListener('click', cancelCrop);
+    const applyB = el('button', 'btn-pill btn-primary sm', 'Применить');
+    applyB.addEventListener('click', () => switchMode('select'));
+    root.append(resetB, cancelB, applyB);
+    updateCropSize();
+  }
+
+  // ─── Загрузка изображения ─────────────────────────────────
+  function loadFile(file) {
+    if (!file || !file.type.startsWith('image/')) {
+      if (file) toast('Это не изображение — выберите PNG, JPG или WebP');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        cancelText();
+        S.image = img;
+        S.imageId++;
+        S.annotations = [];
+        S.undo = [];
+        S.redo = [];
+        S.liveBase = null;
+        S.selectedId = null;
+        S.current = null;
+        S.crop = null;
+        S.cropDraft = null;
+        if (S.mode === 'crop') S.mode = 'select';
+        // Толщина по умолчанию зависит от размера картинки, чтобы на больших скриншотах линии не терялись
+        const base = Math.max(3, Math.round(Math.max(img.naturalWidth, img.naturalHeight) / 400));
+        S.arrow.thickness = Math.min(40, base);
+        S.box.thickness = Math.min(40, base);
+        S.marker.size = Math.min(80, Math.max(16, Math.round(Math.max(img.naturalWidth, img.naturalHeight) / 60)));
+        const amb = $('ambientImg');
+        amb.style.backgroundImage = `url("${ev.target.result}")`;
+        amb.classList.add('on');
+        $('empty').hidden = true;
+        canvasWrap.hidden = false;
+        $('status').hidden = false;
+        $('layers').hidden = false;
+        canvas.width = 0; // гарантирует пересчёт размера в redraw
+        V.fitted = true;
+        switchMode(S.mode);
+        changed();
+      };
+      img.onerror = () => toast('Не удалось открыть файл — попробуйте другой формат');
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  fileInput.addEventListener('change', () => { loadFile(fileInput.files[0]); fileInput.value = ''; });
+  $('openBtn').addEventListener('click', () => fileInput.click());
+  $('emptyOpenBtn').addEventListener('click', () => fileInput.click());
+
+  window.addEventListener('paste', (e) => {
+    const item = [...(e.clipboardData?.items || [])].find((i) => i.type.startsWith('image/'));
+    if (item) { e.preventDefault(); loadFile(item.getAsFile()); }
+  });
+
+  const hasFiles = (e) => [...(e.dataTransfer?.types || [])].includes('Files');
+  let dragDepth = 0;
+  window.addEventListener('dragenter', (e) => { if (hasFiles(e)) { e.preventDefault(); dragDepth++; app.classList.add('dragging'); } });
+  window.addEventListener('dragover', (e) => { if (hasFiles(e)) e.preventDefault(); });
+  window.addEventListener('dragleave', () => { dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) app.classList.remove('dragging'); });
+  window.addEventListener('drop', (e) => {
+    if (!hasFiles(e)) return;
+    e.preventDefault();
+    dragDepth = 0;
+    app.classList.remove('dragging');
+    loadFile(e.dataTransfer.files[0]);
+  });
+
+  // ─── Скачивание ───────────────────────────────────────────
+  let downloadsApi = null;
+  try {
+    if (window.claude && window.claude.use) {
+      window.claude.use('downloads').then((d) => { downloadsApi = d; }).catch(() => {});
+    }
+  } catch (_) {}
+
+  async function download() {
+    if (!S.image) return;
+    commitText(false);
+    if (S.mode === 'crop') switchMode('select');
+    // Рендерим отдельно, чтобы рамка выделения не попала в файл
+    const { w, h } = exportSize();
+    const out = document.createElement('canvas');
+    out.width = w; out.height = h;
+    paint(out.getContext('2d'), false);
+    const blob = await new Promise((r) => out.toBlob(r, 'image/png'));
+    if (!blob) { toast('Не удалось подготовить файл'); return; }
+    const filename = `screenshot-${Date.now()}.png`;
+
+    if (downloadsApi) {
+      try {
+        await downloadsApi.save({ filename, data: blob });
+        toast('Сохранено');
+      } catch (err) {
+        const code = err && err.code;
+        if (code === 'declined') return;
+        if (code === 'rate_limited') toast('Окно сохранения уже открыто');
+        else if (code === 'too_large') toast('Файл слишком большой — уменьшите отступы');
+        else toast('Не удалось сохранить файл');
+      }
+      return;
+    }
+    const a = document.createElement('a');
+    a.download = filename;
+    a.href = URL.createObjectURL(blob);
+    document.body.append(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+
+  // ─── Сброс ────────────────────────────────────────────────
+  function reset() {
+    cancelText();
+    S.image = null;
+    S.fx = { ...FX_DEFAULTS };
+    S.annotations = [];
+    S.undo = [];
+    S.redo = [];
+    S.liveBase = null;
+    S.selectedId = null;
+    S.current = null;
+    S.crop = null;
+    S.cropDraft = null;
+    S.mode = 'select';
+    rounded = { key: null, canvas: null };
+    V.fitted = true;
+    $('ambientImg').classList.remove('on');
+    $('empty').hidden = false;
+    canvasWrap.hidden = true;
+    $('status').hidden = true;
+    $('layers').hidden = true;
+    renderRail();
+    renderOptions(true);
+    renderLayers();
+    updateButtons();
+  }
+
+  $('undoBtn').addEventListener('click', undo);
+  $('redoBtn').addEventListener('click', redo);
+  $('resetBtn').addEventListener('click', reset);
+  $('downloadBtn').addEventListener('click', download);
+
+  // ─── Перемещение и масштаб холста ─────────────────────────
+  let spaceHeld = false;
+  let pan = null;
+  let pinch = null;
+  const touches = new Map();
+
+  const releaseSpace = () => { spaceHeld = false; stage.classList.remove('pan-ready'); };
+  window.addEventListener('blur', releaseSpace);
+
+  const cancelDrawing = () => {
+    if (drag) { drag = null; endLiveEdit(); }
+    if (!drawing) return;
+    drawing = false;
+    S.current = null;
+    scheduleRedraw();
+  };
+
+  const pinchState = () => {
+    const [a, b] = [...touches.values()];
+    return { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 };
+  };
+
+  // Попадёт ли клик в режиме «Выбор» по слою или ручке (тогда это не перемещение холста)
+  function hitsLayerAt(e) {
+    if (e.target !== canvas) return false;
+    const p = getPoint(e);
+    const tol = tolerance();
+    const sel = selected();
+    return !!((sel && (hitHandle(sel, p, tol) || hitLayer(sel, p, tol))) || hitTest(p, tol));
+  }
+
+  // Фаза захвата: перехватываем жест раньше рисования на холсте
+  stage.addEventListener('pointerdown', (e) => {
+    if (!S.image || e.target.closest('button, .status, .text-draft')) return;
+
+    if (e.pointerType === 'touch') {
+      touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (touches.size === 2) {
+        cancelDrawing();
+        const p = pinchState();
+        pinch = { ...p, zoom: V.zoom, x: V.x, y: V.y };
+        e.stopPropagation();
+        return;
+      }
+    }
+
+    const wantPan = spaceHeld || e.button === 1 || (S.mode === 'select' && e.button === 0 && !hitsLayerAt(e));
+    if (!wantPan) return;
+    e.preventDefault();
+    e.stopPropagation();
+    commitText(false);
+    if (!spaceHeld && e.button === 0 && S.selectedId != null) deselect(); // клик мимо слоёв снимает выделение
+    pan = { id: e.pointerId, sx: e.clientX, sy: e.clientY, x: V.x, y: V.y };
+    stage.setPointerCapture(e.pointerId);
+    stage.classList.add('panning');
+  }, true);
+
+  stage.addEventListener('pointermove', (e) => {
+    if (touches.has(e.pointerId)) touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (pinch && touches.size >= 2) {
+      const p = pinchState();
+      const r = stage.getBoundingClientRect();
+      const nz = clampZoom(pinch.zoom * (p.d / pinch.d));
+      const k = nz / pinch.zoom;
+      V.x = (p.cx - r.left) - (pinch.cx - r.left - pinch.x) * k;
+      V.y = (p.cy - r.top) - (pinch.cy - r.top - pinch.y) * k;
+      V.zoom = nz;
+      V.fitted = false;
+      applyView();
+      e.stopPropagation();
+      return;
+    }
+
+    if (pan && e.pointerId === pan.id) {
+      V.x = pan.x + (e.clientX - pan.sx);
+      V.y = pan.y + (e.clientY - pan.sy);
+      V.fitted = false;
+      applyView();
+      e.stopPropagation();
+    }
+  }, true);
+
+  const endStagePointer = (e) => {
+    touches.delete(e.pointerId);
+    if (touches.size < 2) pinch = null;
+    if (pan && e.pointerId === pan.id) { pan = null; stage.classList.remove('panning'); }
+  };
+  stage.addEventListener('pointerup', endStagePointer, true);
+  stage.addEventListener('pointercancel', endStagePointer, true);
+
+  stage.addEventListener('wheel', (e) => {
+    if (!S.image) return;
+    e.preventDefault();
+    const unit = e.deltaMode === 1 ? 16 : 1;
+    if (e.ctrlKey || e.metaKey) {
+      const r = stage.getBoundingClientRect();
+      const dy = Math.max(-60, Math.min(60, e.deltaY * unit));
+      zoomTo(V.zoom * Math.exp(-dy * 0.006), e.clientX - r.left, e.clientY - r.top);
+    } else {
+      V.x -= e.deltaX * unit;
+      V.y -= e.deltaY * unit;
+      V.fitted = false;
+      applyView();
+    }
+  }, { passive: false });
+
+  $('zoomIn').addEventListener('click', () => zoomStep(1));
+  $('zoomOut').addEventListener('click', () => zoomStep(-1));
+  $('zoom').addEventListener('click', fitView);
+
+  // ─── Горячие клавиши ──────────────────────────────────────
+  // e.code не зависит от раскладки: в русской e.key для Z будет «я»
+  const NUDGE = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+
+  window.addEventListener('keydown', (e) => {
+    const t = e.target;
+    const typing = t.tagName === 'TEXTAREA' || t.isContentEditable || (t.tagName === 'INPUT' && t.type === 'text');
+    if (typing) return;
+    const onRange = t.tagName === 'INPUT' && t.type === 'range';
+    const mod = e.metaKey || e.ctrlKey;
+
+    if (e.code === 'Space') {
+      if (!S.image) return;
+      e.preventDefault(); // не прокручивать страницу и не нажимать кнопку в фокусе
+      if (!spaceHeld) { spaceHeld = true; stage.classList.add('pan-ready'); }
+      return;
+    }
+
+    if (mod && e.code === 'KeyZ') { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
+    if (mod && e.code === 'KeyY') { e.preventDefault(); redo(); return; }
+    if (mod && e.code === 'KeyS') { e.preventDefault(); download(); return; }
+    if (mod && e.code === 'KeyO') { e.preventDefault(); fileInput.click(); return; }
+    if (mod && e.code === 'KeyD' && S.selectedId != null) { e.preventDefault(); duplicateSelected(); return; }
+    if (mod && S.image && (e.code === 'Equal' || e.code === 'NumpadAdd')) { e.preventDefault(); zoomStep(1); return; }
+    if (mod && S.image && (e.code === 'Minus' || e.code === 'NumpadSubtract')) { e.preventDefault(); zoomStep(-1); return; }
+    if (mod && S.image && (e.code === 'Digit0' || e.code === 'Numpad0')) { e.preventDefault(); fitView(); return; }
+    if (mod && S.image && (e.code === 'Digit1' || e.code === 'Numpad1')) { e.preventDefault(); zoomTo(1); return; }
+    if (mod || e.altKey) return;
+
+    if (S.mode === 'crop') {
+      if (e.key === 'Enter') { e.preventDefault(); switchMode('select'); return; }
+      if (e.key === 'Escape') { e.preventDefault(); cancelCrop(); return; }
+    }
+
+    const sel = selected();
+    if (sel && (e.key === 'Backspace' || e.key === 'Delete')) { e.preventDefault(); deleteSelected(); return; }
+    if (sel && e.key === 'Escape') { e.preventDefault(); deselect(); return; }
+    if (sel && e.key === 'Enter' && sel.type === 'text') { e.preventDefault(); openDraft(null, sel); return; }
+    if (sel && NUDGE[e.key] && !onRange) {
+      e.preventDefault();
+      const [dx, dy] = NUDGE[e.key];
+      const step = e.shiftKey ? 10 : 1;
+      liveEdit(sel.id, translated(sel, dx * step, dy * step));
+      return;
+    }
+
+    const tool = TOOLS.find((x) => x.code === e.code);
+    if (tool && S.image && !onRange) { e.preventDefault(); switchMode(tool.id); }
+  });
+
+  window.addEventListener('keyup', (e) => {
+    if (e.code === 'Space' && spaceHeld) { e.preventDefault(); releaseSpace(); }
+    if (NUDGE[e.key]) endLiveEdit(); // серия сдвигов стрелками — один шаг истории
+  });
+
+  // ─── Уведомления ──────────────────────────────────────────
+  let toastTimer = 0;
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // ─── Старт ────────────────────────────────────────────────
+  canvas.style.cursor = 'grab';
+  renderRail();
+  renderOptions(true);
+  renderLayers();
+  updateButtons();
+})();
+</script>
 </body>
 </html>
+
+</body></html>
