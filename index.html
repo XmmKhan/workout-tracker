@@ -1,2293 +1,1119 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Скриншот с эффектами</title>
+<title>Трекер тренировок</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #E7E3EC;
-  --amb-a: #ff2d95;
-  --amb-b: #ff6a1a;
-  --amb-c: #3a7bff;
-  --amb-opacity: .55;
-  --img-opacity: .7;
-
-  --glass: rgba(26, 24, 30, .62);
-  --glass-strong: rgba(20, 18, 24, .78);
-  --stroke: rgba(255, 255, 255, .10);
-  --hi: rgba(255, 255, 255, .08);
-  --text: rgba(255, 255, 255, .94);
-  --muted: rgba(255, 255, 255, .55);
-  --faint: rgba(255, 255, 255, .28);
-  --fill: rgba(255, 255, 255, .07);
-  --fill-hover: rgba(255, 255, 255, .12);
-  --active: rgba(255, 255, 255, .18);
-  --primary-bg: rgba(255, 255, 255, .92);
-  --primary-text: #1a1720;
-  --checker: rgba(120, 110, 130, .16);
-  --stage-text: rgba(30, 26, 36, .6);
-  --drop: rgba(30, 26, 36, .35);
-
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --r-bar: 22px;
-  --r-pill: 999px;
-
+  --bg: #f2f2f7; --surface: #ffffff; --surface-2: #e9e9ee; --sheet: #ffffff; --inset: #f2f2f7;
+  --line: rgba(0,0,0,.08); --text: #1d1d1f; --muted: #6e6e73; --faint: #b0b0b5; --chart: #1d1d1f;
+  --pos: #1e8e3e; --pos-bg: rgba(52,199,89,.15); --neg: #c4320a; --neg-bg: rgba(255,69,58,.12);
+  --danger: #d70015; --cta-bg: #1d1d1f; --cta-fg: #ffffff; --done-bg: rgba(52,199,89,.12); --check-on: #34c759;
+  --backdrop: rgba(0,0,0,.35); --shadow: 0 12px 32px rgba(0,0,0,.14);
+  color-scheme: light;
   box-sizing: border-box;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #15121A;
-    --amb-opacity: .38;
-    --img-opacity: .42;
-    --checker: rgba(255, 255, 255, .05);
-    --stage-text: rgba(255, 255, 255, .55);
-    --drop: rgba(255, 255, 255, .35);
+    --bg: #000000; --surface: #1c1c1e; --surface-2: #2c2c2e; --sheet: #232325; --inset: #1c1c1e;
+    --line: rgba(255,255,255,.08); --text: #f5f5f7; --muted: #8e8e93; --faint: #545458; --chart: #f5f5f7;
+    --pos: #32d74b; --pos-bg: rgba(50,215,75,.16); --neg: #ff6961; --neg-bg: rgba(255,69,58,.16);
+    --danger: #ff453a; --cta-bg: #d1d1d6; --cta-fg: #000000; --done-bg: rgba(50,215,75,.10); --check-on: #30d158;
+    --backdrop: rgba(0,0,0,.6); --shadow: 0 12px 40px rgba(0,0,0,.6);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #15121A;
-  --amb-opacity: .38;
-  --img-opacity: .42;
-  --checker: rgba(255, 255, 255, .05);
-  --stage-text: rgba(255, 255, 255, .55);
-  --drop: rgba(255, 255, 255, .35);
+  --bg: #000000; --surface: #1c1c1e; --surface-2: #2c2c2e; --sheet: #232325; --inset: #1c1c1e;
+  --line: rgba(255,255,255,.08); --text: #f5f5f7; --muted: #8e8e93; --faint: #545458; --chart: #f5f5f7;
+  --pos: #32d74b; --pos-bg: rgba(50,215,75,.16); --neg: #ff6961; --neg-bg: rgba(255,69,58,.16);
+  --danger: #ff453a; --cta-bg: #d1d1d6; --cta-fg: #000000; --done-bg: rgba(50,215,75,.10); --check-on: #30d158;
+  --backdrop: rgba(0,0,0,.6); --shadow: 0 12px 40px rgba(0,0,0,.6);
   color-scheme: dark;
 }
-html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
 *, *::before, *::after { box-sizing: border-box; }
 body {
-  height: 100%;
-  margin: 0;
-  background: var(--bg);
-  font-family: var(--font);
-  font-size: 13px;
-  line-height: 1.35;
-  color: var(--text);
-  -webkit-font-smoothing: antialiased;
-  overflow: hidden;
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px; line-height: 1.45; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%;
 }
-button, input { font: inherit; color: inherit; }
-button { cursor: pointer; border: 0; background: none; padding: 0; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 button:disabled { cursor: default; }
-:focus-visible { outline: 2px solid rgba(255, 255, 255, .7); outline-offset: 2px; }
-svg.i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+h1, h2, h3, p { margin: 0; }
 
-/* ── Фон: размытая копия скриншота, как стекло поверх яркого контента ── */
-.ambient { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-.ambient-base {
-  position: absolute; inset: -20%;
-  background:
-    radial-gradient(38% 42% at 28% 72%, var(--amb-a), transparent 70%),
-    radial-gradient(30% 34% at 52% 58%, var(--amb-b), transparent 70%),
-    radial-gradient(34% 40% at 82% 22%, var(--amb-c), transparent 70%);
-  filter: blur(70px);
-  opacity: var(--amb-opacity);
-}
-.ambient-img {
-  position: absolute; inset: -12%;
-  background-size: cover; background-position: center;
-  filter: blur(90px) saturate(1.6);
-  opacity: 0;
-  transition: opacity .7s ease;
-}
-.ambient-img.on { opacity: var(--img-opacity); }
+.app { max-width: 460px; margin: 0 auto; padding: 10px 16px 140px; display: flex; flex-direction: column; gap: 14px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; min-height: 48px; }
+.topbar h1 { font-size: 30px; font-weight: 700; letter-spacing: -.025em; }
+.icon-btn { width: 40px; height: 40px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--surface); }
+.icon-btn.ghost { background: transparent; }
+.back { display: inline-flex; align-items: center; gap: 2px; font-weight: 500; height: 44px; padding-right: 10px; margin-left: -6px; }
+.muted { color: var(--muted); font-size: 15px; }
+.label { font-size: 14px; font-weight: 600; color: var(--muted); }
+.sec-title { font-size: 21px; font-weight: 700; letter-spacing: -.015em; margin: 10px 4px -4px; }
 
-.glass {
-  background: var(--glass);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  backdrop-filter: blur(30px) saturate(180%);
-  border: 1px solid var(--stroke);
-  box-shadow: inset 0 1px 0 var(--hi), 0 14px 40px rgba(10, 6, 20, .28);
-}
+/* Week */
+.week { background: var(--surface); border-radius: 24px; padding: 8px 8px 10px; }
+.week-nav { display: flex; align-items: center; justify-content: space-between; }
+.week-range { font-weight: 600; font-size: 15px; padding: 8px 12px; border-radius: 999px; }
+.week-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-top: 2px; }
+.day { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 0 6px; border-radius: 16px; }
+.day .wd { font-size: 12px; color: var(--muted); font-weight: 500; }
+.day .dn { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-weight: 600; font-variant-numeric: tabular-nums; transition: background .15s, color .15s; }
+.day.today .dn { box-shadow: inset 0 0 0 1.5px var(--text); }
+.day.sel .dn { background: var(--text); color: var(--bg); }
+.day .dot { width: 5px; height: 5px; border-radius: 50%; }
+.day.has .dot { background: var(--text); }
 
-/* ── Каркас ── */
-.app {
-  position: relative; z-index: 1;
-  height: 100%;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-rows: auto minmax(0, 1fr);
-  gap: 12px;
-  padding: 12px;
-}
+/* Hero */
+.hero { background: var(--surface); border-radius: 28px; padding: 20px; }
+.hero-day { color: var(--muted); font-size: 15px; font-weight: 500; }
+.hero-title { display: block; margin: 6px 0 2px; font-size: 46px; line-height: 1.02; font-weight: 700; letter-spacing: -.04em; text-align: left; overflow-wrap: anywhere; }
+.hero-title.is-empty { color: var(--faint); }
+.hero-sub { color: var(--muted); font-size: 15px; margin-top: 4px; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 999px; background: var(--surface-2); color: var(--muted); font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pill.live { color: var(--text); }
+.cta { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 56px; margin-top: 18px; border-radius: 999px; background: var(--cta-bg); color: var(--cta-fg); font-weight: 600; font-size: 17px; transition: transform .15s ease, opacity .15s; }
+.cta:active { transform: scale(.98); }
+.cta:disabled { opacity: .35; }
+.cta .play { width: 24px; height: 24px; border-radius: 7px; background: var(--cta-fg); color: var(--cta-bg); display: grid; place-items: center; }
+.cta.sm { width: auto; margin: 0; height: 52px; padding: 0 20px; font-size: 16px; flex: none; }
+.btn-secondary { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 54px; border-radius: 999px; background: var(--surface); font-weight: 600; transition: transform .15s ease; }
+.btn-secondary:active { transform: scale(.98); }
+.link-btn { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 15px; padding: 10px 4px; }
+.link-btn.quiet { color: var(--muted); font-weight: 500; }
+.hero .list { margin-top: 14px; background: var(--surface-2); }
+.hero-more { margin-top: 6px; }
 
-/* ── Верхняя панель: параметры инструмента ── */
-.topbar {
-  grid-column: 1 / -1;
-  display: flex; align-items: center; gap: 10px;
-  min-height: 56px;
-  padding: 8px 8px 8px 8px;
-  border-radius: var(--r-bar);
-}
-.options {
-  flex: 1; min-width: 0;
-  display: flex; align-items: center; gap: 16px;
-  overflow-x: auto; scrollbar-width: none;
-  height: 40px; /* фиксированная высота: содержимое панели меняется, а холст не должен прыгать */
-  padding: 0 6px;
-  white-space: nowrap;
-}
-.options::-webkit-scrollbar { display: none; }
-.opt-title { font-weight: 600; font-size: 13.5px; letter-spacing: -.01em; }
-.opt-empty { color: var(--muted); }
-.vsep { width: 1px; height: 22px; background: var(--stroke); flex: none; }
+/* Tiles */
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.tile { background: var(--surface); border-radius: 22px; padding: 14px 6px 12px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.tile > svg { color: var(--muted); }
+.tile-n { font-size: 27px; font-weight: 700; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.tile-n small { font-size: 15px; font-weight: 600; color: var(--muted); margin-left: 3px; letter-spacing: 0; }
+.tile-l { font-size: 12.5px; color: var(--muted); line-height: 1.2; }
 
-.ctl-slider { display: flex; align-items: center; gap: 10px; }
-.ctl-label { color: var(--muted); }
-.ctl-value { min-width: 38px; font-variant-numeric: tabular-nums; color: var(--text); }
-input[type="range"] {
-  -webkit-appearance: none; appearance: none;
-  width: 108px; height: 18px; background: transparent; margin: 0; cursor: pointer;
-  --p: 50%;
-}
-input[type="range"]::-webkit-slider-runnable-track {
-  height: 4px; border-radius: 4px;
-  background: linear-gradient(to right, rgba(255,255,255,.85) var(--p), rgba(255,255,255,.16) var(--p));
-}
-input[type="range"]::-moz-range-track { height: 4px; border-radius: 4px; background: rgba(255,255,255,.16); }
-input[type="range"]::-moz-range-progress { height: 4px; border-radius: 4px; background: rgba(255,255,255,.85); }
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
-  background: #fff; margin-top: -6px; box-shadow: 0 1px 4px rgba(0,0,0,.4);
-}
-input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+/* Summary sheet-card */
+.summary { background: var(--sheet); border: 1px solid var(--line); border-radius: 30px; padding: 22px 18px 18px; }
+.big { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.big-n { font-size: 68px; font-weight: 800; letter-spacing: -.05em; line-height: .95; font-variant-numeric: tabular-nums; }
+.big-u { font-size: 30px; font-weight: 700; letter-spacing: -.02em; }
+.delta { align-self: center; margin-left: 8px; height: 28px; padding: 0 10px; border-radius: 999px; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; background: var(--pos-bg); color: var(--pos); font-variant-numeric: tabular-nums; }
+.delta.neg { background: var(--neg-bg); color: var(--neg); }
+.delta.flat { background: var(--surface-2); color: var(--muted); }
+.big-label { margin-top: 8px; font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
+.summary .muted { margin-top: 10px; }
+.chart-card { margin-top: 18px; background: var(--inset); border-radius: 22px; padding: 14px 6px 4px; }
+.chart-head { display: flex; align-items: center; gap: 8px; padding: 0 10px; font-weight: 600; font-size: 15px; }
+.chart-head > svg { color: var(--muted); }
+.chart-head span { margin-left: auto; color: var(--muted); font-weight: 400; font-size: 13px; }
+.chart { display: block; width: 100%; height: auto; margin-top: 4px; overflow: visible; }
+.chart-line { fill: none; stroke: var(--chart); stroke-width: 2.25; stroke-linecap: round; }
+.chart-dot { fill: var(--chart); stroke: var(--inset); stroke-width: 1.5; }
+.chart-guide { stroke: var(--faint); stroke-dasharray: 2 4; stroke-width: 1; opacity: .7; }
+.chart-val { fill: var(--text); font-size: 11.5px; font-weight: 700; font-family: inherit; }
+.chart-lbl { fill: var(--muted); font-size: 10.5px; font-family: inherit; }
+.chart-empty { padding: 30px 16px; text-align: center; color: var(--muted); font-size: 14px; }
+.seg { display: flex; gap: 2px; background: var(--inset); border-radius: 999px; padding: 3px; margin-top: 18px; }
+.seg button { flex: 1; height: 34px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--muted); transition: background .15s, color .15s; }
+.seg button[aria-selected="true"] { background: var(--surface-2); color: var(--text); }
+.seg + .chart-card { margin-top: 10px; }
 
-.seg { display: flex; gap: 2px; padding: 3px; border-radius: var(--r-pill); background: var(--fill); }
-.seg button { padding: 5px 12px; border-radius: var(--r-pill); color: var(--muted); transition: background .15s, color .15s; }
-.seg button:hover { color: var(--text); }
-.seg button.on { background: var(--active); color: var(--text); }
+/* Lists */
+.list { background: var(--surface); border-radius: 22px; overflow: hidden; }
+.row { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 13px 16px; min-height: 60px; }
+.row + .row { border-top: 1px solid var(--line); }
+.row-main { flex: 1; min-width: 0; }
+.row-title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-sub { font-size: 14px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-end { color: var(--muted); font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 4px; font-size: 15px; flex: none; }
+.row.danger .row-title { color: var(--danger); }
 
-.colors { display: flex; align-items: center; gap: 8px; }
-.swatch {
-  position: relative; width: 22px; height: 22px; border-radius: 50%;
-  background: var(--c); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
-  transition: transform .12s;
-}
-.swatch:hover { transform: scale(1.1); }
-.swatch.on { box-shadow: 0 0 0 2px rgba(20,18,24,.9), 0 0 0 3.5px #fff; }
-.swatch.custom { background: conic-gradient(from 0deg, #ff3b3b, #ffd23b, #3bff6e, #3bd5ff, #7a3bff, #ff3bd2, #ff3b3b); cursor: pointer; }
-.swatch.custom.on { background: var(--c); }
-.swatch.custom input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; border: 0; padding: 0; }
-.note { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
-.note svg.i { width: 15px; height: 15px; }
-.btn-icon.opt-del { width: 32px; height: 32px; color: var(--muted); }
-.stepper { display: flex; align-items: center; gap: 2px; padding: 3px; border-radius: var(--r-pill); background: var(--fill); }
-.stepper button { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 16px; line-height: 1; }
-.stepper button:hover:not(:disabled) { background: var(--fill-hover); }
-.stepper button:disabled { color: var(--faint); }
-.stepper .val { min-width: 26px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
-.next-num { color: var(--muted); }
-.next-num b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
-.btn-icon.opt-del:hover { color: var(--text); }
+/* Workout */
+.w-head { padding: 0 4px; }
+.w-title { margin-top: 4px; font-size: 40px; font-weight: 700; letter-spacing: -.04em; line-height: 1.05; overflow-wrap: anywhere; text-align: left; }
+.ex-card { background: var(--surface); border-radius: 24px; padding: 12px 10px 4px; }
+.ex-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 4px 8px 6px; }
+.ex-name { display: inline-flex; align-items: center; gap: 8px; min-width: 0; font-size: 18px; font-weight: 700; letter-spacing: -.01em; text-align: left; }
+.ex-name svg { color: var(--muted); flex: none; }
+.sets { display: flex; flex-direction: column; gap: 4px; }
+.set { display: grid; grid-template-columns: 22px minmax(0,1fr) 72px 62px 42px; gap: 8px; align-items: center; padding: 4px; border-radius: 14px; font-variant-numeric: tabular-nums; transition: background .2s; }
+.set.head { font-size: 12px; color: var(--muted); font-weight: 500; padding-top: 0; padding-bottom: 0; }
+.set.head span:nth-child(n+3) { text-align: center; }
+.set-n { color: var(--muted); font-weight: 600; text-align: center; font-size: 15px; }
+.set-prev { color: var(--muted); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.set-in { width: 100%; height: 42px; border: 0; border-radius: 12px; background: var(--surface-2); color: var(--text); font: inherit; font-size: 17px; font-weight: 600; text-align: center; font-variant-numeric: tabular-nums; outline: none; -webkit-appearance: none; appearance: none; }
+.set-in::placeholder { color: var(--faint); font-weight: 500; }
+.set-in:focus { box-shadow: 0 0 0 2px var(--text); }
+.set-check { width: 42px; height: 42px; border-radius: 12px; background: var(--surface-2); color: var(--faint); display: grid; place-items: center; transition: background .15s, color .15s, transform .15s; }
+.set-check:active { transform: scale(.9); }
+.set-check[aria-pressed="true"] { background: var(--check-on); color: #fff; }
+.set.is-done { background: var(--done-bg); }
+.set.is-done .set-in { background: transparent; }
+.ex-foot { display: flex; justify-content: space-between; padding: 0 4px; }
+.empty-card { background: var(--surface); border-radius: 24px; padding: 22px 20px; }
+.empty-title { font-size: 19px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 6px; }
+.done-note { text-align: center; color: var(--muted); font-size: 15px; padding: 6px 0; }
 
-.btn-pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  height: 38px; padding: 0 16px; border-radius: var(--r-pill);
-  background: var(--fill); transition: background .15s;
-  white-space: nowrap;
-}
-.btn-pill:hover { background: var(--fill-hover); }
-.btn-pill.sm { height: 32px; padding: 0 14px; }
-.crop-size { color: var(--muted); font-variant-numeric: tabular-nums; min-width: 92px; }
-.opt-spacer { flex: 1; min-width: 8px; }
-.btn-primary { background: var(--primary-bg); color: var(--primary-text); font-weight: 600; }
-.btn-primary:hover { background: #fff; }
-.btn-primary:disabled { background: var(--fill); color: var(--faint); }
-.kbd { font-size: 12px; opacity: .55; font-weight: 500; }
-.btn-icon {
-  width: 38px; height: 38px; border-radius: 50%;
-  display: grid; place-items: center;
-  color: var(--text); transition: background .15s, color .15s;
-}
-.btn-icon:hover:not(:disabled) { background: var(--fill-hover); }
-.btn-icon:disabled { color: var(--faint); }
-.actions { display: flex; align-items: center; gap: 4px; flex: none; }
+/* History */
+.hist { display: flex; flex-direction: column; gap: 10px; }
+.hist-item { background: var(--surface); border-radius: 20px; padding: 14px 16px; }
+.hist-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.hist-date { font-weight: 600; }
+.hist-w { font-size: 14px; color: var(--muted); text-align: left; }
+.badge { font-size: 12px; font-weight: 700; color: var(--pos); background: var(--pos-bg); padding: 3px 9px; border-radius: 999px; flex: none; }
+.set-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.set-chip { font-size: 14px; font-weight: 600; background: var(--surface-2); padding: 5px 10px; border-radius: 10px; font-variant-numeric: tabular-nums; }
 
-/* ── Панель инструментов слева ── */
-.rail {
-  grid-column: 1; grid-row: 2;
-  align-self: start;
-  display: flex; flex-direction: column; gap: 4px;
-  padding: 6px;
-  border-radius: 26px;
-}
-.tool {
-  position: relative;
-  width: 44px; height: 44px; border-radius: 50%;
-  display: grid; place-items: center;
-  color: var(--muted);
-  transition: background .15s, color .15s;
-}
-.tool svg.i { width: 20px; height: 20px; }
-.tool:hover:not(:disabled) { color: var(--text); background: var(--fill); }
-.tool.on { color: var(--text); background: var(--active); box-shadow: inset 0 1px 0 rgba(255,255,255,.12); }
-.tool:disabled { color: var(--faint); }
-.tool .tip {
-  position: absolute; left: calc(100% + 12px); top: 50%; transform: translate(-4px, -50%);
-  display: flex; gap: 10px; align-items: center;
-  padding: 7px 12px; border-radius: var(--r-pill);
-  background: var(--glass-strong); border: 1px solid var(--stroke);
-  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
-  color: var(--text); white-space: nowrap; pointer-events: none;
-  opacity: 0; transition: opacity .12s, transform .12s; z-index: 5;
-}
-.tool:hover .tip, .tool:focus-visible .tip { opacity: 1; transform: translate(0, -50%); }
-.rail-sep { height: 1px; margin: 4px 8px; background: var(--stroke); }
+/* Onboarding */
+.onboard { background: var(--sheet); border: 1px solid var(--line); border-radius: 30px; padding: 22px 20px; }
+.onboard h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 6px; }
+.onboard .btn-secondary { margin-top: 16px; background: var(--surface-2); }
+.foot { text-align: center; color: var(--muted); font-size: 13px; margin-top: 6px; }
 
-/* ── Холст по центру ── */
-.stage {
-  grid-column: 2; grid-row: 2;
-  position: relative;
-  display: grid; place-items: center;
-  min-height: 0; min-width: 0;
-  border-radius: 28px;
-  transition: box-shadow .15s;
-}
-.app.dragging .stage { box-shadow: inset 0 0 0 2px var(--drop); }
-.stage { overflow: hidden; touch-action: none; z-index: 1; }
-/* Панели всегда над холстом, иначе подсказки инструментов уходят под скриншот */
-.topbar, .rail, .layers { position: relative; z-index: 5; }
-.canvas-wrap { position: absolute; left: 0; top: 0; line-height: 0; will-change: transform; }
-.stage.pan-ready canvas, .stage.pan-ready { cursor: grab !important; }
-.stage.panning canvas, .stage.panning { cursor: grabbing !important; }
-.zoom-ctl { display: flex; align-items: center; gap: 2px; margin: -4px -8px -4px 0; }
-.zbtn { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: var(--text); font-size: 16px; line-height: 1; }
-.zbtn:hover { background: var(--fill-hover); }
-.zval { min-width: 48px; height: 26px; padding: 0 6px; border-radius: var(--r-pill); color: var(--muted); }
-.zval:hover { background: var(--fill-hover); color: var(--text); }
-canvas#canvas {
-  display: block;
-  touch-action: none;
-  background: repeating-conic-gradient(var(--checker) 0 25%, transparent 0 50%) 0 0 / 16px 16px;
-  border-radius: 6px;
-}
-.text-draft {
-  position: absolute; margin: 0; padding: 0; border: 0;
-  background: transparent;
-  outline: 1px dashed currentColor; outline-offset: 3px;
-  resize: none; overflow: hidden; white-space: pre;
-  display: block;
-}
-.text-draft::placeholder { color: currentColor; opacity: .45; }
+/* Dock: rest timer + toast */
+.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 12px calc(14px + env(safe-area-inset-bottom, 0px)); pointer-events: none; }
+.dock > * { pointer-events: auto; width: min(436px, 100%); }
+.rest { position: relative; overflow: hidden; display: flex; align-items: center; gap: 2px; height: 60px; padding: 0 6px 0 20px; border-radius: 999px; background: var(--cta-bg); color: var(--cta-fg); box-shadow: var(--shadow); animation: up .3s cubic-bezier(.2,.8,.2,1); }
+.rest > * { position: relative; }
+.rest-bar { position: absolute; inset: 0 auto 0 0; background: currentColor; opacity: .1; transition: width .25s linear; }
+.rest-label { font-weight: 500; font-size: 15px; opacity: .65; white-space: nowrap; }
+.rest-time { font-weight: 700; font-size: 23px; font-variant-numeric: tabular-nums; margin: 0 auto 0 8px; }
+.rest button { height: 46px; min-width: 46px; padding: 0 8px; border-radius: 999px; font-weight: 600; font-size: 15px; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.rest button:active { background: rgba(127,127,127,.25); }
+.toast { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 6px 6px 18px; border-radius: 18px; background: var(--sheet); color: var(--text); border: 1px solid var(--line); box-shadow: var(--shadow); font-size: 15px; animation: up .25s cubic-bezier(.2,.8,.2,1); }
+.toast span { flex: 1; }
+.toast button { font-weight: 700; padding: 10px 14px; border-radius: 12px; }
 
-.empty {
-  width: min(400px, 100%);
-  padding: 32px 28px 28px;
-  border-radius: 28px;
-  text-align: center;
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
+/* Sheets */
+.backdrop { position: fixed; inset: 0; z-index: 50; background: var(--backdrop); display: flex; align-items: flex-end; justify-content: center; animation: fade .2s ease; }
+.sheet { width: 100%; max-width: 520px; max-height: 88%; overflow-y: auto; overscroll-behavior: contain; background: var(--sheet); border-radius: 28px 28px 0 0; padding: 8px 18px calc(24px + env(safe-area-inset-bottom, 0px)); animation: up .3s cubic-bezier(.2,.8,.2,1); }
+.grabber { width: 38px; height: 5px; border-radius: 3px; background: var(--faint); margin: 2px auto 12px; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.sheet-head h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+.sheet-head .icon-btn { background: var(--surface-2); width: 34px; height: 34px; }
+.sheet-sub { margin: -8px 0 16px; color: var(--muted); font-size: 15px; }
+.sheet .label { margin: 22px 2px 8px; }
+.sheet .list { background: var(--surface-2); }
+.field-row { display: flex; gap: 8px; }
+.field { flex: 1; min-width: 0; height: 52px; border: 0; border-radius: 16px; background: var(--surface-2); padding: 0 16px; font: inherit; font-size: 17px; color: var(--text); outline: none; }
+.field::placeholder { color: var(--muted); }
+.field:focus { box-shadow: 0 0 0 2px var(--text); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { height: 40px; padding: 0 14px; border-radius: 999px; background: var(--surface-2); font-weight: 500; font-size: 15px; }
+
+/* Gamification */
+.tile.btn { cursor: pointer; transition: transform .15s ease; }
+.tile.btn:active { transform: scale(.97); }
+.ring-wrap { position: relative; width: 58px; height: 58px; display: grid; place-items: center; flex: none; }
+.ring-wrap svg { position: absolute; inset: 0; }
+.ring-track { stroke: var(--surface-2); }
+.ring-fill { stroke: var(--text); transition: stroke-dashoffset .7s cubic-bezier(.2,.8,.2,1), stroke .3s; }
+.ring-fill.full { stroke: var(--check-on); }
+.ring-n { position: relative; font-size: 21px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.ring-n small { font-size: 13px; color: var(--muted); font-weight: 600; letter-spacing: 0; }
+.ach-strip { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--surface); border-radius: 22px; padding: 14px 14px 14px 16px; }
+.ach-strip .row-title .muted { font-weight: 500; margin-left: 4px; }
+.ach-mini { display: flex; flex: none; }
+.ach-mini .badge-ic + .badge-ic { margin-left: -9px; }
+.ach-strip > svg { color: var(--muted); flex: none; }
+.badge-ic { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); color: var(--faint); flex: none; }
+.badge-ic.on { background: var(--text); color: var(--bg); }
+.badge-ic.sm { width: 32px; height: 32px; box-shadow: 0 0 0 2.5px var(--surface); }
+.badge-ic.pr { background: var(--pos-bg); color: var(--pos); }
+.sheet .badge-ic { background: var(--sheet); }
+.sheet .badge-ic.on { background: var(--text); }
+.sheet .badge-ic.pr { background: var(--pos-bg); }
+.ach-row { align-items: flex-start; }
+.row-sub.wrap { white-space: normal; }
+.bar { height: 4px; border-radius: 2px; background: rgba(127,127,127,.25); margin: 8px 0 4px; overflow: hidden; }
+.bar > div { height: 100%; background: var(--text); border-radius: 2px; }
+.goal-box { display: flex; align-items: center; gap: 14px; background: var(--surface-2); border-radius: 20px; padding: 14px 16px; }
+.goal-box .ring-track { stroke: var(--sheet); }
+.goal-chips { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.goal-chips button { height: 54px; border-radius: 16px; background: var(--surface-2); font-size: 19px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.goal-chips button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+.row-end.strong { color: var(--text); font-weight: 700; }
+.set-n { display: grid; place-items: center; }
+.set-n svg { color: var(--pos); }
+.set.pop { animation: flash 1.3s ease; }
+.set.pop .set-check { animation: pop .5s cubic-bezier(.2,1.7,.4,1); }
+.toast > svg { flex: none; color: var(--pos); }
+.sheet .big-n { font-size: 60px; }
+.sheet .cta { margin-top: 22px; }
+@keyframes pop { from { transform: scale(.55); } to { transform: scale(1); } }
+@keyframes flash { 0%, 45% { background: var(--pos-bg); } 100% { background: var(--done-bg); } }
+@keyframes up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+.sheet { animation-name: sheetUp; }
+@keyframes sheetUp { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+@media (max-width: 360px) {
+  .set { grid-template-columns: 18px minmax(0,1fr) 62px 54px 40px; gap: 6px; }
+  .big-n { font-size: 56px; }
+  .hero-title { font-size: 40px; }
 }
-.empty-icon { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; background: var(--fill); margin-bottom: 6px; }
-.empty-icon svg.i { width: 26px; height: 26px; }
-.empty h1 { margin: 0; font-size: 21px; font-weight: 650; letter-spacing: -.02em; }
-.empty p { margin: 0 0 12px; color: var(--muted); font-size: 14px; line-height: 1.45; max-width: 30ch; }
-
-.status {
-  position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
-  display: flex; align-items: center; gap: 12px;
-  max-width: calc(100% - 24px);
-  padding: 8px 16px; border-radius: var(--r-pill);
-  color: var(--muted); font-size: 12.5px; white-space: nowrap;
-}
-.status #hint { color: var(--text); overflow: hidden; text-overflow: ellipsis; }
-.status .vsep { height: 14px; }
-.status .num { font-variant-numeric: tabular-nums; }
-
-/* ── Слои справа ── */
-.layers {
-  grid-column: 3; grid-row: 2;
-  align-self: start;
-  width: 232px; max-height: 100%;
-  display: flex; flex-direction: column;
-  border-radius: var(--r-bar);
-  overflow: hidden;
-}
-.layers-head { display: flex; align-items: center; gap: 8px; padding: 14px 16px 10px; font-weight: 600; font-size: 13.5px; }
-.layers-head .count { margin-left: auto; color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
-.layers-list { list-style: none; margin: 0; padding: 0 6px 6px; overflow-y: auto; }
-.layer {
-  display: flex; align-items: center; gap: 10px;
-  height: 36px; padding: 0 6px 0 10px; border-radius: 12px;
-}
-.layer { cursor: pointer; }
-.layer:hover { background: var(--fill); }
-.layer.on { background: var(--active); }
-.layer.base { cursor: default; }
-.layer.base:hover { background: none; }
-.layer .dot { width: 10px; height: 10px; border-radius: 3px; flex: none; background: var(--c); box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); }
-.layer .dot.round { border-radius: 50%; }
-.layer .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.layer .del { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); opacity: 0; transition: opacity .12s; }
-.layer .del svg.i { width: 15px; height: 15px; }
-.layer:hover .del, .layer .del:focus-visible { opacity: 1; }
-.layer .del:hover { color: var(--text); background: var(--fill-hover); }
-.layer.base { color: var(--muted); }
-.layers-empty { padding: 2px 16px 16px; color: var(--muted); font-size: 12.5px; line-height: 1.45; }
-
-.toast {
-  position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 84px);
-  transform: translate(-50%, -8px);
-  padding: 9px 16px; border-radius: var(--r-pill); z-index: 10;
-  opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none;
-}
-.toast.show { opacity: 1; transform: translate(-50%, 0); }
-
-[hidden] { display: none !important; }
-
-@media (hover: none) { .layer .del { opacity: 1; } .tool .tip { display: none; } }
-
-@media (max-width: 1080px) { .layers { display: none; } .app { grid-template-columns: auto minmax(0, 1fr); } }
-
-@media (max-width: 720px) {
-  .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px; padding: 8px; }
-  .topbar { flex-wrap: wrap; padding: 6px; }
-  .options { order: 3; flex-basis: 100%; padding: 4px 6px 2px; }
-  .actions { margin-left: auto; }
-  .btn-pill .kbd { display: none; }
-  .stage { grid-column: 1; grid-row: 2; }
-  .rail { grid-column: 1; grid-row: 3; flex-direction: row; justify-self: center; align-self: center; }
-  .rail-sep { width: 1px; height: auto; margin: 8px 2px; }
-  .status #hint, .status #hint + .vsep { display: none; }
-  .status { bottom: 6px; }
-}
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
 <body>
-<div class="ambient" aria-hidden="true">
-  <div class="ambient-base"></div>
-  <div class="ambient-img" id="ambientImg"></div>
-</div>
-
-<div class="app" id="app">
-  <header class="topbar glass">
-    <button class="btn-pill" id="openBtn" title="Открыть изображение">
-      <svg class="i" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-      <span>Открыть</span>
-    </button>
-    <div class="vsep"></div>
-    <div class="options" id="options"></div>
-    <div class="actions">
-      <button class="btn-icon" id="undoBtn" aria-label="Отменить"><svg class="i" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
-      <button class="btn-icon" id="redoBtn" aria-label="Повторить"><svg class="i" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
-      <button class="btn-icon" id="resetBtn" aria-label="Закрыть изображение и сбросить всё"><svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
-      <button class="btn-pill btn-primary" id="downloadBtn">
-        <span>Скачать</span><span class="kbd" id="saveKbd"></span>
-      </button>
-    </div>
-  </header>
-
-  <nav class="rail glass" id="rail" aria-label="Инструменты"></nav>
-
-  <main class="stage" id="stage">
-    <div class="empty glass" id="empty">
-      <div class="empty-icon"><svg class="i" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>
-      <h1>Скриншот с эффектами</h1>
-      <p id="emptyText">Перетащите изображение сюда или вставьте его из буфера</p>
-      <button class="btn-pill btn-primary" id="emptyOpenBtn">Выбрать файл</button>
-    </div>
-    <div class="canvas-wrap" id="canvasWrap" hidden>
-      <canvas id="canvas"></canvas>
-    </div>
-    <div class="status glass" id="status" hidden>
-      <span id="hint"></span>
-      <span class="vsep"></span>
-      <span class="zoom-ctl">
-        <button class="zbtn" id="zoomOut" aria-label="Уменьшить">−</button>
-        <button class="num zval" id="zoom"></button>
-        <button class="zbtn" id="zoomIn" aria-label="Увеличить">+</button>
-      </span>
-      <span class="vsep"></span>
-      <span class="num" id="dims"></span>
-    </div>
-  </main>
-
-  <aside class="layers glass" id="layers" hidden>
-    <div class="layers-head">
-      <svg class="i" viewBox="0 0 24 24"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg>
-      Слои <span class="count" id="layerCount"></span>
-    </div>
-    <ul class="layers-list" id="layerList"></ul>
-  </aside>
-</div>
-
-<div class="toast glass" id="toast" role="status" aria-live="polite"></div>
-<input type="file" id="fileInput" accept="image/*" hidden>
-
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
 <script>
-(() => {
-  // ─── Константы ────────────────────────────────────────────
-  const PALETTE = ['#0ECE55', '#9FA5AD', '#24A8FB'];
-  const SELECT_COLOR = '#24A8FB';
-  const FONT_FAMILY = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-  const IS_MAC = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
-  const MOD = IS_MAC ? '⌘' : 'Ctrl+';
+'use strict';
+const { useState, useEffect, useMemo, useRef } = React;
+const html = htm.bind(React.createElement);
 
-  const svg = (inner) => `<svg class="i" viewBox="0 0 24 24">${inner}</svg>`;
-  const ICONS = {
-    select: svg('<path d="M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z"/>'),
-    crop: svg('<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/>'),
-    highlight: svg('<path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/>'),
-    blur: svg('<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/>'),
-    focus: svg('<circle cx="12" cy="12" r="3"/><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>'),
-    arrow: svg('<path d="M7 17 17 7"/><path d="M7 7h10v10"/>'),
-    box: svg('<rect width="18" height="18" x="3" y="3" rx="2"/>'),
-    marker: svg('<circle cx="12" cy="12" r="9"/><path d="M10.5 9.5 12.5 8v8"/>'),
-    text: svg('<polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/>'),
-    x: svg('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'),
-    trash: svg('<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'),
-    info: svg('<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>'),
-  };
+/* ---------- utils ---------- */
+const uid = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);
+const pad = n => String(n).padStart(2, '0');
+const dkey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const fromKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (d, n) => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() + n); return x; };
+const startOfWeek = d => addDays(d, -((d.getDay() + 6) % 7));
+const num = v => { const n = parseFloat(String(v == null ? '' : v).replace(',', '.')); return Number.isFinite(n) && n > 0 ? n : 0; };
+const norm = s => (s || '').trim().toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ');
+const sum = a => a.reduce((x, y) => x + y, 0);
+const PR = new Intl.PluralRules('ru-RU');
+const plural = (n, f) => `${n} ${f[{ one: 0, few: 1, many: 2 }[PR.select(n)] ?? 1]}`;
+const W_EX = ['упражнение', 'упражнения', 'упражнений'];
+const W_SET = ['подход', 'подхода', 'подходов'];
+const W_WO = ['тренировка', 'тренировки', 'тренировок'];
+const nf1 = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 1 });
+const nf2 = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2 });
+const volParts = v => v >= 10000 ? [nf1.format(v / 1000), 'т'] : [nf1.format(Math.round(v)), 'кг'];
+const fmtVol = v => volParts(v).join(' ');
+const fmtKg = v => `${nf2.format(v)} кг`;
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const fmtDM = d => d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+const fmtShort = d => d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }).replace('.', '');
+const dayLabel = k => {
+  const now = new Date();
+  if (k === dkey(now)) return 'Сегодня';
+  if (k === dkey(addDays(now, -1))) return 'Вчера';
+  if (k === dkey(addDays(now, 1))) return 'Завтра';
+  return cap(fromKey(k).toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' }));
+};
+const fmtClock = ms => { const s = Math.max(0, Math.floor(ms / 1000)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? `${h}:${pad(m)}:${pad(x)}` : `${m}:${pad(x)}`; };
+const fmtDur = ms => { const m = Math.max(1, Math.round(ms / 60000)); return m >= 60 ? `${Math.floor(m / 60)} ч ${m % 60} мин` : `${m} мин`; };
+const epley = (w, r) => r <= 1 ? w : w * (1 + Math.min(r, 12) / 30);
+const counts = s => num(s.reps) > 0; // a set counts once reps are entered
+const workoutVolume = w => sum(w.exercises.map(e => sum(e.sets.map(s => counts(s) ? num(s.reps) * num(s.weight) : 0))));
+const workoutSets = w => sum(w.exercises.map(e => e.sets.filter(counts).length));
+const toInput = n => n ? String(n).replace('.', ',') : '';
 
-  const TOOLS = [
-    { id: 'select',    label: 'Выбор',     key: 'V', code: 'KeyV', hint: 'Кликните по слою, чтобы выделить. Двойной клик по тексту — править' },
-    { id: 'crop',      label: 'Кадрирование', key: 'C', code: 'KeyC', hint: 'Тяните углы и края рамки. Enter — применить, Esc — отмена' },
-    { id: 'highlight', label: 'Подсветка', key: 'H', code: 'KeyH', hint: 'Выделите область, чтобы подсветить её' },
-    { id: 'blur',      label: 'Скрытие',   key: 'B', code: 'KeyB', hint: 'Выделите область, чтобы скрыть её' },
-    { id: 'focus',     label: 'Фокус',     key: 'F', code: 'KeyF', hint: 'Выделите, что показать, — остальное затемнится. Областей может быть несколько' },
-    { id: 'arrow',     label: 'Стрелка',   key: 'A', code: 'KeyA', hint: 'Ведите от начала к острию стрелки' },
-    { id: 'box',       label: 'Рамка',     key: 'R', code: 'KeyR', hint: 'Растяните рамку вокруг нужного места' },
-    { id: 'marker',    label: 'Маркер',    key: 'N', code: 'KeyN', hint: 'Кликните, чтобы поставить номер. Можно сразу тянуть на место' },
-    { id: 'text',      label: 'Текст',     key: 'T', code: 'KeyT', hint: 'Кликните и пишите. Enter — готово, Shift+Enter — новая строка' },
-  ];
-
-  const TYPE_LABEL = { highlight: 'Подсветка', blur: 'Скрытие', focus: 'Фокус', arrow: 'Стрелка', box: 'Рамка', marker: 'Маркер', text: 'Текст' };
-  const FX_DEFAULTS = { radius: 20, shadowBlur: 40, shadowOpacity: 0.3, padding: 60 };
-
-  // ─── Состояние ────────────────────────────────────────────
-  const S = {
-    image: null,
-    imageId: 0,
-    mode: 'select',
-    fx: { ...FX_DEFAULTS },
-    highlight: { color: '#0ECE55', opacity: 0.4 },
-    blur: { variant: 'pixelate', strength: 12 },
-    focus: { tone: 'dark', opacity: 0.55, blur: 0, radius: 12 },
-    arrow: { style: 'curved', bend: 0.3, color: '#0ECE55', thickness: 3 },
-    box: { style: 'solid', color: '#0ECE55', thickness: 3, cornerRadius: 8 },
-    marker: { style: 'filled', color: '#0ECE55', size: 22 },
-    text: { variant: 'plain', color: '#0ECE55', size: 32, bold: true },
-    annotations: [],
-    undo: [],        // снимки списка слоёв до каждого действия
-    redo: [],
-    crop: null,       // область изображения после кадрирования { x, y, w, h } или null
-    cropDraft: null,  // рамка, которую двигают в режиме кадрирования
-    cropAspect: null,
-    liveBase: null,  // снимок до начала непрерывной правки (перетаскивание, ползунок)
-    selectedId: null,
-    hiddenId: null,  // слой, который сейчас правится в поле ввода
-    current: null,
-    draft: null,
-    scale: 1,
-  };
-
-  let lastId = 0;
-  const newId = () => ++lastId;
-
-  const pct = (v) => Math.round(v * 100) + '%';
-  const px = (v) => v + 'px';
-
-  // Параметры: для инструмента по умолчанию и для выделенного слоя того же типа
-  const OPTIONS = {
-    fx: [
-      { t: 'slider', key: 'radius', label: 'Скругление', min: 0, max: 100, fmt: px },
-      { t: 'slider', key: 'shadowBlur', label: 'Тень', min: 0, max: 100, fmt: px },
-      { t: 'slider', key: 'shadowOpacity', label: 'Плотность тени', min: 0, max: 1, step: 0.05, fmt: pct },
-      { t: 'slider', key: 'padding', label: 'Отступы', min: 0, max: 200, fmt: px },
-    ],
-    highlight: [
-      { t: 'color', key: 'color' },
-      { t: 'slider', key: 'opacity', label: 'Плотность', min: 0.1, max: 0.8, step: 0.05, fmt: pct },
-    ],
-    blur: [
-      { t: 'seg', key: 'variant', options: [['pixelate', 'Пикселизация'], ['blur', 'Размытие']] },
-      { t: 'slider', key: 'strength', label: (get) => (get('variant') === 'blur' ? 'Сила' : 'Размер пикселя'), min: 5, max: 30, fmt: px },
-      { t: 'note', text: 'Для паролей и личных данных надёжнее пикселизация' },
-    ],
-    focus: [
-      { t: 'seg', key: 'tone', options: [['dark', 'Тёмный'], ['light', 'Светлый']] },
-      { t: 'slider', key: 'opacity', label: 'Затемнение', min: 0.1, max: 0.9, step: 0.05, fmt: pct },
-      { t: 'slider', key: 'blur', label: 'Размытие фона', min: 0, max: 20, fmt: px },
-      { t: 'slider', key: 'radius', label: 'Углы', min: 0, max: 60, fmt: px },
-    ],
-    arrow: [
-      { t: 'seg', key: 'style', options: [['straight', 'Прямая'], ['curved', 'Кривая'], ['dotted', 'С точкой']] },
-      { t: 'color', key: 'color' },
-      { t: 'slider', key: 'bend', label: 'Изгиб', min: -1, max: 1, step: 0.05, fmt: pct, when: (get) => get('style') === 'curved' },
-      { t: 'slider', key: 'thickness', label: 'Толщина', min: 2, max: 40, fmt: px },
-    ],
-    box: [
-      { t: 'seg', key: 'style', options: [['solid', 'Сплошная'], ['dashed', 'Пунктир']] },
-      { t: 'slider', key: 'cornerRadius', label: 'Скругление', min: 0, max: 60, fmt: px },
-      { t: 'color', key: 'color' },
-      { t: 'slider', key: 'thickness', label: 'Толщина', min: 1, max: 40, fmt: px },
-    ],
-    marker: [
-      { t: 'stepper', key: 'num', label: 'Номер', layerOnly: true },
-      { t: 'next', toolOnly: true },
-      { t: 'seg', key: 'style', options: [['filled', 'Заливка'], ['outline', 'Контур']] },
-      { t: 'color', key: 'color' },
-      { t: 'slider', key: 'size', label: 'Размер', min: 10, max: 80, fmt: px },
-    ],
-    text: [
-      { t: 'seg', key: 'variant', options: [['plain', 'Без фона'], ['label', 'Плашка'], ['callout', 'Выноска']] },
-      { t: 'slider', key: 'size', label: 'Размер', min: 12, max: 120, fmt: px },
-      { t: 'color', key: 'color' },
-      { t: 'seg', key: 'bold', options: [[false, 'Обычный'], [true, 'Жирный']] },
-    ],
-  };
-
-  // ─── DOM ──────────────────────────────────────────────────
-  const $ = (id) => document.getElementById(id);
-  const app = $('app'), canvas = $('canvas'), ctx = canvas.getContext('2d');
-  const stage = $('stage'), canvasWrap = $('canvasWrap'), fileInput = $('fileInput');
-
-  const el = (tag, cls, text) => {
-    const e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (text != null) e.textContent = text;
-    return e;
-  };
-
-  $('saveKbd').textContent = MOD + 'S';
-  $('undoBtn').title = `Отменить (${MOD}Z)`;
-  $('redoBtn').title = `Повторить (${IS_MAC ? '⇧⌘Z' : 'Ctrl+Y'})`;
-  $('resetBtn').title = 'Сбросить всё';
-  $('emptyText').textContent = `Перетащите изображение сюда или вставьте его из буфера (${MOD}V)`;
-
-  // ─── Геометрия ────────────────────────────────────────────
-  const toRect = (start, end) => ({
-    x: Math.round(Math.min(start.x, end.x)),
-    y: Math.round(Math.min(start.y, end.y)),
-    width: Math.round(Math.abs(end.x - start.x)),
-    height: Math.round(Math.abs(end.y - start.y)),
-  });
-
-  const roundRectPath = (c, x, y, w, h, radius) => {
-    const r = Math.max(0, Math.min(radius, w / 2, h / 2));
-    c.beginPath();
-    c.moveTo(x + r, y);
-    c.lineTo(x + w - r, y);
-    c.quadraticCurveTo(x + w, y, x + w, y + r);
-    c.lineTo(x + w, y + h - r);
-    c.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    c.lineTo(x + r, y + h);
-    c.quadraticCurveTo(x, y + h, x, y + h - r);
-    c.lineTo(x, y + r);
-    c.quadraticCurveTo(x, y, x + r, y);
-    c.closePath();
-  };
-
-  const hexToRgba = (hex, a) => {
-    const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${a})`;
-  };
-
-  const textFont = (size, bold) => `${bold ? 'bold ' : ''}${size}px ${FONT_FAMILY}`;
-
-  // bend — сила дуги: смещение контрольной точки поперёк стрелки в долях её длины.
-  // Знак выбирает сторону, 0 — прямая
-  const DEFAULT_BEND = 0.3;
-  const bendOf = (a) => (a.bend == null ? DEFAULT_BEND : a.bend);
-  const curveControl = (start, end, bend = DEFAULT_BEND) => ({
-    x: start.x + (end.x - start.x) / 2 - (end.y - start.y) * bend,
-    y: start.y + (end.y - start.y) / 2 + (end.x - start.x) * bend,
-  });
-  // Точка на середине дуги — за неё тянут, чтобы менять изгиб
-  const arrowMid = (a) => {
-    const b = a.style === 'curved' ? bendOf(a) : 0;
-    return bezierAt(a.start, curveControl(a.start, a.end, b), a.end, 0.5);
-  };
-  // Обратная задача: какой изгиб даст дугу, проходящую через точку p
-  const bendFromPoint = (a, p) => {
-    const dx = a.end.x - a.start.x, dy = a.end.y - a.start.y;
-    const len2 = dx * dx + dy * dy;
-    if (!len2) return 0;
-    const mx = (a.start.x + a.end.x) / 2, my = (a.start.y + a.end.y) / 2;
-    const b = (2 * ((p.x - mx) * -dy + (p.y - my) * dx)) / len2;
-    return Math.max(-1.5, Math.min(1.5, Math.round(b * 100) / 100));
-  };
-  const bezierAt = (start, c, end, t) => ({
-    x: (1 - t) ** 2 * start.x + 2 * (1 - t) * t * c.x + t * t * end.x,
-    y: (1 - t) ** 2 * start.y + 2 * (1 - t) * t * c.y + t * t * end.y,
-  });
-
-  // ─── Отрисовка аннотаций ──────────────────────────────────
-  const drawHighlight = (c, { start, end, color, opacity }) => {
-    const { x, y, width, height } = toRect(start, end);
-    c.fillStyle = hexToRgba(color, opacity);
-    c.fillRect(x, y, width, height);
-  };
-
-  const drawBlur = (c, { start, end, strength, variant }) => {
-    const { x, y, width, height } = toRect(start, end);
-    if (width < 2 || height < 2) return;
-
-    if (variant === 'pixelate') {
-      const sw = Math.max(1, Math.ceil(width / strength));
-      const sh = Math.max(1, Math.ceil(height / strength));
-      const tmp = document.createElement('canvas');
-      tmp.width = sw; tmp.height = sh;
-      tmp.getContext('2d').drawImage(c.canvas, x, y, width, height, 0, 0, sw, sh);
-      c.save();
-      c.imageSmoothingEnabled = false;
-      c.drawImage(tmp, 0, 0, sw, sh, x, y, width, height);
-      c.restore();
-      return;
-    }
-
-    // Берём область с запасом, чтобы по краям не было светлой каймы
-    const margin = strength * 2;
-    const sx = Math.max(0, x - margin), sy = Math.max(0, y - margin);
-    const sw = Math.min(c.canvas.width, x + width + margin) - sx;
-    const sh = Math.min(c.canvas.height, y + height + margin) - sy;
-    if (sw <= 0 || sh <= 0) return;
-    const snap = document.createElement('canvas');
-    snap.width = sw; snap.height = sh;
-    snap.getContext('2d').drawImage(c.canvas, sx, sy, sw, sh, 0, 0, sw, sh);
-    c.save();
-    c.beginPath();
-    c.rect(x, y, width, height);
-    c.clip();
-    c.filter = `blur(${strength}px)`;
-    c.drawImage(snap, sx, sy);
-    c.restore();
-  };
-
-  const drawBox = (c, { start, end, color, thickness, style, cornerRadius }) => {
-    const { x, y, width, height } = toRect(start, end);
-    c.save();
-    c.strokeStyle = color;
-    c.lineWidth = thickness;
-    c.lineCap = 'round';
-    c.lineJoin = 'round';
-    // Шаг пунктира растёт с толщиной; с круглыми концами штрих визуально длиннее на толщину
-    c.setLineDash(style === 'dashed' ? [Math.max(4, thickness * 2.5), thickness + Math.max(5, thickness * 1.5)] : []);
-    roundRectPath(c, x, y, width, height, cornerRadius || 0);
-    c.stroke();
-    c.restore();
-  };
-
-  const drawArrowHead = (c, end, angle, len) => {
-    c.beginPath();
-    c.moveTo(end.x, end.y);
-    c.lineTo(end.x - len * Math.cos(angle - Math.PI / 6), end.y - len * Math.sin(angle - Math.PI / 6));
-    c.lineTo(end.x - len * Math.cos(angle + Math.PI / 6), end.y - len * Math.sin(angle + Math.PI / 6));
-    c.closePath();
-    c.fill();
-  };
-
-  const headLength = (thickness) => 15 + thickness * 2;
-
-  const drawArrow = (c, { start, end, color, thickness, style, bend }) => {
-    const dx = end.x - start.x, dy = end.y - start.y;
-    const distance = Math.hypot(dx, dy);
-    if (distance < 2) return;
-    const headLen = headLength(thickness);
-
-    c.save();
-    c.strokeStyle = color;
-    c.fillStyle = color;
-    c.lineWidth = thickness;
-    c.lineCap = 'round';
-    c.lineJoin = 'round';
-
-    if (style === 'curved') {
-      const cp = curveControl(start, end, bend == null ? DEFAULT_BEND : bend);
-      const before = bezierAt(start, cp, end, 0.99);
-      const angle = Math.atan2(end.y - before.y, end.x - before.x);
-      const lineEnd = bezierAt(start, cp, end, Math.max(0, 1 - (headLen * 0.6) / distance));
-      c.beginPath();
-      c.moveTo(start.x, start.y);
-      c.quadraticCurveTo(cp.x, cp.y, lineEnd.x, lineEnd.y);
-      c.stroke();
-      drawArrowHead(c, end, angle, headLen);
-    } else {
-      const angle = Math.atan2(dy, dx);
-      let from = start;
-      if (style === 'dotted') {
-        const dotR = 5 + thickness;
-        c.beginPath();
-        c.arc(start.x, start.y, dotR, 0, Math.PI * 2);
-        c.fill();
-        from = { x: start.x + dotR * Math.cos(angle), y: start.y + dotR * Math.sin(angle) };
-      }
-      c.beginPath();
-      c.moveTo(from.x, from.y);
-      c.lineTo(end.x - headLen * 0.5 * Math.cos(angle), end.y - headLen * 0.5 * Math.sin(angle));
-      c.stroke();
-      drawArrowHead(c, end, angle, headLen);
-    }
-    c.restore();
-  };
-
-  // ─── Текст: обычный, плашка, выноска ──────────────────────
-  const LINE = 1.2; // межстрочный интервал относительно кегля
-
-  const textMetrics = (a) => {
-    ctx.save();
-    ctx.font = textFont(a.size, a.bold);
-    const lines = String(a.text).split('\n');
-    const w = Math.max(0, ...lines.map((l) => ctx.measureText(l).width));
-    ctx.restore();
-    const lh = a.size * LINE;
-    return { lines, w, lh, h: (lines.length - 1) * lh + a.size * 1.15 };
-  };
-
-  const platePad = (a) => ({ px: a.size * 0.55, py: a.size * 0.38, r: a.size * 0.42 });
-  const hasPlate = (a) => a.variant === 'label' || a.variant === 'callout';
-
-  const plateRect = (a, m = textMetrics(a)) => {
-    const { px, py } = platePad(a);
-    return { x: a.x - px, y: a.y - py, width: m.w + px * 2, height: m.h + py * 2 };
-  };
-
-  // Кончик хвоста выноски; если его ещё не двигали — под плашкой слева
-  const tailOf = (a) => {
-    if (a.tail) return a.tail;
-    const r = plateRect(a);
-    return { x: r.x + Math.min(r.width * 0.25, a.size * 2), y: r.y + r.height + a.size * 1.3 };
-  };
-
-  // Треугольник хвоста: основание на ближайшей к кончику стороне плашки
-  function tailTriangle(r, tip, size, radius) {
-    const clamp = (v, lo, hi) => (lo > hi ? (lo + hi) / 2 : Math.max(lo, Math.min(hi, v)));
-    let side;
-    if (tip.y > r.y + r.height) side = 'bottom';
-    else if (tip.y < r.y) side = 'top';
-    else side = tip.x < r.x ? 'left' : 'right';
-    const horizontal = side === 'top' || side === 'bottom';
-    const len = horizontal ? r.width : r.height;
-    const half = Math.min(size * 0.55, len * 0.3);
-    const inset = 1.5; // основание чуть внутри плашки, чтобы не было шва
-    if (horizontal) {
-      const cx = clamp(tip.x, r.x + radius + half, r.x + r.width - radius - half);
-      const y = side === 'bottom' ? r.y + r.height - inset : r.y + inset;
-      return [{ x: cx - half, y }, { x: cx + half, y }, tip];
-    }
-    const cy = clamp(tip.y, r.y + radius + half, r.y + r.height - radius - half);
-    const x = side === 'right' ? r.x + r.width - inset : r.x + inset;
-    return [{ x, y: cy - half }, { x, y: cy + half }, tip];
-  }
-
-  const drawText = (c, a) => {
-    const m = textMetrics(a);
-    c.save();
-    let ink = a.color;
-    if (hasPlate(a)) {
-      const r = plateRect(a, m);
-      const { r: radius } = platePad(a);
-      roundRectPath(c, r.x, r.y, r.width, r.height, radius);
-      if (a.variant === 'callout') {
-        let tri = tailTriangle(r, tailOf(a), a.size, radius);
-        // Направление обхода как у плашки, иначе при заливке место стыка станет дыркой
-        const area = (tri[1].x - tri[0].x) * (tri[2].y - tri[0].y) - (tri[2].x - tri[0].x) * (tri[1].y - tri[0].y);
-        if (area < 0) tri = [tri[1], tri[0], tri[2]];
-        c.moveTo(tri[0].x, tri[0].y);
-        c.lineTo(tri[1].x, tri[1].y);
-        c.lineTo(tri[2].x, tri[2].y);
-        c.closePath();
-      }
-      c.shadowColor = 'rgba(0, 0, 0, 0.25)';
-      c.shadowBlur = a.size * 0.5;
-      c.shadowOffsetY = a.size * 0.12;
-      c.fillStyle = a.color;
-      c.fill('nonzero');
-      c.shadowColor = 'transparent';
-      ink = readableOn(a.color);
-    }
-    c.font = textFont(a.size, a.bold);
-    c.fillStyle = ink;
-    c.textBaseline = 'top';
-    m.lines.forEach((line, i) => c.fillText(line, a.x, a.y + i * m.lh));
-    c.restore();
-  };
-
-  // Фокус: все области фокуса рисуются одним слоем, чтобы пересекающиеся
-  // или соседние области не затемняли друг друга. Затемняется только сам скриншот
-  function drawFocus(c, list) {
-    if (!list.length) return;
-    const f = list[0];
-    const W = c.canvas.width, H = c.canvas.height;
-    const { padding, radius } = S.fx;
-    const { w: iw, h: ih } = region();
-
-    const cutHoles = (x) => {
-      x.globalCompositeOperation = 'destination-out';
-      x.fillStyle = '#000';
-      list.forEach((a) => {
-        const r = toRect(a.start, a.end);
-        if (r.width < 2 || r.height < 2) return;
-        roundRectPath(x, r.x, r.y, r.width, r.height, a.radius);
-        x.fill();
+/* ---------- derived index ---------- */
+function buildIndex(workouts) {
+  const list = Object.values(workouts).sort((a, b) => a.date.localeCompare(b.date) || (a.createdAt || 0) - (b.createdAt || 0));
+  const order = new Map(list.map((w, i) => [w.id, i]));
+  const byDate = {};
+  const ex = new Map();
+  list.forEach((w, i) => {
+    (byDate[w.date] = byDate[w.date] || []).push(w);
+    w.exercises.forEach(e => {
+      const k = norm(e.name); if (!k) return;
+      const sets = e.sets.filter(counts).map(s => ({ reps: num(s.reps), weight: num(s.weight) }));
+      if (!ex.has(k)) ex.set(k, { key: k, name: e.name.trim(), sessions: [] });
+      const rec = ex.get(k); rec.name = e.name.trim();
+      rec.sessions.push({
+        order: i, date: w.date, workoutId: w.id, workoutName: w.name, sets,
+        maxW: sets.reduce((m, s) => Math.max(m, s.weight), 0),
+        vol: sum(sets.map(s => s.reps * s.weight)),
+        e1rm: sets.reduce((m, s) => Math.max(m, epley(s.weight, s.reps)), 0),
       });
-      x.globalCompositeOperation = 'source-over';
-    };
-    const layer = () => {
-      const cv = document.createElement('canvas');
-      cv.width = W; cv.height = H;
-      return cv;
-    };
-
-    if (f.blur > 0) {
-      const b = layer(), bc = b.getContext('2d');
-      roundRectPath(bc, padding, padding, iw, ih, radius);
-      bc.clip();
-      bc.filter = `blur(${f.blur}px)`;
-      bc.drawImage(c.canvas, 0, 0);
-      bc.filter = 'none';
-      cutHoles(bc);
-      c.drawImage(b, 0, 0);
-    }
-
-    const d = layer(), dc = d.getContext('2d');
-    dc.fillStyle = f.tone === 'light' ? `rgba(255, 255, 255, ${f.opacity})` : `rgba(12, 10, 16, ${f.opacity})`;
-    roundRectPath(dc, padding, padding, iw, ih, radius);
-    dc.fill();
-    cutHoles(dc);
-    c.drawImage(d, 0, 0);
-  }
-
-  // Контрастный цвет цифры: тёмный на светлой заливке, белый на тёмной
-  const readableOn = (hex) => {
-    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.62 ? '#16141a' : '#ffffff';
-  };
-
-  const drawMarker = (c, { x, y, num, color, size, style }) => {
-    const label = String(num);
-    c.save();
-    c.beginPath();
-    c.arc(x, y, size, 0, Math.PI * 2);
-    c.shadowColor = 'rgba(0, 0, 0, 0.28)';
-    c.shadowBlur = size * 0.35;
-    c.shadowOffsetY = size * 0.1;
-    if (style === 'outline') {
-      c.fillStyle = '#ffffff';
-      c.fill();
-      c.shadowColor = 'transparent';
-      c.lineWidth = Math.max(2, size * 0.16);
-      c.strokeStyle = color;
-      c.stroke();
-      c.fillStyle = color;
-    } else {
-      c.fillStyle = color;
-      c.fill();
-      c.shadowColor = 'transparent';
-      c.fillStyle = readableOn(color);
-    }
-    const fontSize = size * (label.length > 1 ? 0.92 : 1.12);
-    c.font = textFont(fontSize, true);
-    c.textAlign = 'center';
-    c.textBaseline = 'middle';
-    c.fillText(label, x, y + size * 0.05);
-    c.restore();
-  };
-
-  const DRAW = { highlight: drawHighlight, blur: drawBlur, box: drawBox, arrow: drawArrow, marker: drawMarker, text: drawText };
-  const drawAnnotation = (c, a) => DRAW[a.type] && DRAW[a.type](c, a);
-
-  // ─── Попадание по слоям ───────────────────────────────────
-  const textBox = (a) => {
-    const m = textMetrics(a);
-    return hasPlate(a) ? plateRect(a, m) : { x: a.x, y: a.y, width: m.w, height: m.h };
-  };
-
-  const inRect = (r, p, t = 0) =>
-    p.x >= r.x - t && p.x <= r.x + r.width + t && p.y >= r.y - t && p.y <= r.y + r.height + t;
-
-  const distToSeg = (p, a, b) => {
-    const dx = b.x - a.x, dy = b.y - a.y;
-    const len = dx * dx + dy * dy;
-    const t = len ? Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len)) : 0;
-    return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy);
-  };
-
-  const arrowPath = (a) => {
-    if (a.style !== 'curved') return [a.start, a.end];
-    const cp = curveControl(a.start, a.end, bendOf(a));
-    return Array.from({ length: 25 }, (_, i) => bezierAt(a.start, cp, a.end, i / 24));
-  };
-
-  function hitLayer(a, p, tol) {
-    switch (a.type) {
-      case 'highlight':
-      case 'blur':
-      case 'focus':
-        return inRect(toRect(a.start, a.end), p, tol);
-      case 'box': {
-        // Рамку берём только за контур, чтобы клики внутри доходили до того, что в ней
-        const r = toRect(a.start, a.end);
-        const t = tol + a.thickness / 2;
-        const inner = { x: r.x + t, y: r.y + t, width: r.width - 2 * t, height: r.height - 2 * t };
-        return inRect(r, p, t) && !(inner.width > 0 && inner.height > 0 && inRect(inner, p));
-      }
-      case 'arrow': {
-        const pts = arrowPath(a);
-        const reach = tol + a.thickness / 2;
-        for (let i = 1; i < pts.length; i++) if (distToSeg(p, pts[i - 1], pts[i]) <= reach) return true;
-        return Math.hypot(p.x - a.end.x, p.y - a.end.y) <= headLength(a.thickness) + tol;
-      }
-      case 'text':
-        return inRect(textBox(a), p, tol);
-      case 'marker':
-        return Math.hypot(p.x - a.x, p.y - a.y) <= a.size + tol;
-      default:
-        return false;
-    }
-  }
-
-  const hitTest = (p, tol, filter = () => true) => {
-    for (let i = S.annotations.length - 1; i >= 0; i--) {
-      const a = S.annotations[i];
-      if (a.id !== S.hiddenId && filter(a) && hitLayer(a, p, tol)) return a;
-    }
-    return null;
-  };
-
-  function handlesOf(a) {
-    if (a.type === 'arrow') {
-      const hs = [{ id: 'start', ...a.start }, { id: 'end', ...a.end }];
-      // Ручка изгиба: у кривой и у прямой (потянув её, прямую можно изогнуть)
-      if (a.style !== 'dotted') hs.push({ id: 'mid', ...arrowMid(a), small: true });
-      return hs;
-    }
-    if (a.type === 'text') return a.variant === 'callout' ? [{ id: 'tail', ...tailOf(a) }] : [];
-    if (a.type === 'marker') return [];
-    const r = toRect(a.start, a.end);
-    return [
-      { id: 'nw', x: r.x, y: r.y },
-      { id: 'ne', x: r.x + r.width, y: r.y },
-      { id: 'sw', x: r.x, y: r.y + r.height },
-      { id: 'se', x: r.x + r.width, y: r.y + r.height },
-    ];
-  }
-
-  const hitHandle = (a, p, tol) =>
-    handlesOf(a).find((h) => Math.hypot(p.x - h.x, p.y - h.y) <= tol * 1.5) || null;
-
-  const HANDLE_CURSOR = { nw: 'nwse-resize', se: 'nwse-resize', ne: 'nesw-resize', sw: 'nesw-resize', start: 'move', end: 'move', tail: 'move', mid: 'grab' };
-
-  // Сдвиг слоя на dx, dy относительно исходного состояния
-  const translated = (a, dx, dy) =>
-    a.type === 'text' || a.type === 'marker'
-      ? { x: a.x + dx, y: a.y + dy, ...(a.tail ? { tail: { x: a.tail.x + dx, y: a.tail.y + dy } } : {}) }
-      : { start: { x: a.start.x + dx, y: a.start.y + dy }, end: { x: a.end.x + dx, y: a.end.y + dy } };
-
-  // Тянем угол прямоугольника: противоположный угол остаётся на месте
-  function resizedRect(orig, handle, p) {
-    const r = toRect(orig.start, orig.end);
-    const fixed = {
-      nw: { x: r.x + r.width, y: r.y + r.height },
-      ne: { x: r.x, y: r.y + r.height },
-      sw: { x: r.x + r.width, y: r.y },
-      se: { x: r.x, y: r.y },
-    }[handle];
-    return { start: fixed, end: { x: p.x, y: p.y } };
-  }
-
-  // Новый маркер получает номер на единицу больше максимального
-  const nextMarkerNum = () =>
-    S.annotations.reduce((m, a) => (a.type === 'marker' ? Math.max(m, a.num) : m), 0) + 1;
-
-  // ─── Выделение ────────────────────────────────────────────
-  const selected = () => (S.selectedId == null ? null : S.annotations.find((a) => a.id === S.selectedId) || null);
-
-  function select(id) {
-    if (S.selectedId === id || S.mode === 'crop') return;
-    S.selectedId = id;
-    redraw();
-    renderLayers();
-    renderOptions();
-    updateStatus();
-  }
-  const deselect = () => select(null);
-
-  function drawSelection(c) {
-    const a = selected();
-    if (!a || a.id === S.hiddenId) return;
-    const z = V.zoom || 1;
-    c.save();
-    c.strokeStyle = SELECT_COLOR;
-    c.lineWidth = 1.5 / z;
-    if (a.type !== 'arrow') {
-      const r = a.type === 'text' ? textBox(a)
-        : a.type === 'marker' ? { x: a.x - a.size, y: a.y - a.size, width: a.size * 2, height: a.size * 2 }
-        : toRect(a.start, a.end);
-      const pad = (a.type === 'box' ? a.thickness / 2 : 0) + 3 / z;
-      c.setLineDash(a.type === 'text' ? [4 / z, 3 / z] : []);
-      c.strokeRect(r.x - pad, r.y - pad, r.width + pad * 2, r.height + pad * 2);
-      c.setLineDash([]);
-    }
-    handlesOf(a).forEach((h) => {
-      c.beginPath();
-      c.arc(h.x, h.y, (h.small ? 4.5 : 5.5) / z, 0, Math.PI * 2);
-      c.fillStyle = h.small ? SELECT_COLOR : '#fff'; // ручка изгиба — синяя, чтобы не путать с концами
-      c.fill();
-      c.strokeStyle = h.small ? '#fff' : SELECT_COLOR;
-      c.stroke();
     });
-    c.restore();
-  }
-
-  // ─── Холст ────────────────────────────────────────────────
-  // Какая часть исходного изображения сейчас на холсте. В режиме кадрирования
-  // показываем всё изображение, чтобы рамку можно было и расширить
-  const fullRegion = () => ({ x: 0, y: 0, w: S.image.naturalWidth, h: S.image.naturalHeight });
-  const region = () => (S.mode === 'crop' || !S.crop ? fullRegion() : S.crop);
-  // Слои хранятся в координатах кадрированного холста; в режиме кадрирования сдвигаем их
-  const annotationOffset = () => (S.mode === 'crop' && S.crop ? { x: S.crop.x, y: S.crop.y } : { x: 0, y: 0 });
-
-  let rounded = { key: null, canvas: null };
-  const getRoundedImage = () => {
-    const r = region();
-    const key = `${S.imageId}|${S.fx.radius}|${r.x},${r.y},${r.w},${r.h}`;
-    if (rounded.key !== key) {
-      const c = document.createElement('canvas');
-      c.width = r.w;
-      c.height = r.h;
-      const t = c.getContext('2d');
-      roundRectPath(t, 0, 0, c.width, c.height, S.fx.radius);
-      t.clip();
-      t.drawImage(S.image, r.x, r.y, r.w, r.h, 0, 0, r.w, r.h);
-      rounded = { key, canvas: c };
-    }
-    return rounded.canvas;
-  };
-
-  // Рисует итоговое изображение (без рамки выделения) в любой контекст
-  function paint(c, withCurrent) {
-    const { padding, shadowBlur, shadowOpacity } = S.fx;
-    c.save();
-    c.shadowColor = `rgba(0, 0, 0, ${shadowOpacity})`;
-    c.shadowBlur = shadowBlur;
-    c.shadowOffsetX = 0;
-    c.shadowOffsetY = shadowBlur / 4;
-    c.drawImage(getRoundedImage(), padding, padding);
-    c.restore();
-    const cur = withCurrent ? S.current : null;
-    const o = annotationOffset();
-    const shift = (a) => (o.x || o.y ? { ...a, ...translated(a, o.x, o.y) } : a);
-    const layers = S.annotations.filter((a) => a.id !== S.hiddenId).map(shift);
-    const focuses = layers.filter((a) => a.type === 'focus');
-    if (cur && cur.type === 'focus') focuses.push(cur);
-    let focusDone = false;
-    for (const a of layers) {
-      if (a.type === 'focus') {
-        if (!focusDone) { drawFocus(c, focuses); focusDone = true; }
-        continue;
-      }
-      drawAnnotation(c, a);
-    }
-    if (cur) {
-      if (cur.type !== 'focus') drawAnnotation(c, cur);
-      else if (!focusDone) drawFocus(c, focuses);
-    }
-  }
-
-  const exportSize = () => ({
-    w: region().w + S.fx.padding * 2,
-    h: region().h + S.fx.padding * 2,
   });
+  return { list, order, byDate, ex };
+}
+function prevSession(index, name, workoutId) {
+  const rec = index.ex.get(norm(name)); if (!rec) return null;
+  const cur = index.order.has(workoutId) ? index.order.get(workoutId) : Infinity;
+  for (let i = rec.sessions.length - 1; i >= 0; i--) { const s = rec.sessions[i]; if (s.order < cur && s.sets.length) return s; }
+  return null;
+}
 
-  function redraw() {
-    if (!S.image) return;
-    const { w, h } = exportSize();
-    const resized = canvas.width !== w || canvas.height !== h;
-    if (resized) { canvas.width = w; canvas.height = h; } else ctx.clearRect(0, 0, w, h);
-    paint(ctx, true);
-    if (S.mode === 'crop') drawCropOverlay(ctx);
-    else drawSelection(ctx);
-    if (resized) fit();
+/* ---------- gamification ---------- */
+const W_WEEK = ['неделя', 'недели', 'недель'];
+function bestBefore(index, name, workoutId) {
+  const rec = index.ex.get(norm(name)); if (!rec) return { w: 0, e: 0 };
+  const cur = index.order.has(workoutId) ? index.order.get(workoutId) : Infinity;
+  let w = 0, e = 0;
+  rec.sessions.forEach(s => { if (s.order < cur) { w = Math.max(w, s.maxW); e = Math.max(e, s.e1rm); } });
+  return { w, e };
+}
+function gameStats(index, goal) {
+  const done = index.list.filter(w => workoutSets(w) > 0);
+  let prCount = 0;
+  index.ex.forEach(rec => { let top = 0; rec.sessions.forEach(s => { if (!s.sets.length) return; if (top > 0 && s.maxW > top) prCount++; top = Math.max(top, s.maxW); }); });
+  const perWeek = {};
+  done.forEach(w => { const k = dkey(startOfWeek(fromKey(w.date))); perWeek[k] = (perWeek[k] || 0) + 1; });
+  const met = d => (perWeek[dkey(d)] || 0) >= goal;
+  const thisWs = startOfWeek(new Date());
+  const thisCount = perWeek[dkey(thisWs)] || 0;
+  // the current week never breaks a streak: it is still in progress
+  let streak = met(thisWs) ? 1 : 0;
+  for (let d = addDays(thisWs, -7); met(d); d = addDays(d, -7)) streak++;
+  let best = 0, chain = 0;
+  if (done.length) for (let d = startOfWeek(fromKey(done[0].date)); d <= thisWs; d = addDays(d, 7)) {
+    if (met(d)) { chain++; best = Math.max(best, chain); } else if (dkey(d) !== dkey(thisWs)) chain = 0;
   }
-
-  let rafId = 0;
-  const scheduleRedraw = () => {
-    if (rafId) return;
-    rafId = requestAnimationFrame(() => { rafId = 0; redraw(); });
-  };
-
-  // ─── Вид: масштаб и сдвиг ─────────────────────────────────
-  const V = { zoom: 1, x: 0, y: 0, fitted: true };
-  const ZMIN = 0.05, ZMAX = 8;
-  const clampZoom = (z) => Math.min(ZMAX, Math.max(ZMIN, z));
-  const statusRoom = () => ($('status').offsetParent ? 64 : 16);
-
-  function applyView() {
-    const zoomChanged = S.scale !== V.zoom;
-    S.scale = V.zoom;
-    canvas.style.width = canvas.width * V.zoom + 'px';
-    canvas.style.height = canvas.height * V.zoom + 'px';
-    canvasWrap.style.transform = `translate(${Math.round(V.x)}px, ${Math.round(V.y)}px)`;
-    if (S.draft) positionDraft(S.draft);
-    if (zoomChanged && S.selectedId != null) scheduleRedraw(); // ручки выделения всегда одного экранного размера
-    updateStatus();
-  }
-
-  // Вписывает холст, пока пользователь сам не менял масштаб или положение
-  function fit() {
-    if (!S.image) return;
-    if (!V.fitted) { applyView(); return; }
-    const r = stage.getBoundingClientRect();
-    const room = statusRoom();
-    const aw = Math.max(40, r.width - 48);
-    const ah = Math.max(40, r.height - 24 - room);
-    V.zoom = Math.min(1, aw / canvas.width, ah / canvas.height) || 1;
-    V.x = (r.width - canvas.width * V.zoom) / 2;
-    V.y = (r.height - room + 16 - canvas.height * V.zoom) / 2;
-    applyView();
-  }
-  new ResizeObserver(fit).observe(stage);
-
-  const fitView = () => { V.fitted = true; fit(); };
-
-  function zoomTo(nz, cx, cy) {
-    if (!S.image) return;
-    const r = stage.getBoundingClientRect();
-    if (cx == null) { cx = r.width / 2; cy = (r.height - statusRoom() + 16) / 2; }
-    nz = clampZoom(nz);
-    V.x = cx - (cx - V.x) * (nz / V.zoom);
-    V.y = cy - (cy - V.y) * (nz / V.zoom);
-    V.zoom = nz;
-    V.fitted = false;
-    applyView();
-  }
-  const zoomStep = (dir, cx, cy) => zoomTo(V.zoom * (dir > 0 ? 1.25 : 0.8), cx, cy);
-
-  function updateStatus() {
-    const sel = selected();
-    const tool = TOOLS.find((t) => t.id === S.mode);
-    $('hint').textContent = sel
-      ? 'Тяните слой или его углы. Delete удаляет, Esc снимает выделение'
-      : tool.hint;
-    $('zoom').textContent = Math.round(S.scale * 100) + '%';
-    $('zoom').title = `Вписать в окно (${MOD}0)`;
-    $('dims').textContent = S.image ? `${canvas.width} × ${canvas.height}` : '';
-  }
-
-  // ─── История ──────────────────────────────────────────────
-  // Любое изменение слоёв идёт через commit: сохраняем снимок «до»,
-  // чтобы отменялось само действие — добавление, удаление, правка
-  const HISTORY_LIMIT = 200;
-
-  // Запись истории: слои и кадрирование вместе, чтобы отмена кадрирования
-  // возвращала и слои на их места
-  function pushHistory(annotations) {
-    S.undo.push({ annotations, crop: S.crop });
-    if (S.undo.length > HISTORY_LIMIT) S.undo.shift();
-    S.redo = [];
-  }
-
-  function commit(update) {
-    endLiveEdit();
-    const next = update(S.annotations);
-    if (next === S.annotations) return;
-    pushHistory(S.annotations);
-    S.annotations = next;
-    changed();
-  }
-
-  // Непрерывная правка (перетаскивание, ползунок): много промежуточных
-  // состояний, но в историю попадает одно действие
-  function liveEdit(target, patch) {
-    if (!S.liveBase) S.liveBase = S.annotations;
-    const match = typeof target === 'function' ? target : (a) => a.id === target;
-    S.annotations = S.annotations.map((a) => (match(a) ? { ...a, ...patch } : a));
-    scheduleRedraw();
-  }
-
-  function endLiveEdit() {
-    const base = S.liveBase;
-    if (!base) return;
-    S.liveBase = null;
-    if (base !== S.annotations) { pushHistory(base); changed(); }
-  }
-
-  const pushAnnotation = (a) => commit((list) => [...list, a]);
-
-  function restore(from, to) {
-    endLiveEdit();
-    if (S.mode === 'crop') cancelCrop();
-    if (!from.length) return;
-    to.push({ annotations: S.annotations, crop: S.crop });
-    const e = from.pop();
-    const cropChanged = e.crop !== S.crop;
-    S.annotations = e.annotations;
-    S.crop = e.crop;
-    changed();
-    if (cropChanged) fitView();
-  }
-  const undo = () => restore(S.undo, S.redo);
-  const redo = () => restore(S.redo, S.undo);
-
-  function deleteSelected() {
-    const id = S.selectedId;
-    if (id == null) return;
-    S.selectedId = null;
-    commit((list) => list.filter((a) => a.id !== id));
-  }
-
-  function duplicateSelected() {
-    const a = selected();
-    if (!a) return;
-    const copy = { ...a, ...translated(a, 20, 20), id: newId() };
-    S.selectedId = copy.id;
-    commit((list) => {
-      const i = list.findIndex((x) => x.id === a.id);
-      return [...list.slice(0, i + 1), copy, ...list.slice(i + 1)];
-    });
-  }
-
-  function changed() {
-    if (S.selectedId != null && !selected()) S.selectedId = null; // слой мог исчезнуть после отмены
-    redraw();
-    renderLayers();
-    renderOptions(false);
-    updateButtons();
-    updateStatus();
-  }
-
-  // ─── Панель инструментов ──────────────────────────────────
-  function renderRail() {
-    const rail = $('rail');
-    rail.textContent = '';
-    TOOLS.forEach((t, i) => {
-      if (i === 2) rail.append(el('div', 'rail-sep'));
-      const b = el('button', 'tool' + (S.mode === t.id ? ' on' : ''));
-      b.innerHTML = ICONS[t.id];
-      b.setAttribute('aria-label', `${t.label} (${t.key})`);
-      b.setAttribute('aria-pressed', S.mode === t.id);
-      b.disabled = !S.image;
-      const tip = el('span', 'tip');
-      tip.append(el('span', null, t.label), el('span', 'kbd', t.key));
-      b.append(tip);
-      b.addEventListener('click', () => switchMode(t.id));
-      rail.append(b);
-    });
-  }
-
-  // ─── Верхняя панель параметров ────────────────────────────
-  // Цель правки: выделенный слой, настройки инструмента или оформление
-  function optionsTarget() {
-    const sel = selected();
-    if (sel) {
-      return {
-        title: TYPE_LABEL[sel.type],
-        type: sel.type,
-        layer: true,
-        get: (k) => (selected() || sel)[k],
-        set: (k, v, final) => {
-          if (k !== 'num') S[sel.type][k] = v; // следующие слои этого типа будут такими же
-          if (S.draft && S.draft.editId === sel.id) { S.draft[k] = v; positionDraft(S.draft); }
-          // Затемнение, тон и размытие общие для всех областей фокуса
-          const shared = sel.type === 'focus' && ['tone', 'opacity', 'blur'].includes(k);
-          liveEdit(shared ? (a) => a.type === 'focus' : sel.id, { [k]: v });
-          if (final) endLiveEdit();
-        },
-      };
-    }
-    if (S.mode === 'select') {
-      return {
-        title: 'Оформление', type: 'fx',
-        get: (k) => S.fx[k],
-        set: (k, v) => { S.fx[k] = v; scheduleRedraw(); },
-      };
-    }
-    const tool = TOOLS.find((t) => t.id === S.mode);
-    return {
-      title: tool.label, type: S.mode,
-      get: (k) => S[S.mode][k],
-      set: (k, v) => {
-        S[S.mode][k] = v;
-        if (S.mode === 'text' && S.draft) { S.draft[k] = v; positionDraft(S.draft); }
-      },
-    };
-  }
-
-  function buildSlider(c, T) {
-    const wrap = el('label', 'ctl-slider');
-    const label = typeof c.label === 'function' ? c.label(T.get) : c.label;
-    const input = document.createElement('input');
-    input.type = 'range';
-    input.min = c.min; input.max = c.max; input.step = c.step || 1;
-    input.value = T.get(c.key);
-    input.setAttribute('aria-label', label);
-    const val = el('span', 'ctl-value', c.fmt(T.get(c.key)));
-    const fill = () => input.style.setProperty('--p', ((input.value - c.min) / (c.max - c.min)) * 100 + '%');
-    fill();
-    input.addEventListener('input', () => {
-      const v = Number(input.value);
-      T.set(c.key, v, false);
-      val.textContent = c.fmt(v);
-      fill();
-    });
-    input.addEventListener('change', () => T.set(c.key, Number(input.value), true));
-    wrap.append(el('span', 'ctl-label', label), input, val);
-    return wrap;
-  }
-
-  function buildSeg(c, T) {
-    const wrap = el('div', 'seg');
-    wrap.setAttribute('role', 'group');
-    c.options.forEach(([value, label]) => {
-      const on = T.get(c.key) === value;
-      const b = el('button', on ? 'on' : '', label);
-      b.setAttribute('aria-pressed', on);
-      b.addEventListener('click', () => { T.set(c.key, value, true); renderOptions(true); });
-      wrap.append(b);
-    });
-    return wrap;
-  }
-
-  function buildStepper(c, T) {
-    const wrap = el('div', 'ctl-slider');
-    const box = el('div', 'stepper');
-    const v = T.get(c.key);
-    const minus = el('button', null, '−');
-    const plus = el('button', null, '+');
-    minus.setAttribute('aria-label', 'Уменьшить номер');
-    plus.setAttribute('aria-label', 'Увеличить номер');
-    minus.disabled = v <= 1;
-    plus.disabled = v >= 99;
-    minus.addEventListener('click', () => { T.set(c.key, Math.max(1, T.get(c.key) - 1), true); renderOptions(true); });
-    plus.addEventListener('click', () => { T.set(c.key, Math.min(99, T.get(c.key) + 1), true); renderOptions(true); });
-    box.append(minus, el('span', 'val', String(v)), plus);
-    wrap.append(el('span', 'ctl-label', c.label), box);
-    return wrap;
-  }
-
-  function buildColor(c, T) {
-    const wrap = el('div', 'colors');
-    const swatches = [];
-    PALETTE.forEach((col) => {
-      const b = el('button', 'swatch');
-      b.style.setProperty('--c', col);
-      b.dataset.color = col.toLowerCase();
-      b.setAttribute('aria-label', 'Цвет ' + col);
-      b.addEventListener('click', () => { T.set(c.key, col, true); mark(); });
-      swatches.push(b);
-      wrap.append(b);
-    });
-    const custom = el('label', 'swatch custom');
-    custom.title = 'Свой цвет';
-    const input = document.createElement('input');
-    input.type = 'color';
-    input.value = T.get(c.key);
-    input.setAttribute('aria-label', 'Свой цвет');
-    input.addEventListener('input', () => { T.set(c.key, input.value, false); mark(); });
-    input.addEventListener('change', () => { T.set(c.key, input.value, true); mark(); });
-    custom.append(input);
-    wrap.append(custom);
-
-    function mark() {
-      const v = String(T.get(c.key)).toLowerCase();
-      const inPalette = PALETTE.some((p) => p.toLowerCase() === v);
-      swatches.forEach((b) => b.classList.toggle('on', b.dataset.color === v));
-      custom.classList.toggle('on', !inPalette);
-      custom.style.setProperty('--c', v);
-    }
-    mark();
-    return wrap;
-  }
-
-  // Подпись текущего состояния панели: перестраиваем её, только когда оно изменилось,
-  // чтобы не сбивать ползунок, который пользователь сейчас тянет
-  let optionsSig = null;
-  function currentOptionsSig() {
-    if (!S.image) return 'empty';
-    if (S.mode === 'crop') return `crop|${S.cropAspect}`;
-    const T = optionsTarget();
-    const vals = OPTIONS[T.type].map((c) => (c.key ? T.get(c.key) : '')).join('|');
-    return `${S.mode}|${S.selectedId}|${vals}`;
-  }
-
-  function renderOptions(force = true) {
-    const sig = currentOptionsSig();
-    if (!force && sig === optionsSig) return;
-    optionsSig = sig;
-
-    const root = $('options');
-    root.textContent = '';
-    if (!S.image) {
-      root.append(el('span', 'opt-empty', 'Откройте скриншот, чтобы начать'));
-      return;
-    }
-    if (S.mode === 'crop') { renderCropOptions(root); return; }
-    const T = optionsTarget();
-    root.append(el('span', 'opt-title', T.title));
-    OPTIONS[T.type].forEach((c) => {
-      if (c.when && !c.when(T.get)) return;
-      if (c.layerOnly && !T.layer) return;
-      if (c.toolOnly && T.layer) return;
-      root.append(el('div', 'vsep'));
-      if (c.t === 'slider') root.append(buildSlider(c, T));
-      else if (c.t === 'seg') root.append(buildSeg(c, T));
-      else if (c.t === 'color') root.append(buildColor(c, T));
-      else if (c.t === 'stepper') root.append(buildStepper(c, T));
-      else if (c.t === 'next') {
-        const n = el('span', 'next-num', 'Следующий номер ');
-        n.append(el('b', null, String(nextMarkerNum())));
-        root.append(n);
-      }
-      else if (c.t === 'note') {
-        const n = el('span', 'note');
-        n.innerHTML = ICONS.info;
-        n.append(el('span', null, c.text));
-        root.append(n);
-      }
-    });
-    if (T.layer) {
-      root.append(el('div', 'vsep'));
-      const del = el('button', 'btn-icon opt-del');
-      del.innerHTML = ICONS.trash;
-      del.title = 'Удалить слой (Delete)';
-      del.setAttribute('aria-label', 'Удалить слой');
-      del.addEventListener('click', deleteSelected);
-      root.append(del);
-    }
-  }
-
-  // Пока вводится текст, клики по цвету и начертанию не должны закрывать поле
-  $('options').addEventListener('mousedown', (e) => {
-    if (S.draft && e.target.closest('button')) e.preventDefault();
-  });
-
-  // ─── Слои ─────────────────────────────────────────────────
-  const layerName = (a) => (a.type === 'text'
-    ? `«${a.text.split('\n')[0]}${a.text.includes('\n') ? '…' : ''}»`
-    : a.type === 'marker' ? `Маркер ${a.num}`
-    : a.type === 'blur' ? (a.variant === 'pixelate' ? 'Пикселизация' : 'Размытие') : TYPE_LABEL[a.type]);
-
-  function renderLayers() {
-    const list = $('layerList');
-    list.textContent = '';
-    $('layerCount').textContent = S.annotations.length || '';
-
-    for (let i = S.annotations.length - 1; i >= 0; i--) {
-      const a = S.annotations[i];
-      const li = el('li', 'layer' + (a.id === S.selectedId ? ' on' : ''));
-      const dot = el('span', 'dot' + (a.type === 'arrow' || a.type === 'text' || a.type === 'marker' ? ' round' : ''));
-      dot.style.setProperty('--c', a.type === 'blur' ? '#8a8591' : a.type === 'focus' ? '#3a3540' : a.color);
-      const del = el('button', 'del');
-      del.innerHTML = ICONS.x;
-      del.setAttribute('aria-label', 'Удалить слой ' + layerName(a));
-      del.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (S.selectedId === a.id) S.selectedId = null;
-        commit((l) => l.filter((x) => x.id !== a.id));
-      });
-      li.addEventListener('click', () => select(a.id));
-      li.append(dot, el('span', 'name', layerName(a)), del);
-      list.append(li);
-    }
-
-    if (!S.annotations.length) {
-      list.append(el('li', 'layers-empty', 'Нарисуйте стрелку, рамку или добавьте текст — всё появится здесь'));
-    }
-    const base = el('li', 'layer base');
-    const dot = el('span', 'dot');
-    dot.style.setProperty('--c', 'rgba(255,255,255,.3)');
-    base.append(dot, el('span', 'name', 'Скриншот'));
-    list.append(base);
-  }
-
-  function updateButtons() {
-    $('undoBtn').disabled = !S.undo.length;
-    $('redoBtn').disabled = !S.redo.length;
-    $('downloadBtn').disabled = !S.image;
-    $('resetBtn').disabled = !S.image;
-  }
-
-  // ─── Текстовое поле ───────────────────────────────────────
-  function positionDraft(d) {
-    const inp = d.el;
-    const z = S.scale;
-    const m = textMetrics({ text: inp.value || 'Текст', size: d.size, bold: d.bold });
-    const plate = hasPlate(d);
-    const { px: padX, py: padY, r } = platePad(d);
-    const px_ = plate ? padX : 0, py_ = plate ? padY : 0;
-    // Поле повторяет будущий слой: та же плашка, отступы и межстрочный интервал
-    const lead = d.size * (LINE - 1) / 2; // textarea добавляет половину интерлиньяжа сверху
-    inp.style.left = (d.x - px_) * z + 'px';
-    inp.style.top = (d.y - py_ - lead) * z + 'px';
-    inp.style.padding = `${py_ * z}px ${px_ * z}px`;
-    inp.style.width = (m.w + px_ * 2) * z + 4 + 'px';
-    inp.style.height = ((m.lines.length * m.lh) + py_ * 2) * z + 'px';
-    inp.style.font = textFont(d.size * z, d.bold);
-    inp.style.lineHeight = m.lh * z + 'px';
-    inp.style.background = plate ? d.color : 'transparent';
-    inp.style.color = plate ? readableOn(d.color) : d.color;
-    inp.style.borderRadius = plate ? r * z + 'px' : '0';
-    inp.style.outline = plate ? `1.5px solid ${SELECT_COLOR}` : '1px dashed currentColor';
-  }
-
-  // edit — существующий текстовый слой, который правим
-  function openDraft(p, edit) {
-    const src = edit || S.text;
-    const d = {
-      x: edit ? edit.x : p.x,
-      y: edit ? edit.y : p.y,
-      variant: src.variant || 'plain',
-      color: src.color, size: src.size, bold: src.bold,
-      editId: edit ? edit.id : null,
-      original: edit ? edit.text : '',
-    };
-    const inp = el('textarea', 'text-draft');
-    inp.placeholder = 'Текст';
-    inp.spellcheck = false;
-    inp.rows = 1;
-    inp.wrap = 'off';
-    inp.value = d.original;
-    d.el = inp;
-    inp.addEventListener('input', () => positionDraft(d));
-    inp.addEventListener('keydown', (e) => {
-      // Enter — готово, Shift+Enter — новая строка
-      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); commitText(true); }
-      if (e.key === 'Escape') { e.preventDefault(); cancelText(); }
-    });
-    inp.addEventListener('blur', () => commitText(false));
-    S.draft = d;
-    if (edit) { S.hiddenId = edit.id; S.selectedId = edit.id; redraw(); renderLayers(); renderOptions(false); }
-    canvasWrap.append(inp);
-    positionDraft(d);
-    setTimeout(() => { inp.focus(); if (edit) inp.select(); }, 0);
-  }
-
-  // Безопасно вызывать несколько раз. selectAfter — выделить слой после ввода
-  function commitText(selectAfter) {
-    const d = S.draft;
-    if (!d) return;
-    S.draft = null;
-    S.hiddenId = null;
-    // Убираем пустые строки по краям, но сохраняем переносы внутри
-    const text = d.el.value.replace(/\s+$/, '').replace(/^\s*\n/, '');
-    d.el.remove();
-
-    if (d.editId != null) {
-      if (!text.trim()) { S.selectedId = null; commit((l) => l.filter((a) => a.id !== d.editId)); return; }
-      const patch = { text, variant: d.variant, color: d.color, size: d.size, bold: d.bold };
-      commit((l) => l.map((a) => (a.id === d.editId ? { ...a, ...patch } : a)));
-      redraw();
-      return;
-    }
-    if (!text.trim()) return;
-    const id = newId();
-    if (selectAfter) S.selectedId = id;
-    pushAnnotation({ type: 'text', id, x: d.x, y: d.y, text, variant: d.variant, color: d.color, size: d.size, bold: d.bold });
-  }
-
-  function cancelText() {
-    const d = S.draft;
-    if (!d) return;
-    S.draft = null;
-    S.hiddenId = null;
-    d.el.remove();
-    redraw();
-  }
-
-  // ─── Ввод указателем на холсте ────────────────────────────
-  let drawing = false;
-  let drag = null; // { kind: 'move' | 'handle', id, handle, from, orig }
-
-  const getPoint = (e) => {
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: (e.clientX - rect.left) * (canvas.width / rect.width),
-      y: (e.clientY - rect.top) * (canvas.height / rect.height),
-    };
-  };
-  const tolerance = () => 8 / (V.zoom || 1);
-
-  function startDrag(e, kind, a, handle, p) {
-    canvas.setPointerCapture(e.pointerId);
-    drag = { kind, id: a.id, handle, from: p, orig: a };
-    if (S.selectedId !== a.id) select(a.id);
-  }
-
-  canvas.addEventListener('pointerdown', (e) => {
-    if (!S.image || e.button > 0) return;
-    const p = getPoint(e);
-
-    if (S.mode === 'crop') {
-      const hit = cropHitAt(p);
-      canvas.setPointerCapture(e.pointerId);
-      cropDrag = { ...hit, from: toImagePx(p), orig: { ...S.cropDraft } };
-      return;
-    }
-    const tol = tolerance();
-    const sel = selected();
-
-    // Текст: клик по готовому тексту открывает его на правку
-    if (S.mode === 'text') {
-      e.preventDefault(); // не отдаём фокус холсту
-      if (S.draft) { commitText(false); return; }
-      // По готовому тексту: потянул — переместить, просто кликнул — править
-      const t = hitTest(p, tol, (a) => a.type === 'text');
-      if (t) {
-        startDrag(e, 'move', t, null, p);
-        drag.editOnClick = true;
-        drag.screen = { x: e.clientX, y: e.clientY };
-        return;
-      }
-    }
-
-    // Ручки и тело выделенного слоя работают в любом инструменте
-    if (sel) {
-      const h = hitHandle(sel, p, tol);
-      if (h) { startDrag(e, 'handle', sel, h.id, p); return; }
-      if (hitLayer(sel, p, tol)) { startDrag(e, 'move', sel, null, p); return; }
-    }
-
-    if (S.mode === 'select') {
-      const hit = hitTest(p, tol);
-      if (hit) startDrag(e, 'move', hit, null, p);
-      else deselect();
-      return;
-    }
-
-    if (S.mode === 'marker') {
-      // Клик по существующему маркеру — перетащить его, иначе поставить новый
-      const hit = hitTest(p, tol, (a) => a.type === 'marker');
-      if (hit) { startDrag(e, 'move', hit, null, p); return; }
-      const m = { type: 'marker', id: newId(), ...S.marker, x: p.x, y: p.y, num: nextMarkerNum() };
-      // Установка и перетаскивание сразу после неё — один шаг истории
-      endLiveEdit();
-      S.liveBase = S.annotations;
-      S.annotations = [...S.annotations, m];
-      S.selectedId = m.id;
-      canvas.setPointerCapture(e.pointerId);
-      drag = { kind: 'move', id: m.id, handle: null, from: p, orig: m };
-      redraw();
-      renderLayers();
-      renderOptions(false);
-      updateStatus();
-      return;
-    }
-
-    if (sel) deselect();
-
-    if (S.mode === 'text') { openDraft(p); return; }
-
-    canvas.setPointerCapture(e.pointerId);
-    drawing = true;
-    S.current = { type: S.mode, ...S[S.mode], id: newId(), start: p, end: p };
-    scheduleRedraw();
-  });
-
-  canvas.addEventListener('dblclick', (e) => {
-    if (!S.image || S.draft || S.mode === 'crop') return;
-    const t = hitTest(getPoint(e), tolerance(), (a) => a.type === 'text');
-    if (t) openDraft(null, t);
-  });
-
-  function hoverCursor(p) {
-    const tol = tolerance();
-    const sel = selected();
-    if (sel) {
-      const h = hitHandle(sel, p, tol);
-      if (h) return HANDLE_CURSOR[h.id];
-      if (hitLayer(sel, p, tol)) return 'move';
-    }
-    if (S.mode === 'text' && hitTest(p, tol, (a) => a.type === 'text')) return 'move';
-    if (S.mode === 'marker' && hitTest(p, tol, (a) => a.type === 'marker')) return 'move';
-    if (S.mode === 'select') return hitTest(p, tol) ? 'move' : 'grab';
-    return S.mode === 'text' ? 'text' : 'crosshair';
-  }
-
-  canvas.addEventListener('pointermove', (e) => {
-    if (!S.image) return;
-    const p = getPoint(e);
-
-    if (S.mode === 'crop') {
-      if (cropDrag) {
-        const ip = toImagePx(p);
-        const o = cropDrag.orig;
-        const { w: W, h: H } = fullRegion();
-        if (cropDrag.kind === 'move') {
-          S.cropDraft = { ...o, x: clampN(o.x + ip.x - cropDrag.from.x, 0, W - o.w), y: clampN(o.y + ip.y - cropDrag.from.y, 0, H - o.h) };
-        } else if (cropDrag.kind === 'handle') {
-          S.cropDraft = resizeCrop(o, cropDrag.id, ip);
-        } else {
-          S.cropDraft = newCrop(cropDrag.from, ip);
-        }
-        updateCropSize();
-        scheduleRedraw();
-      } else if (e.pointerType === 'mouse') {
-        const h = cropHitAt(p);
-        canvas.style.cursor = h.kind === 'handle' ? CROP_CURSOR[h.id] : h.kind === 'move' ? 'move' : 'crosshair';
-      }
-      return;
-    }
-
-    if (drag) {
-      if (drag.editOnClick) {
-        // Пока указатель почти не сдвинулся, это ещё клик, а не перетаскивание
-        if (Math.hypot(e.clientX - drag.screen.x, e.clientY - drag.screen.y) < 4) return;
-        drag.editOnClick = false;
-      }
-      const dx = p.x - drag.from.x, dy = p.y - drag.from.y;
-      const o = drag.orig;
-      let patch;
-      if (drag.kind === 'move') patch = translated(o, dx, dy);
-      else if (drag.handle === 'tail') patch = { tail: { x: p.x, y: p.y } };
-      else if (drag.handle === 'mid') patch = { style: 'curved', bend: bendFromPoint(o, p) };
-      else if (o.type === 'arrow') patch = { [drag.handle]: { x: p.x, y: p.y } };
-      else patch = resizedRect(o, drag.handle, p);
-      liveEdit(drag.id, patch);
-      return;
-    }
-    if (drawing && S.current) {
-      S.current.end = p;
-      scheduleRedraw();
-      return;
-    }
-    if (e.pointerType === 'mouse') canvas.style.cursor = hoverCursor(p);
-  });
-
-  const endPointerOnCanvas = () => {
-    if (cropDrag) { cropDrag = null; return; }
-    if (drag) {
-      const clickToEdit = drag.editOnClick ? drag.orig : null;
-      drag = null;
-      endLiveEdit();
-      if (clickToEdit) openDraft(null, selected() || clickToEdit);
-      return;
-    }
-    if (!drawing) return;
-    drawing = false;
-    const cur = S.current;
-    S.current = null;
-    if (cur) {
-      const { width, height } = toRect(cur.start, cur.end);
-      const bigEnough = cur.type === 'arrow' ? Math.hypot(width, height) > 5 : width > 3 && height > 3;
-      if (bigEnough) {
-        S.selectedId = cur.id; // только что нарисованное сразу можно поправить
-        pushAnnotation(cur);
-        return;
-      }
-    }
-    redraw();
-  };
-  canvas.addEventListener('pointerup', endPointerOnCanvas);
-  canvas.addEventListener('pointercancel', endPointerOnCanvas);
-
-  function switchMode(m) {
-    commitText(false);
-    const wasCrop = S.mode === 'crop';
-    if (wasCrop && m !== 'crop') applyCropDraft(); // уход из кадрирования применяет рамку
-    S.mode = m;
-    S.selectedId = null;
-    if (m === 'crop' && !wasCrop) { S.cropDraft = { ...(S.crop || fullRegion()) }; S.cropAspect = null; }
-    canvas.style.cursor = m === 'select' ? 'grab' : m === 'text' ? 'text' : 'crosshair';
-    if (wasCrop !== (m === 'crop')) V.fitted = true; // размер холста меняется — вписываем заново
-    redraw();
-    fit();
-    updateButtons();
-    renderRail();
-    renderLayers();
-    renderOptions(true);
-    updateStatus();
-  }
-
-  // ─── Кадрирование ─────────────────────────────────────────
-  const CROP_MIN = 16;
-  const ASPECTS = [[null, 'Свободно'], [1, '1:1'], [4 / 3, '4:3'], [16 / 9, '16:9']];
-  let cropDrag = null;
-  const clampN = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-  const toImagePx = (p) => ({ x: p.x - S.fx.padding, y: p.y - S.fx.padding });
-
-  function cropHandles(d) {
-    const pad = S.fx.padding;
-    const l = pad + d.x, t = pad + d.y, r = l + d.w, b = t + d.h, cx = l + d.w / 2, cy = t + d.h / 2;
-    const all = [
-      { id: 'nw', x: l, y: t }, { id: 'n', x: cx, y: t }, { id: 'ne', x: r, y: t }, { id: 'e', x: r, y: cy },
-      { id: 'se', x: r, y: b }, { id: 's', x: cx, y: b }, { id: 'sw', x: l, y: b }, { id: 'w', x: l, y: cy },
-    ];
-    // С фиксированными пропорциями тянуть можно только за углы
-    return S.cropAspect ? all.filter((h) => h.id.length === 2) : all;
-  }
-
-  const CROP_CURSOR = { nw: 'nwse-resize', se: 'nwse-resize', ne: 'nesw-resize', sw: 'nesw-resize', n: 'ns-resize', s: 'ns-resize', e: 'ew-resize', w: 'ew-resize' };
-
-  function cropHitAt(p) {
-    const d = S.cropDraft;
-    const tol = tolerance() * 1.6;
-    const h = cropHandles(d).find((q) => Math.hypot(p.x - q.x, p.y - q.y) <= tol);
-    if (h) return { kind: 'handle', id: h.id };
-    const ip = toImagePx(p);
-    if (ip.x >= d.x && ip.x <= d.x + d.w && ip.y >= d.y && ip.y <= d.y + d.h) return { kind: 'move' };
-    return { kind: 'new' };
-  }
-
-  // Подгоняем пропорции, не выходя за уже заданную ширину и высоту
-  function fitToAspect(w, h, aspect) {
-    if (!aspect) return [w, h];
-    return w / h > aspect ? [h * aspect, h] : [w, w / aspect];
-  }
-
-  function resizeCrop(o, id, ip) {
-    const { w: W, h: H } = fullRegion();
-    const px_ = clampN(ip.x, 0, W), py_ = clampN(ip.y, 0, H);
-    let l = o.x, t = o.y, r = o.x + o.w, b = o.y + o.h;
-    if (id.includes('w')) l = Math.min(px_, r - CROP_MIN);
-    if (id.includes('e')) r = Math.max(px_, l + CROP_MIN);
-    if (id.includes('n')) t = Math.min(py_, b - CROP_MIN);
-    if (id.includes('s')) b = Math.max(py_, t + CROP_MIN);
-    if (S.cropAspect) {
-      const [w, h] = fitToAspect(r - l, b - t, S.cropAspect);
-      if (id.includes('w')) l = r - w; else r = l + w;
-      if (id.includes('n')) t = b - h; else b = t + h;
-    }
-    return { x: l, y: t, w: r - l, h: b - t };
-  }
-
-  function newCrop(start, ip) {
-    const { w: W, h: H } = fullRegion();
-    const ex = clampN(ip.x, 0, W), ey = clampN(ip.y, 0, H);
-    let [w, h] = fitToAspect(Math.max(CROP_MIN, Math.abs(ex - start.x)), Math.max(CROP_MIN, Math.abs(ey - start.y)), S.cropAspect);
-    const x = ex < start.x ? start.x - w : start.x;
-    const y = ey < start.y ? start.y - h : start.y;
-    return { x: clampN(x, 0, W - w), y: clampN(y, 0, H - h), w: Math.min(w, W), h: Math.min(h, H) };
-  }
-
-  function setAspect(aspect) {
-    S.cropAspect = aspect;
-    if (aspect) {
-      const d = S.cropDraft;
-      const [w, h] = fitToAspect(d.w, d.h, aspect);
-      S.cropDraft = { x: d.x + (d.w - w) / 2, y: d.y + (d.h - h) / 2, w, h };
-    }
-    redraw();
-    renderOptions(true);
-  }
-
-  function drawCropOverlay(c) {
-    const d = S.cropDraft;
-    if (!d) return;
-    const pad = S.fx.padding;
-    const { w: iw, h: ih } = fullRegion();
-    const z = V.zoom || 1;
-    const x = pad + d.x, y = pad + d.y;
-    c.save();
-    // Затемняем всё за пределами рамки
-    c.beginPath();
-    c.rect(pad, pad, iw, ih);
-    c.rect(x, y, d.w, d.h);
-    c.fillStyle = 'rgba(8, 6, 12, 0.6)';
-    c.fill('evenodd');
-    // Сетка третей
-    c.strokeStyle = 'rgba(255, 255, 255, 0.45)';
-    c.lineWidth = 1 / z;
-    c.beginPath();
-    for (let i = 1; i < 3; i++) {
-      c.moveTo(x + (d.w * i) / 3, y); c.lineTo(x + (d.w * i) / 3, y + d.h);
-      c.moveTo(x, y + (d.h * i) / 3); c.lineTo(x + d.w, y + (d.h * i) / 3);
-    }
-    c.stroke();
-    c.strokeStyle = '#fff';
-    c.lineWidth = 1.5 / z;
-    c.strokeRect(x, y, d.w, d.h);
-    // Ручки
-    const hs = 5 / z;
-    cropHandles(d).forEach((h) => {
-      c.fillStyle = '#fff';
-      c.strokeStyle = 'rgba(0, 0, 0, 0.35)';
-      c.lineWidth = 1 / z;
-      c.fillRect(h.x - hs, h.y - hs, hs * 2, hs * 2);
-      c.strokeRect(h.x - hs, h.y - hs, hs * 2, hs * 2);
-    });
-    c.restore();
-  }
-
-  const updateCropSize = () => {
-    const e = document.getElementById('cropSize');
-    if (e && S.cropDraft) e.textContent = `${Math.round(S.cropDraft.w)} × ${Math.round(S.cropDraft.h)}`;
-  };
-
-  // Применяет рамку: слои сдвигаются, чтобы остаться на тех же местах изображения
-  function applyCropDraft() {
-    const d = S.cropDraft;
-    S.cropDraft = null;
-    if (!d || !S.image) return;
-    const full = fullRegion();
-    const r = { x: Math.round(d.x), y: Math.round(d.y), w: Math.round(d.w), h: Math.round(d.h) };
-    const next = r.x === 0 && r.y === 0 && r.w === full.w && r.h === full.h ? null : r;
-    const cur = S.crop;
-    const same = (cur === null && next === null) ||
-      (cur && next && cur.x === next.x && cur.y === next.y && cur.w === next.w && cur.h === next.h);
-    if (same) return;
-    endLiveEdit();
-    pushHistory(S.annotations);
-    const dx = (cur ? cur.x : 0) - (next ? next.x : 0);
-    const dy = (cur ? cur.y : 0) - (next ? next.y : 0);
-    if (dx || dy) S.annotations = S.annotations.map((a) => ({ ...a, ...translated(a, dx, dy) }));
-    S.crop = next;
-  }
-
-  function cancelCrop() {
-    if (S.mode !== 'crop') return;
-    S.cropDraft = null; // без рамки нечего применять
-    switchMode('select');
-  }
-
-  function renderCropOptions(root) {
-    root.append(el('span', 'opt-title', 'Кадрирование'));
-    root.append(el('div', 'vsep'));
-    const seg = el('div', 'seg');
-    ASPECTS.forEach(([value, label]) => {
-      const on = S.cropAspect === value;
-      const b = el('button', on ? 'on' : '', label);
-      b.setAttribute('aria-pressed', on);
-      b.addEventListener('click', () => setAspect(value));
-      seg.append(b);
-    });
-    root.append(seg);
-    root.append(el('span', 'crop-size'));
-    root.lastChild.id = 'cropSize';
-    root.append(el('span', 'opt-spacer'));
-    const resetB = el('button', 'btn-pill sm', 'Всё изображение');
-    resetB.addEventListener('click', () => { S.cropAspect = null; S.cropDraft = fullRegion(); redraw(); renderOptions(true); });
-    const cancelB = el('button', 'btn-pill sm', 'Отмена');
-    cancelB.addEventListener('click', cancelCrop);
-    const applyB = el('button', 'btn-pill btn-primary sm', 'Применить');
-    applyB.addEventListener('click', () => switchMode('select'));
-    root.append(resetB, cancelB, applyB);
-    updateCropSize();
-  }
-
-  // ─── Загрузка изображения ─────────────────────────────────
-  function loadFile(file) {
-    if (!file || !file.type.startsWith('image/')) {
-      if (file) toast('Это не изображение — выберите PNG, JPG или WebP');
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const img = new Image();
-      img.onload = () => {
-        cancelText();
-        S.image = img;
-        S.imageId++;
-        S.annotations = [];
-        S.undo = [];
-        S.redo = [];
-        S.liveBase = null;
-        S.selectedId = null;
-        S.current = null;
-        S.crop = null;
-        S.cropDraft = null;
-        if (S.mode === 'crop') S.mode = 'select';
-        // Толщина по умолчанию зависит от размера картинки, чтобы на больших скриншотах линии не терялись
-        const base = Math.max(3, Math.round(Math.max(img.naturalWidth, img.naturalHeight) / 400));
-        S.arrow.thickness = Math.min(40, base);
-        S.box.thickness = Math.min(40, base);
-        S.marker.size = Math.min(80, Math.max(16, Math.round(Math.max(img.naturalWidth, img.naturalHeight) / 60)));
-        const amb = $('ambientImg');
-        amb.style.backgroundImage = `url("${ev.target.result}")`;
-        amb.classList.add('on');
-        $('empty').hidden = true;
-        canvasWrap.hidden = false;
-        $('status').hidden = false;
-        $('layers').hidden = false;
-        canvas.width = 0; // гарантирует пересчёт размера в redraw
-        V.fitted = true;
-        switchMode(S.mode);
-        changed();
-      };
-      img.onerror = () => toast('Не удалось открыть файл — попробуйте другой формат');
-      img.src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-
-  fileInput.addEventListener('change', () => { loadFile(fileInput.files[0]); fileInput.value = ''; });
-  $('openBtn').addEventListener('click', () => fileInput.click());
-  $('emptyOpenBtn').addEventListener('click', () => fileInput.click());
-
-  window.addEventListener('paste', (e) => {
-    const item = [...(e.clipboardData?.items || [])].find((i) => i.type.startsWith('image/'));
-    if (item) { e.preventDefault(); loadFile(item.getAsFile()); }
-  });
-
-  const hasFiles = (e) => [...(e.dataTransfer?.types || [])].includes('Files');
-  let dragDepth = 0;
-  window.addEventListener('dragenter', (e) => { if (hasFiles(e)) { e.preventDefault(); dragDepth++; app.classList.add('dragging'); } });
-  window.addEventListener('dragover', (e) => { if (hasFiles(e)) e.preventDefault(); });
-  window.addEventListener('dragleave', () => { dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) app.classList.remove('dragging'); });
-  window.addEventListener('drop', (e) => {
-    if (!hasFiles(e)) return;
-    e.preventDefault();
-    dragDepth = 0;
-    app.classList.remove('dragging');
-    loadFile(e.dataTransfer.files[0]);
-  });
-
-  // ─── Скачивание ───────────────────────────────────────────
-  let downloadsApi = null;
-  try {
-    if (window.claude && window.claude.use) {
-      window.claude.use('downloads').then((d) => { downloadsApi = d; }).catch(() => {});
-    }
-  } catch (_) {}
-
-  async function download() {
-    if (!S.image) return;
-    commitText(false);
-    if (S.mode === 'crop') switchMode('select');
-    // Рендерим отдельно, чтобы рамка выделения не попала в файл
-    const { w, h } = exportSize();
-    const out = document.createElement('canvas');
-    out.width = w; out.height = h;
-    paint(out.getContext('2d'), false);
-    const blob = await new Promise((r) => out.toBlob(r, 'image/png'));
-    if (!blob) { toast('Не удалось подготовить файл'); return; }
-    const filename = `screenshot-${Date.now()}.png`;
-
-    if (downloadsApi) {
+  return { workouts: done.length, totalVol: sum(done.map(workoutVolume)), prCount, thisCount, streak, bestStreak: Math.max(best, streak) };
+}
+const ACH = [
+  { id: 'first', icon: 'flag', title: 'Первый шаг', desc: 'Записать первую тренировку', metric: 'workouts', target: 1 },
+  { id: 'w10', icon: 'calendar', title: 'Десятка', desc: '10 тренировок', metric: 'workouts', target: 10 },
+  { id: 'w25', icon: 'calendar', title: 'Четверть сотни', desc: '25 тренировок', metric: 'workouts', target: 25 },
+  { id: 'w50', icon: 'calendar', title: 'Полсотни', desc: '50 тренировок', metric: 'workouts', target: 50 },
+  { id: 'w100', icon: 'calendar', title: 'Сотня', desc: '100 тренировок', metric: 'workouts', target: 100 },
+  { id: 'pr1', icon: 'trophy', title: 'Новая высота', desc: 'Побить свой рекорд веса в любом упражнении', metric: 'prCount', target: 1 },
+  { id: 'pr10', icon: 'trophy', title: 'Коллекционер', desc: '10 личных рекордов', metric: 'prCount', target: 10 },
+  { id: 'pr50', icon: 'trophy', title: 'Без потолка', desc: '50 личных рекордов', metric: 'prCount', target: 50 },
+  { id: 's4', icon: 'flame', title: 'Месяц в ритме', desc: '4 недели подряд с выполненной целью', metric: 'bestStreak', target: 4 },
+  { id: 's12', icon: 'flame', title: 'Квартал', desc: '12 недель подряд с выполненной целью', metric: 'bestStreak', target: 12 },
+  { id: 'v6', icon: 'weight', title: 'Слон', desc: 'Суммарно поднять 6 т — вес африканского слона', metric: 'totalVol', target: 6000 },
+  { id: 'v41', icon: 'weight', title: 'Самолёт', desc: 'Суммарно 41 т — как пассажирский Boeing 737', metric: 'totalVol', target: 41000 },
+  { id: 'v150', icon: 'weight', title: 'Синий кит', desc: 'Суммарно 150 т — вес синего кита', metric: 'totalVol', target: 150000 },
+  { id: 'v420', icon: 'star', title: 'Орбита', desc: 'Суммарно 420 т — масса МКС', metric: 'totalVol', target: 420000 },
+];
+const achValue = (a, g) => g[a.metric] || 0;
+const achProgress = (a, v) => a.metric === 'totalVol' ? `${fmtVol(Math.min(v, a.target))} из ${fmtVol(a.target)}` : `${Math.min(v, a.target)} из ${a.target}`;
+const THINGS = [
+  [150000, ['синий кит', 'синих кита', 'синих китов']],
+  [41000, ['пассажирский самолёт', 'пассажирских самолёта', 'пассажирских самолётов']],
+  [12000, ['городской автобус', 'городских автобуса', 'городских автобусов']],
+  [6000, ['африканский слон', 'африканских слона', 'африканских слонов']],
+  [1500, ['легковой автомобиль', 'легковых автомобиля', 'легковых автомобилей']],
+  [450, ['концертный рояль', 'концертных рояля', 'концертных роялей']],
+];
+function compareVol(v) {
+  for (const [kg, f] of THINGS) if (v >= kg) { const n = Math.round(v / kg); return `Примерно как ${n === 1 ? f[0] : plural(n, f)}`; }
+  return null;
+}
+function Ring({ value, total, size = 58, stroke = 5 }) {
+  const r = (size - stroke) / 2, c = 2 * Math.PI * r, p = Math.min(1, value / Math.max(1, total));
+  return html`<svg width=${size} height=${size} viewBox=${`0 0 ${size} ${size}`} aria-hidden="true">
+    <circle cx=${size / 2} cy=${size / 2} r=${r} fill="none" strokeWidth=${stroke} className="ring-track"></circle>
+    <circle cx=${size / 2} cy=${size / 2} r=${r} fill="none" strokeWidth=${stroke} strokeLinecap="round" className=${'ring-fill' + (p >= 1 ? ' full' : '')}
+      strokeDasharray=${c} strokeDashoffset=${c * (1 - p)} transform=${`rotate(-90 ${size / 2} ${size / 2})`}></circle>
+  </svg>`;
+}
+
+/* ---------- storage: localStorage now, private per-user cloud doc when available ---------- */
+const LS_KEY = 'workout-tracker:v2';
+const emptyState = () => ({ v: 2, workouts: {}, templates: {}, settings: { rest: 90, goal: 3 }, updatedAt: 0 });
+const loadLocal = () => { try { const raw = localStorage.getItem(LS_KEY); if (raw) return { ...emptyState(), ...JSON.parse(raw) }; } catch (e) {} return emptyState(); };
+
+function useStore() {
+  const [state, setState] = useState(loadLocal);
+  const [cloud, setCloud] = useState(false);
+  const docRef = useRef(null);
+  useEffect(() => {
+    let alive = true;
+    (async () => {
       try {
-        await downloadsApi.save({ filename, data: blob });
-        toast('Сохранено');
-      } catch (err) {
-        const code = err && err.code;
-        if (code === 'declined') return;
-        if (code === 'rate_limited') toast('Окно сохранения уже открыто');
-        else if (code === 'too_large') toast('Файл слишком большой — уменьшите отступы');
-        else toast('Не удалось сохранить файл');
-      }
-      return;
-    }
-    const a = document.createElement('a');
-    a.download = filename;
-    a.href = URL.createObjectURL(blob);
-    document.body.append(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-  }
+        if (!window.claude || typeof window.claude.use !== 'function') return;
+        const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+        if (!db || !user) return;
+        const id = await user.id(); if (!id || !alive) return;
+        const ref = db.collection('data/users/' + id).doc('tracker');
+        const snap = await ref.get(); if (!alive) return;
+        if (snap.exists) {
+          const remote = snap.data();
+          setState(cur => (remote.updatedAt || 0) > (cur.updatedAt || 0) ? { ...emptyState(), ...remote } : cur);
+        }
+        docRef.current = ref; setCloud(true);
+      } catch (e) { console.warn('Облачное сохранение недоступно', e); }
+    })();
+    return () => { alive = false; };
+  }, []);
+  useEffect(() => {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
+    if (!docRef.current || !state.updatedAt) return;
+    const t = setTimeout(() => { docRef.current.set(JSON.parse(JSON.stringify(state))).catch(e => console.warn('Не удалось сохранить в облако', e)); }, 800);
+    return () => clearTimeout(t);
+  }, [state, cloud]);
+  const update = fn => setState(s => ({ ...fn(s), updatedAt: Date.now() }));
+  return { state, setState, update, cloud };
+}
 
-  // ─── Сброс ────────────────────────────────────────────────
-  function reset() {
-    cancelText();
-    S.image = null;
-    S.fx = { ...FX_DEFAULTS };
-    S.annotations = [];
-    S.undo = [];
-    S.redo = [];
-    S.liveBase = null;
-    S.selectedId = null;
-    S.current = null;
-    S.crop = null;
-    S.cropDraft = null;
-    S.mode = 'select';
-    rounded = { key: null, canvas: null };
-    V.fitted = true;
-    $('ambientImg').classList.remove('on');
-    $('empty').hidden = false;
-    canvasWrap.hidden = true;
-    $('status').hidden = true;
-    $('layers').hidden = true;
-    renderRail();
-    renderOptions(true);
-    renderLayers();
-    updateButtons();
-  }
-
-  $('undoBtn').addEventListener('click', undo);
-  $('redoBtn').addEventListener('click', redo);
-  $('resetBtn').addEventListener('click', reset);
-  $('downloadBtn').addEventListener('click', download);
-
-  // ─── Перемещение и масштаб холста ─────────────────────────
-  let spaceHeld = false;
-  let pan = null;
-  let pinch = null;
-  const touches = new Map();
-
-  const releaseSpace = () => { spaceHeld = false; stage.classList.remove('pan-ready'); };
-  window.addEventListener('blur', releaseSpace);
-
-  const cancelDrawing = () => {
-    if (drag) { drag = null; endLiveEdit(); }
-    if (!drawing) return;
-    drawing = false;
-    S.current = null;
-    scheduleRedraw();
+/* ---------- demo data ---------- */
+function demoState() {
+  const plan = {
+    'Жим': [['Жим лёжа', 60, 82.5, 8], ['Жим гантелей сидя', 16, 24, 10], ['Разводка гантелей', 10, 14, 12], ['Французский жим', 25, 32.5, 10]],
+    'Тяга': [['Становая тяга', 100, 135, 5], ['Тяга штанги в наклоне', 50, 67.5, 8], ['Тяга верхнего блока', 45, 60, 10], ['Подъём штанги на бицепс', 25, 35, 10]],
+    'Ноги': [['Приседания', 80, 112.5, 6], ['Жим ногами', 140, 200, 10], ['Румынская тяга', 60, 85, 8], ['Подъёмы на носки', 60, 80, 15]],
   };
-
-  const pinchState = () => {
-    const [a, b] = [...touches.values()];
-    return { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 };
-  };
-
-  // Попадёт ли клик в режиме «Выбор» по слою или ручке (тогда это не перемещение холста)
-  function hitsLayerAt(e) {
-    if (e.target !== canvas) return false;
-    const p = getPoint(e);
-    const tol = tolerance();
-    const sel = selected();
-    return !!((sel && (hitHandle(sel, p, tol) || hitLayer(sel, p, tol))) || hitTest(p, tol));
+  const r25 = x => Math.round(x / 2.5) * 2.5;
+  const today = new Date();
+  const start = startOfWeek(addDays(today, -7 * 8));
+  const workouts = {};
+  for (let wk = 0; wk < 9; wk++) {
+    [[0, 'Жим'], [2, 'Тяга'], [4, 'Ноги']].forEach(([off, name]) => {
+      const d = addDays(start, wk * 7 + off);
+      if (dkey(d) > dkey(today) || (wk === 3 && off === 2)) return; // one skipped day for realism
+      const p = Math.min(1, (wk + Math.random() * 0.7) / 8);
+      const created = d.getTime() + 18 * 3600e3;
+      const id = uid();
+      workouts[id] = {
+        id, date: dkey(d), name, createdAt: created, startedAt: created, finishedAt: created + (52 + Math.random() * 25) * 60e3,
+        exercises: plan[name].map(([n, a, b, r]) => {
+          const w = r25(a + (b - a) * p);
+          return { id: uid(), name: n, sets: [0, 1, 2].map(j => ({ id: uid(), weight: toInput(w), reps: String(Math.max(3, r - (j === 2 ? 1 + Math.round(Math.random()) : 0))), done: true })) };
+        }),
+      };
+    });
   }
-
-  // Фаза захвата: перехватываем жест раньше рисования на холсте
-  stage.addEventListener('pointerdown', (e) => {
-    if (!S.image || e.target.closest('button, .status, .text-draft')) return;
-
-    if (e.pointerType === 'touch') {
-      touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
-      if (touches.size === 2) {
-        cancelDrawing();
-        const p = pinchState();
-        pinch = { ...p, zoom: V.zoom, x: V.x, y: V.y };
-        e.stopPropagation();
-        return;
-      }
-    }
-
-    const wantPan = spaceHeld || e.button === 1 || (S.mode === 'select' && e.button === 0 && !hitsLayerAt(e));
-    if (!wantPan) return;
-    e.preventDefault();
-    e.stopPropagation();
-    commitText(false);
-    if (!spaceHeld && e.button === 0 && S.selectedId != null) deselect(); // клик мимо слоёв снимает выделение
-    pan = { id: e.pointerId, sx: e.clientX, sy: e.clientY, x: V.x, y: V.y };
-    stage.setPointerCapture(e.pointerId);
-    stage.classList.add('panning');
-  }, true);
-
-  stage.addEventListener('pointermove', (e) => {
-    if (touches.has(e.pointerId)) touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
-
-    if (pinch && touches.size >= 2) {
-      const p = pinchState();
-      const r = stage.getBoundingClientRect();
-      const nz = clampZoom(pinch.zoom * (p.d / pinch.d));
-      const k = nz / pinch.zoom;
-      V.x = (p.cx - r.left) - (pinch.cx - r.left - pinch.x) * k;
-      V.y = (p.cy - r.top) - (pinch.cy - r.top - pinch.y) * k;
-      V.zoom = nz;
-      V.fitted = false;
-      applyView();
-      e.stopPropagation();
-      return;
-    }
-
-    if (pan && e.pointerId === pan.id) {
-      V.x = pan.x + (e.clientX - pan.sx);
-      V.y = pan.y + (e.clientY - pan.sy);
-      V.fitted = false;
-      applyView();
-      e.stopPropagation();
-    }
-  }, true);
-
-  const endStagePointer = (e) => {
-    touches.delete(e.pointerId);
-    if (touches.size < 2) pinch = null;
-    if (pan && e.pointerId === pan.id) { pan = null; stage.classList.remove('panning'); }
-  };
-  stage.addEventListener('pointerup', endStagePointer, true);
-  stage.addEventListener('pointercancel', endStagePointer, true);
-
-  stage.addEventListener('wheel', (e) => {
-    if (!S.image) return;
-    e.preventDefault();
-    const unit = e.deltaMode === 1 ? 16 : 1;
-    if (e.ctrlKey || e.metaKey) {
-      const r = stage.getBoundingClientRect();
-      const dy = Math.max(-60, Math.min(60, e.deltaY * unit));
-      zoomTo(V.zoom * Math.exp(-dy * 0.006), e.clientX - r.left, e.clientY - r.top);
-    } else {
-      V.x -= e.deltaX * unit;
-      V.y -= e.deltaY * unit;
-      V.fitted = false;
-      applyView();
-    }
-  }, { passive: false });
-
-  $('zoomIn').addEventListener('click', () => zoomStep(1));
-  $('zoomOut').addEventListener('click', () => zoomStep(-1));
-  $('zoom').addEventListener('click', fitView);
-
-  // ─── Горячие клавиши ──────────────────────────────────────
-  // e.code не зависит от раскладки: в русской e.key для Z будет «я»
-  const NUDGE = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
-
-  window.addEventListener('keydown', (e) => {
-    const t = e.target;
-    const typing = t.tagName === 'TEXTAREA' || t.isContentEditable || (t.tagName === 'INPUT' && t.type === 'text');
-    if (typing) return;
-    const onRange = t.tagName === 'INPUT' && t.type === 'range';
-    const mod = e.metaKey || e.ctrlKey;
-
-    if (e.code === 'Space') {
-      if (!S.image) return;
-      e.preventDefault(); // не прокручивать страницу и не нажимать кнопку в фокусе
-      if (!spaceHeld) { spaceHeld = true; stage.classList.add('pan-ready'); }
-      return;
-    }
-
-    if (mod && e.code === 'KeyZ') { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
-    if (mod && e.code === 'KeyY') { e.preventDefault(); redo(); return; }
-    if (mod && e.code === 'KeyS') { e.preventDefault(); download(); return; }
-    if (mod && e.code === 'KeyO') { e.preventDefault(); fileInput.click(); return; }
-    if (mod && e.code === 'KeyD' && S.selectedId != null) { e.preventDefault(); duplicateSelected(); return; }
-    if (mod && S.image && (e.code === 'Equal' || e.code === 'NumpadAdd')) { e.preventDefault(); zoomStep(1); return; }
-    if (mod && S.image && (e.code === 'Minus' || e.code === 'NumpadSubtract')) { e.preventDefault(); zoomStep(-1); return; }
-    if (mod && S.image && (e.code === 'Digit0' || e.code === 'Numpad0')) { e.preventDefault(); fitView(); return; }
-    if (mod && S.image && (e.code === 'Digit1' || e.code === 'Numpad1')) { e.preventDefault(); zoomTo(1); return; }
-    if (mod || e.altKey) return;
-
-    if (S.mode === 'crop') {
-      if (e.key === 'Enter') { e.preventDefault(); switchMode('select'); return; }
-      if (e.key === 'Escape') { e.preventDefault(); cancelCrop(); return; }
-    }
-
-    const sel = selected();
-    if (sel && (e.key === 'Backspace' || e.key === 'Delete')) { e.preventDefault(); deleteSelected(); return; }
-    if (sel && e.key === 'Escape') { e.preventDefault(); deselect(); return; }
-    if (sel && e.key === 'Enter' && sel.type === 'text') { e.preventDefault(); openDraft(null, sel); return; }
-    if (sel && NUDGE[e.key] && !onRange) {
-      e.preventDefault();
-      const [dx, dy] = NUDGE[e.key];
-      const step = e.shiftKey ? 10 : 1;
-      liveEdit(sel.id, translated(sel, dx * step, dy * step));
-      return;
-    }
-
-    const tool = TOOLS.find((x) => x.code === e.code);
-    if (tool && S.image && !onRange) { e.preventDefault(); switchMode(tool.id); }
+  const templates = {};
+  Object.entries(plan).forEach(([name, list], i) => {
+    const id = uid();
+    templates[id] = { id, name, createdAt: Date.now() - i, exercises: list.map(([n, a, , r]) => ({ name: n, sets: [0, 1, 2].map(() => ({ reps: r, weight: a })) })) };
   });
+  return { ...emptyState(), workouts, templates, updatedAt: Date.now() };
+}
 
-  window.addEventListener('keyup', (e) => {
-    if (e.code === 'Space' && spaceHeld) { e.preventDefault(); releaseSpace(); }
-    if (NUDGE[e.key]) endLiveEdit(); // серия сдвигов стрелками — один шаг истории
-  });
+/* ---------- icons ---------- */
+const ICONS = {
+  chevL: '<path d="M15 18l-6-6 6-6"/>',
+  chevR: '<path d="M9 18l6-6-6-6"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  more: '<circle cx="5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="19" cy="12" r="1.4" fill="currentColor"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  weight: '<path d="M9 8a3 3 0 1 1 6 0"/><path d="M6.5 9h11l1.5 11h-14z"/>',
+  dumbbell: '<path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>',
+  trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5.5a2.5 2.5 0 0 0 2.5 4M16 6h2.5a2.5 2.5 0 0 1-2.5 4M12 13v4M9 20h6"/>',
+  x: '<path d="M6 6l12 12M18 6L6 18"/>',
+  play: '<path d="M9 6.5v11l8.5-5.5z" fill="currentColor" stroke="none"/>',
+  chart: '<path d="M4 4v16h16"/><path d="M8 15l3.5-4 3 2.5L19 8"/>',
+  flag: '<path d="M6 21V4h11l-2 4 2 4H6"/>',
+  flame: '<path d="M12 3c.6 3.2 5 5.4 5 10.2A5 5 0 0 1 7 13.5c0-2.6 1.5-4.2 2.6-5.2.2 1.8 1.1 2.8 2 3.2.4-3-1-5.6.4-8.5z"/>',
+  star: '<path d="M12 3.5l2.6 5.3 5.9.9-4.25 4.1 1 5.8L12 16.9l-5.25 2.7 1-5.8L3.5 9.7l5.9-.9z"/>',
+  calendar: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+};
+const Icon = ({ n, s = 20, w = 2 }) => html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth=${w} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" dangerouslySetInnerHTML=${{ __html: ICONS[n] }}></svg>`;
 
-  // ─── Уведомления ──────────────────────────────────────────
-  let toastTimer = 0;
-  function toast(msg) {
-    const t = $('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+/* ---------- chart ---------- */
+function AreaChart({ values, labels, fmt, label }) {
+  const gid = 'g' + React.useId().replace(/[^a-zA-Z0-9]/g, '');
+  if (values.length < 2 || !values.some(v => v > 0)) return html`<div className="chart-empty">График появится после двух тренировок с записанными подходами</div>`;
+  const W = 340, H = 170, top = 28, bottom = 26, sx = 14;
+  const max = Math.max(...values), min = Math.min(...values);
+  const lo = max > min ? Math.max(0, min - (max - min) * 0.8) : 0; // zoom in so progress is visible
+  const x = i => sx + i * (W - sx * 2) / (values.length - 1);
+  const y = v => top + (H - top - bottom) * (1 - (v - lo) / (max - lo || 1));
+  const pts = values.map((v, i) => [x(i), y(v)]);
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], mx = (x0 + x1) / 2; d += ` C${mx},${y0} ${mx},${y1} ${x1},${y1}`; }
+  const last = values.length - 1;
+  const area = `${d} L${pts[last][0]},${H - bottom} L${pts[0][0]},${H - bottom} Z`;
+  const maxI = values.indexOf(max);
+  const marks = values[last] === max || last - maxI < 2 ? [last] : [maxI, last];
+  const anchor = i => i === last ? 'end' : i === 0 ? 'start' : 'middle';
+  const step = Math.max(1, Math.ceil(values.length / 6));
+  return html`<svg className="chart" viewBox=${`0 0 ${W} ${H}`} role="img" aria-label=${label}>
+    <defs><linearGradient id=${gid} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" style=${{ stopColor: 'var(--chart)', stopOpacity: 0.42 }}></stop>
+      <stop offset="1" style=${{ stopColor: 'var(--chart)', stopOpacity: 0 }}></stop>
+    </linearGradient></defs>
+    <line x1=${sx} x2=${W - sx} y1=${y(max)} y2=${y(max)} className="chart-guide"></line>
+    <path d=${area} fill=${`url(#${gid})`}></path>
+    <path d=${d} className="chart-line"></path>
+    ${pts.map(([px, py], i) => html`<circle key=${'p' + i} cx=${px} cy=${py} r=${i === last ? 4 : 2.75} className="chart-dot"></circle>`)}
+    ${marks.map(i => html`<text key=${'v' + i} x=${pts[i][0] + (i === last ? 4 : 0)} y=${pts[i][1] - 10} textAnchor=${anchor(i)} className="chart-val">${fmt(values[i])}</text>`)}
+    ${labels.map((l, i) => ((last - i) % step === 0) ? html`<text key=${'l' + i} x=${x(i)} y=${H - 6} textAnchor=${anchor(i)} className="chart-lbl">${l}</text>` : null)}
+  </svg>`;
+}
+
+/* ---------- small pieces ---------- */
+function Elapsed({ since }) {
+  const [, tick] = useState(0);
+  useEffect(() => { const t = setInterval(() => tick(x => x + 1), 1000); return () => clearInterval(t); }, []);
+  return fmtClock(Date.now() - since);
+}
+
+function Delta({ value, suffix = '%', title }) {
+  if (value == null) return null;
+  const cls = value > 0 ? 'delta' : value < 0 ? 'delta neg' : 'delta flat';
+  return html`<span className=${cls} title=${title}>${value > 0 ? '+' : value < 0 ? '−' : ''}${nf2.format(Math.abs(value))}${suffix}</span>`;
+}
+
+function Sheet({ title, sub, onClose, children }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const onKey = e => { if (e.key === 'Escape') onClose(); };
+    const prevFocus = document.activeElement;
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    if (ref.current && !ref.current.contains(document.activeElement)) ref.current.focus({ preventScroll: true });
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = ''; if (prevFocus && prevFocus.focus) prevFocus.focus({ preventScroll: true }); };
+  }, []);
+  return html`<div className="backdrop" onClick=${onClose}>
+    <div className="sheet" role="dialog" aria-modal="true" aria-label=${title} tabIndex="-1" ref=${ref} onClick=${e => e.stopPropagation()}>
+      <div className="grabber"></div>
+      <div className="sheet-head"><h2>${title}</h2><button className="icon-btn" onClick=${onClose} aria-label="Закрыть"><${Icon} n="x" s=${18} /></button></div>
+      ${sub ? html`<p className="sheet-sub">${sub}</p>` : null}
+      ${children}
+    </div>
+  </div>`;
+}
+
+function ActionSheet({ title, sub, actions, onClose }) {
+  return html`<${Sheet} title=${title} sub=${sub} onClose=${onClose}>
+    <div className="list">
+      ${actions.filter(Boolean).map(a => html`<button key=${a.label} className=${'row' + (a.danger ? ' danger' : '')} onClick=${() => { onClose(); a.onClick(); }}>
+        <div className="row-main"><div className="row-title">${a.label}</div>${a.sub ? html`<div className="row-sub">${a.sub}</div>` : null}</div>
+      </button>`)}
+    </div>
+  <//>`;
+}
+
+function TextSheet({ title, sub, initial = '', placeholder, cta, onSubmit, onClose, suggestions = [] }) {
+  const [v, setV] = useState(initial);
+  const inputRef = useRef(null);
+  useEffect(() => { const t = setTimeout(() => inputRef.current && inputRef.current.focus(), 80); return () => clearTimeout(t); }, []);
+  const q = norm(v);
+  const sugg = suggestions.filter(s => norm(s) !== q && (!q || norm(s).includes(q))).slice(0, 10);
+  const submit = text => { if (!text.trim()) return; onClose(); onSubmit(text.trim()); };
+  return html`<${Sheet} title=${title} sub=${sub} onClose=${onClose}>
+    <form className="field-row" onSubmit=${e => { e.preventDefault(); submit(v); }}>
+      <input ref=${inputRef} className="field" value=${v} placeholder=${placeholder} onChange=${e => setV(e.target.value)} enterKeyHint="done" autoComplete="off" />
+      <button className="cta sm" disabled=${!v.trim()}>${cta}</button>
+    </form>
+    ${sugg.length ? html`<p className="label">${q ? 'Похожие из истории' : 'Из истории'}</p>
+      <div className="chips">${sugg.map(s => html`<button key=${s} className="chip" onClick=${() => submit(s)}>${s}</button>`)}</div>` : null}
+  <//>`;
+}
+
+function StartSheet({ date, state, index, onClose, onCreate }) {
+  const [name, setName] = useState('');
+  const templates = Object.values(state.templates).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  const seen = new Set();
+  const recents = [];
+  for (let i = index.list.length - 1; i >= 0 && recents.length < 4; i--) {
+    const w = index.list[i]; const k = norm(w.name);
+    if (!w.exercises.length || seen.has(k)) continue; seen.add(k); recents.push(w);
+  }
+  const go = (n, src) => { onClose(); onCreate(date, n, src); };
+  const names = list => list.map(e => e.name).join(', ');
+  return html`<${Sheet} title="Новая тренировка" sub=${dayLabel(date)} onClose=${onClose}>
+    <form className="field-row" onSubmit=${e => { e.preventDefault(); if (name.trim()) go(name, []); }}>
+      <input className="field" value=${name} placeholder="Например, «Ноги»" onChange=${e => setName(e.target.value)} enterKeyHint="go" autoComplete="off" />
+      <button className="cta sm" disabled=${!name.trim()}>Создать</button>
+    </form>
+    ${recents.length ? html`<p className="label">Повторить</p><div className="list">
+      ${recents.map(w => html`<button key=${w.id} className="row" onClick=${() => go(w.name, w.exercises)}>
+        <div className="row-main"><div className="row-title">${w.name}</div><div className="row-sub">${names(w.exercises)}</div></div>
+        <div className="row-end">${fmtShort(fromKey(w.date))}<${Icon} n="chevR" s=${16} /></div>
+      </button>`)}</div>` : null}
+    ${templates.length ? html`<p className="label">Шаблоны</p><div className="list">
+      ${templates.map(t => html`<button key=${t.id} className="row" onClick=${() => go(t.name, t.exercises)}>
+        <div className="row-main"><div className="row-title">${t.name}</div><div className="row-sub">${names(t.exercises)}</div></div>
+        <div className="row-end">${plural(t.exercises.length, W_EX)}</div>
+      </button>`)}</div>` : null}
+  <//>`;
+}
+
+function TemplatesSheet({ state, onClose, onDelete }) {
+  const templates = Object.values(state.templates).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  return html`<${Sheet} title="Шаблоны" sub="Сохраняйте шаблон из меню тренировки" onClose=${onClose}>
+    ${templates.length ? html`<div className="list">${templates.map(t => html`<div key=${t.id} className="row">
+      <div className="row-main"><div className="row-title">${t.name}</div><div className="row-sub">${t.exercises.map(e => e.name).join(', ')}</div></div>
+      <button className="icon-btn ghost" aria-label=${'Удалить шаблон ' + t.name} onClick=${() => onDelete(t)}><${Icon} n="x" s=${18} /></button>
+    </div>`)}</div>` : html`<p className="muted">Шаблонов пока нет.</p>`}
+  <//>`;
+}
+
+function RestTimer({ rest, onAdjust, onClose }) {
+  const [now, setNow] = useState(Date.now());
+  const buzzed = useRef(false);
+  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 250); return () => clearInterval(t); }, []);
+  const left = rest.endsAt - now, over = left <= 0;
+  useEffect(() => {
+    if (!over) { buzzed.current = false; return; }
+    if (!buzzed.current) { buzzed.current = true; try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {} }
+    const t = setTimeout(onClose, 6000);
+    return () => clearTimeout(t);
+  }, [over]);
+  const pct = Math.min(100, Math.max(0, (1 - left / rest.total) * 100));
+  return html`<div className="rest" role="timer" aria-label="Таймер отдыха">
+    <div className="rest-bar" style=${{ width: pct + '%' }}></div>
+    <span className="rest-label">${over ? 'Пора' : 'Отдых'}</span>
+    <span className="rest-time">${over ? 'подход!' : fmtClock(left + 999)}</span>
+    <button onClick=${() => onAdjust(-15)} aria-label="Убавить 15 секунд">−15</button>
+    <button onClick=${() => onAdjust(15)} aria-label="Добавить 15 секунд">+15</button>
+    <button onClick=${onClose} aria-label="Скрыть таймер"><${Icon} n="x" s=${18} /></button>
+  </div>`;
+}
+
+function Toast({ toast, onClose }) {
+  useEffect(() => { const t = setTimeout(onClose, toast.undo ? 6000 : 3000); return () => clearTimeout(t); }, [toast.key]);
+  return html`<div className="toast" role="status">
+    ${toast.icon ? html`<${Icon} n=${toast.icon} s=${20} />` : null}
+    <span>${toast.text}</span>
+    ${toast.undo ? html`<button onClick=${() => { toast.undo(); onClose(); }}>Отменить</button>` : null}
+  </div>`;
+}
+
+function AchRow({ a, game }) {
+  const v = achValue(a, game), on = game.unlocked.includes(a.id);
+  return html`<div className="row ach-row">
+    <span className=${'badge-ic' + (on ? ' on' : '')}><${Icon} n=${a.icon} s=${20} /></span>
+    <div className="row-main">
+      <div className="row-title">${a.title}</div>
+      <div className="row-sub wrap">${a.desc}</div>
+      ${on ? null : html`<div className="bar"><div style=${{ width: Math.min(100, v / a.target * 100) + '%' }}></div></div><div className="row-sub">${achProgress(a, v)}</div>`}
+    </div>
+  </div>`;
+}
+
+function AchievementsSheet({ game, onClose }) {
+  const open = ACH.filter(a => game.unlocked.includes(a.id));
+  const locked = ACH.filter(a => !game.unlocked.includes(a.id)).sort((a, b) => achValue(b, game) / b.target - achValue(a, game) / a.target);
+  return html`<${Sheet} title="Достижения" sub=${`Открыто ${game.unlocked.length} из ${ACH.length}`} onClose=${onClose}>
+    ${open.length ? html`<div className="list">${open.map(a => html`<${AchRow} key=${a.id} a=${a} game=${game} />`)}</div>` : null}
+    ${locked.length ? html`<p className="label">Впереди</p><div className="list">${locked.map(a => html`<${AchRow} key=${a.id} a=${a} game=${game} />`)}</div>` : null}
+  <//>`;
+}
+
+function GoalSheet({ goal, onPick, onClose }) {
+  return html`<${Sheet} title="Цель на неделю" sub="Сколько тренировок в неделю вы планируете. Серия растёт за каждую неделю с выполненной целью, а дни отдыха её не прерывают." onClose=${onClose}>
+    <div className="goal-chips" role="group" aria-label="Тренировок в неделю">
+      ${[1, 2, 3, 4, 5, 6, 7].map(n => html`<button key=${n} aria-pressed=${n === goal} onClick=${() => { onPick(n); onClose(); }}>${n}</button>`)}
+    </div>
+  <//>`;
+}
+
+function SummarySheet({ data, game, onClose }) {
+  const [n, u] = volParts(data.vol);
+  const cmp = data.vol ? compareVol(data.vol) : null;
+  const fresh = game.unlocked.filter(id => !data.seenBefore.includes(id)).map(id => ACH.find(a => a.id === id)).filter(Boolean);
+  const left = game.goal - game.thisCount;
+  return html`<${Sheet} title="Тренировка завершена" sub=${data.name} onClose=${onClose}>
+    <div className="big"><span className="big-n">${n}</span><span className="big-u">${u}</span></div>
+    <p className="big-label">поднято за тренировку</p>
+    ${cmp ? html`<p className="muted" style=${{ marginTop: 4 }}>${cmp}</p>` : null}
+    <div className="pills">
+      ${data.duration ? html`<span className="pill"><${Icon} n="clock" s=${15} />${fmtDur(data.duration)}</span>` : null}
+      <span className="pill">${plural(data.sets, W_SET)}</span>
+      <span className="pill">${plural(data.exercises, W_EX)}</span>
+    </div>
+    ${data.prs.length ? html`<p className="label">Личные рекорды</p><div className="list">${data.prs.map(p => html`<div key=${p.name} className="row">
+      <span className="badge-ic pr"><${Icon} n="trophy" s=${20} /></span>
+      <div className="row-main"><div className="row-title">${p.name}</div><div className="row-sub">было ${fmtKg(p.prev)}</div></div>
+      <div className="row-end strong">${fmtKg(p.weight)}</div>
+    </div>`)}</div>` : null}
+    <p className="label">Неделя</p>
+    <div className="goal-box">
+      <div className="ring-wrap"><${Ring} value=${game.thisCount} total=${game.goal} /><span className="ring-n">${game.thisCount}<small>/${game.goal}</small></span></div>
+      <div className="row-main">
+        <div className="row-title">${left <= 0 ? 'Цель недели выполнена' : `Ещё ${plural(left, W_WO)} до цели`}</div>
+        <div className="row-sub wrap">${game.streak ? `Серия: ${plural(game.streak, W_WEEK)} подряд` : 'Выполните цель недели, чтобы начать серию'}</div>
+      </div>
+    </div>
+    ${fresh.length ? html`<p className="label">Новые достижения</p><div className="list">${fresh.map(a => html`<${AchRow} key=${a.id} a=${a} game=${game} />`)}</div>` : null}
+    <button className="cta" onClick=${onClose}>Готово</button>
+  <//>`;
+}
+
+/* ---------- screens ---------- */
+function Home({ state, index, ui, ctx, cloud, game }) {
+  const { selDay, setSelDay, weekStart, setWeekStart } = ui;
+  const today = new Date(), tKey = dkey(today);
+  const days = [0, 1, 2, 3, 4, 5, 6].map(i => addDays(weekStart, i));
+  const dayWorkouts = index.byDate[selDay] || [];
+  const hasData = index.list.some(w => workoutSets(w) > 0);
+
+  const inRange = (a, b) => index.list.filter(w => w.date >= a && w.date <= b);
+  const last30 = inRange(dkey(addDays(today, -29)), tKey);
+  const prev30 = inRange(dkey(addDays(today, -59)), dkey(addDays(today, -30)));
+  const vol30 = sum(last30.map(workoutVolume)), volPrev = sum(prev30.map(workoutVolume));
+  const sessions30 = last30.filter(w => workoutSets(w) > 0).length;
+  const heaviest30 = Math.max(0, ...last30.flatMap(w => w.exercises.flatMap(e => e.sets.filter(counts).map(s => num(s.weight)))));
+  const delta = volPrev > 0 ? Math.round((vol30 - volPrev) / volPrev * 100) : null;
+  const ws = startOfWeek(today);
+  const weeks = [0, 1, 2, 3, 4, 5, 6, 7].map(i => addDays(ws, -7 * (7 - i)));
+  const weekVals = weeks.map(w => sum(inRange(dkey(w), dkey(addDays(w, 6))).map(workoutVolume)));
+  const thisWeek = inRange(dkey(ws), dkey(addDays(ws, 6))).filter(w => workoutSets(w) > 0);
+  const record = Math.max(0, ...[...index.ex.values()].flatMap(e => e.sessions.map(s => s.maxW)));
+  const exercises = [...index.ex.values()].filter(e => e.sessions.some(s => s.sets.length))
+    .sort((a, b) => b.sessions[b.sessions.length - 1].order - a.sessions[a.sessions.length - 1].order);
+  const [vN, vU] = volParts(vol30);
+  const goal = game.goal;
+  const nextAch = ACH.filter(a => !game.unlocked.includes(a.id)).sort((a, b) => achValue(b, game) / b.target - achValue(a, game) / a.target)[0];
+
+  const wsEnd = days[6];
+  const range = weekStart.getMonth() === wsEnd.getMonth() ? `${weekStart.getDate()}–${fmtDM(wsEnd)}` : `${fmtDM(weekStart)} – ${fmtDM(wsEnd)}`;
+  const isCurrentWeek = dkey(weekStart) === dkey(ws);
+  const single = dayWorkouts.length === 1 ? dayWorkouts[0] : null;
+  const isFuture = selDay > tKey;
+
+  return html`<main className="app">
+    <header className="topbar">
+      <h1>Тренировки</h1>
+      <button className="icon-btn" aria-label="Меню" onClick=${() => ctx.setSheet({ type: 'menu' })}><${Icon} n="more" /></button>
+    </header>
+
+    <section className="week" aria-label="Неделя">
+      <div className="week-nav">
+        <button className="icon-btn ghost" aria-label="Предыдущая неделя" onClick=${() => setWeekStart(addDays(weekStart, -7))}><${Icon} n="chevL" /></button>
+        <button className="week-range" onClick=${() => { setWeekStart(ws); setSelDay(tKey); }} title=${isCurrentWeek ? '' : 'Вернуться к текущей неделе'}>${isCurrentWeek ? range : range + ' · к сегодня'}</button>
+        <button className="icon-btn ghost" aria-label="Следующая неделя" onClick=${() => setWeekStart(addDays(weekStart, 7))}><${Icon} n="chevR" /></button>
+      </div>
+      <div className="week-days">
+        ${days.map(d => { const k = dkey(d); const cls = ['day', k === selDay && 'sel', k === tKey && 'today', index.byDate[k] && 'has'].filter(Boolean).join(' ');
+          return html`<button key=${k} className=${cls} aria-pressed=${k === selDay} aria-label=${dayLabel(k) + (index.byDate[k] ? ', есть тренировка' : '')} onClick=${() => setSelDay(k)}>
+            <span className="wd">${d.toLocaleDateString('ru-RU', { weekday: 'short' })}</span><span className="dn">${d.getDate()}</span><span className="dot"></span>
+          </button>`; })}
+      </div>
+    </section>
+
+    <section className="hero">
+      <p className="hero-day">${dayLabel(selDay)}</p>
+      ${dayWorkouts.length === 0 ? html`
+        <p className="hero-title is-empty">${isFuture ? 'Ничего не запланировано' : 'Нет тренировки'}</p>
+        <p className="hero-sub">${isFuture ? 'Можно создать тренировку заранее' : hasData ? 'Повторите прошлую или начните с шаблона' : 'Запишите первую — прогресс начнёт считаться сам'}</p>
+        <button className="cta" onClick=${() => ctx.setSheet({ type: 'start', date: selDay })}><span className="play"><${Icon} n="play" s=${16} /></span>${isFuture ? 'Запланировать' : 'Начать тренировку'}</button>`
+      : single ? html`
+        <button className="hero-title" onClick=${() => ctx.openWorkout(single.id)}>${single.name}</button>
+        <div className="pills">
+          ${single.startedAt && single.finishedAt ? html`<span className="pill"><${Icon} n="clock" s=${15} />${fmtDur(single.finishedAt - single.startedAt)}</span>` : null}
+          ${!single.finishedAt && single.startedAt && single.date === tKey ? html`<span className="pill live"><${Icon} n="clock" s=${15} /><${Elapsed} since=${single.startedAt} /></span>` : null}
+          <span className="pill"><${Icon} n="dumbbell" s=${15} />${plural(single.exercises.length, W_EX)}</span>
+          ${workoutVolume(single) > 0 ? html`<span className="pill"><${Icon} n="weight" s=${15} />${fmtVol(workoutVolume(single))}</span>` : null}
+        </div>
+        <button className="cta" onClick=${() => ctx.openWorkout(single.id)}><span className="play"><${Icon} n="play" s=${16} /></span>${single.finishedAt ? 'Открыть тренировку' : single.date === tKey ? 'Продолжить тренировку' : 'Открыть тренировку'}</button>
+        <button className="link-btn quiet hero-more" onClick=${() => ctx.setSheet({ type: 'start', date: selDay })}><${Icon} n="plus" s=${16} />Ещё одна тренировка в этот день</button>`
+      : html`
+        <p className="hero-title">${plural(dayWorkouts.length, W_WO)}</p>
+        <div className="list">${dayWorkouts.map(w => html`<button key=${w.id} className="row" onClick=${() => ctx.openWorkout(w.id)}>
+          <div className="row-main"><div className="row-title">${w.name}</div><div className="row-sub">${plural(w.exercises.length, W_EX)}</div></div>
+          <div className="row-end">${workoutVolume(w) > 0 ? fmtVol(workoutVolume(w)) : ''}<${Icon} n="chevR" s=${16} /></div>
+        </button>`)}</div>
+        <button className="link-btn quiet hero-more" onClick=${() => ctx.setSheet({ type: 'start', date: selDay })}><${Icon} n="plus" s=${16} />Добавить тренировку</button>`}
+    </section>
+
+    ${hasData ? html`
+      <section className="tiles" aria-label="Коротко">
+        <button className="tile btn" onClick=${() => ctx.setSheet({ type: 'goal' })} aria-label=${`Цель недели: ${game.thisCount} из ${goal}. Изменить цель`}>
+          <div className="ring-wrap"><${Ring} value=${game.thisCount} total=${goal} /><span className="ring-n">${game.thisCount}<small>/${goal}</small></span></div>
+          <div className="tile-l">${game.thisCount >= goal ? 'цель недели выполнена' : 'цель недели'}</div>
+        </button>
+        <div className="tile"><${Icon} n="flame" s=${18} /><div className="tile-n">${game.streak}</div><div className="tile-l">${plural(game.streak, W_WEEK).replace(/^\d+ /, '')} подряд с целью</div></div>
+        <div className="tile"><${Icon} n="trophy" s=${18} /><div className="tile-n">${nf2.format(record)}<small>кг</small></div><div className="tile-l">самый тяжёлый подход</div></div>
+      </section>
+
+      <button className="ach-strip" onClick=${() => ctx.setSheet({ type: 'achievements' })}>
+        <div className="row-main">
+          <div className="row-title">Достижения<span className="muted">${game.unlocked.length} из ${ACH.length}</span></div>
+          <div className="row-sub">${nextAch ? `Следующее: ${nextAch.title}, ${achProgress(nextAch, achValue(nextAch, game))}` : 'Открыты все'}</div>
+        </div>
+        <div className="ach-mini">${game.unlocked.slice(-3).map(id => { const a = ACH.find(x => x.id === id); return a ? html`<span key=${id} className="badge-ic on sm"><${Icon} n=${a.icon} s=${15} /></span>` : null; })}</div>
+        <${Icon} n="chevR" s=${16} />
+      </button>
+
+      <section className="summary" aria-label="Последние 30 дней">
+        <p className="label">Последние 30 дней</p>
+        <div className="big"><span className="big-n">${vN}</span><span className="big-u">${vU}</span><${Delta} value=${delta} title="К предыдущим 30 дням" /></div>
+        <p className="big-label">общий объём</p>
+        <p className="muted">${sessions30 ? `${plural(sessions30, W_WO)}, в среднем ${fmtVol(vol30 / sessions30)} за раз. Самый тяжёлый подход — ${fmtKg(heaviest30)}.` : 'За последние 30 дней тренировок не было.'}</p>
+        <div className="chart-card">
+          <div className="chart-head"><${Icon} n="weight" s=${16} />Объём по неделям<span>8 недель</span></div>
+          <${AreaChart} values=${weekVals} labels=${weeks.map(fmtShort)} fmt=${v => volParts(v).join('\u00a0')} label="Объём по неделям за 8 недель" />
+        </div>
+      </section>
+
+      <h2 className="sec-title">Упражнения</h2>
+      <div className="list">
+        ${exercises.map(e => { const ls = [...e.sessions].reverse().find(s => s.sets.length); const top = ls.sets.reduce((a, b) => b.weight > a.weight ? b : a);
+          return html`<button key=${e.key} className="row" onClick=${() => ctx.openExercise(e.name)}>
+            <div className="row-main"><div className="row-title">${e.name}</div><div className="row-sub">Последний раз ${nf2.format(top.weight)} кг × ${top.reps}, ${fmtShort(fromKey(ls.date))}</div></div>
+            <div className="row-end"><${Icon} n="chevR" s=${16} /></div>
+          </button>`; })}
+      </div>`
+    : html`<section className="onboard">
+        <h2>Здесь будет ваш прогресс</h2>
+        <p className="muted">Объём по неделям, рекорды и график по каждому упражнению появятся после первых тренировок. Хотите посмотреть, как это выглядит?</p>
+        <button className="btn-secondary" onClick=${ctx.loadDemo}>Заполнить демо-данными</button>
+      </section>`}
+
+    <p className="foot">${cloud ? 'Данные сохраняются в вашем аккаунте и видны только вам' : 'Данные сохраняются в этом браузере'}</p>
+  </main>`;
+}
+
+function ExerciseCard({ w, e, index, ctx }) {
+  const prev = prevSession(index, e.name, w.id);
+  const bb = bestBefore(index, e.name, w.id);
+  const hasHistory = (index.ex.get(norm(e.name)) || { sessions: [] }).sessions.some(s => s.sets.length);
+  return html`<article className="ex-card">
+    <div className="ex-head">
+      ${hasHistory
+        ? html`<button className="ex-name" onClick=${() => ctx.openExercise(e.name)} aria-label=${e.name + ': открыть прогресс'}>${e.name}<${Icon} n="chart" s=${16} /></button>`
+        : html`<h3 className="ex-name">${e.name}</h3>`}
+      <button className="icon-btn ghost" aria-label=${'Действия: ' + e.name} onClick=${() => ctx.setSheet({ type: 'exerciseMenu', wid: w.id, eid: e.id })}><${Icon} n="more" /></button>
+    </div>
+    <div className="sets">
+      <div className="set head" aria-hidden="true"><span></span><span>Прошлый раз</span><span>кг</span><span>Повт.</span><span></span></div>
+      ${e.sets.map((s, i) => {
+        const p = prev ? (prev.sets[i] || prev.sets[prev.sets.length - 1]) : null;
+        const before = i > 0 && counts(e.sets[i - 1]) ? { reps: num(e.sets[i - 1].reps), weight: num(e.sets[i - 1].weight) } : null;
+        const ph = p || before || s.hint || null;
+        const isPR = s.done && counts(s) && bb.w > 0 && num(s.weight) > bb.w;
+        return html`<div key=${s.id} className=${'set' + (s.done ? ' is-done' : '') + (ctx.pop === s.id ? ' pop' : '')}>
+          <span className="set-n" aria-label=${isPR ? `Подход ${i + 1}, личный рекорд` : undefined}>${isPR ? html`<${Icon} n="trophy" s=${17} />` : i + 1}</span>
+          <span className="set-prev">${p ? `${p.weight ? nf2.format(p.weight) + ' × ' : ''}${p.reps}` : '—'}</span>
+          <input className="set-in" inputMode="decimal" enterKeyHint="next" autoComplete="off" placeholder=${ph && ph.weight ? nf2.format(ph.weight) : '0'} value=${s.weight}
+            aria-label=${`Вес, подход ${i + 1}`} onChange=${ev => { const v = ev.target.value.replace(/[^\d.,]/g, ''); ctx.patchSet(w.id, e.id, s.id, x => ({ ...x, weight: v })); }} />
+          <input className="set-in" inputMode="numeric" enterKeyHint="done" autoComplete="off" placeholder=${ph && ph.reps ? String(ph.reps) : '0'} value=${s.reps}
+            aria-label=${`Повторения, подход ${i + 1}`} onChange=${ev => { const v = ev.target.value.replace(/\D/g, ''); ctx.patchSet(w.id, e.id, s.id, x => ({ ...x, reps: v })); }} />
+          <button className="set-check" aria-pressed=${!!s.done} aria-label=${`Подход ${i + 1} выполнен`} onClick=${() => ctx.toggleSet(w, e, s, ph)}><${Icon} n="check" s=${18} w=${2.6} /></button>
+        </div>`;
+      })}
+    </div>
+    <div className="ex-foot">
+      <button className="link-btn" onClick=${() => ctx.patchExercise(w.id, e.id, x => ({ ...x, sets: [...x.sets, { id: uid(), reps: '', weight: '', done: false }] }))}><${Icon} n="plus" s=${16} />Подход</button>
+      ${e.sets.length > 1 ? html`<button className="link-btn quiet" onClick=${() => ctx.patchExercise(w.id, e.id, x => ({ ...x, sets: x.sets.slice(0, -1) }))}>Убрать последний</button>` : null}
+    </div>
+  </article>`;
+}
+
+function WorkoutScreen({ w, index, ctx }) {
+  const tKey = dkey(new Date());
+  const active = !w.finishedAt && w.startedAt && w.date === tKey;
+  const vol = workoutVolume(w), sets = workoutSets(w);
+  return html`<main className="app">
+    <header className="topbar">
+      <button className="back" onClick=${ctx.back}><${Icon} n="chevL" />Назад</button>
+      <button className="icon-btn" aria-label="Действия с тренировкой" onClick=${() => ctx.setSheet({ type: 'workoutMenu', id: w.id })}><${Icon} n="more" /></button>
+    </header>
+    <section className="w-head">
+      <p className="hero-day">${dayLabel(w.date)}</p>
+      <button className="w-title" onClick=${() => ctx.setSheet({ type: 'renameWorkout', id: w.id })} aria-label=${'Переименовать: ' + w.name}>${w.name}</button>
+      <div className="pills">
+        ${active ? html`<span className="pill live"><${Icon} n="clock" s=${15} /><${Elapsed} since=${w.startedAt} /></span>`
+          : w.finishedAt && w.startedAt ? html`<span className="pill"><${Icon} n="clock" s=${15} />${fmtDur(w.finishedAt - w.startedAt)}</span>` : null}
+        <span className="pill">${plural(sets, W_SET)}</span>
+        ${vol > 0 ? html`<span className="pill"><${Icon} n="weight" s=${15} />${fmtVol(vol)}</span>` : null}
+      </div>
+    </section>
+    ${w.exercises.length === 0 ? html`<div className="empty-card">
+      <p className="empty-title">Добавьте первое упражнение</p>
+      <p className="muted">Отмечайте подходы галочкой по ходу тренировки. Если поле пустое, подставится значение с прошлого раза, а после отметки запустится таймер отдыха.</p>
+    </div>` : null}
+    ${w.exercises.map(e => html`<${ExerciseCard} key=${e.id} w=${w} e=${e} index=${index} ctx=${ctx} />`)}
+    <button className="btn-secondary" onClick=${() => ctx.setSheet({ type: 'addExercise', id: w.id })}><${Icon} n="plus" />Добавить упражнение</button>
+    ${!w.finishedAt && w.exercises.length ? html`<button className="cta" onClick=${() => ctx.finish(w)}><${Icon} n="flag" />Завершить тренировку</button>` : null}
+    ${w.finishedAt ? html`<p className="done-note">Тренировка завершена. Подходы можно править.</p>` : null}
+  </main>`;
+}
+
+const METRICS = {
+  maxW: { label: 'Вес', fmt: v => fmtKg(v) },
+  e1rm: { label: '1ПМ', fmt: v => fmtKg(Math.round(v * 2) / 2) },
+  vol: { label: 'Объём', fmt: v => fmtVol(v) },
+};
+
+function ExerciseScreen({ rec, ctx }) {
+  const [metric, setMetric] = useState('maxW');
+  const ss = rec.sessions.filter(s => s.sets.length);
+  const recent = ss.slice(-12);
+  const bestW = Math.max(0, ...ss.map(s => s.maxW));
+  const bestE = Math.max(0, ...ss.map(s => s.e1rm));
+  const delta = recent.length > 1 ? recent[recent.length - 1].maxW - recent[0].maxW : null;
+  let run = 0;
+  const flagged = ss.map(s => { const pr = run > 0 && s.maxW > run; run = Math.max(run, s.maxW); return { ...s, pr }; }).reverse();
+  return html`<main className="app">
+    <header className="topbar"><button className="back" onClick=${ctx.back}><${Icon} n="chevL" />Назад</button></header>
+    <section className="w-head"><p className="hero-day">${plural(ss.length, W_WO)}</p><h1 className="w-title">${rec.name}</h1></section>
+    <section className="summary">
+      <p className="label">Лучший вес</p>
+      <div className="big"><span className="big-n">${nf2.format(bestW)}</span><span className="big-u">кг</span><${Delta} value=${delta} suffix=" кг" title="Изменение рабочего веса за показанный период" /></div>
+      <p className="muted">Расчётный максимум на один повтор — ${METRICS.e1rm.fmt(bestE)}. Считается по формуле Эпли из лучшего подхода.</p>
+      <div className="seg" role="tablist" aria-label="Что показать на графике">
+        ${Object.entries(METRICS).map(([k, m]) => html`<button key=${k} role="tab" aria-selected=${metric === k} onClick=${() => setMetric(k)}>${m.label}</button>`)}
+      </div>
+      <div className="chart-card">
+        <${AreaChart} values=${recent.map(s => s[metric])} labels=${recent.map(s => fmtShort(fromKey(s.date)))} fmt=${METRICS[metric].fmt} label=${`${METRICS[metric].label}: последние ${recent.length} тренировок`} />
+      </div>
+    </section>
+    <h2 className="sec-title">История</h2>
+    <div className="hist">
+      ${flagged.map(s => html`<div key=${s.workoutId + s.order} className="hist-item">
+        <div className="hist-top">
+          <div><div className="hist-date">${dayLabel(s.date)}</div><button className="hist-w" onClick=${() => ctx.openWorkout(s.workoutId)}>${s.workoutName}</button></div>
+          ${s.pr ? html`<span className="badge">Рекорд</span>` : null}
+        </div>
+        <div className="set-chips">${s.sets.map((x, i) => html`<span key=${i} className="set-chip">${x.weight ? nf2.format(x.weight) + ' × ' : ''}${x.reps}</span>`)}</div>
+      </div>`)}
+    </div>
+  </main>`;
+}
+
+/* ---------- app ---------- */
+function App() {
+  const { state, setState, update, cloud } = useStore();
+  const index = useMemo(() => buildIndex(state.workouts), [state.workouts]);
+  const [stack, setStack] = useState([{ screen: 'home' }]);
+  const nav = stack[stack.length - 1];
+  const [selDay, setSelDay] = useState(() => dkey(new Date()));
+  const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
+  const [sheet, setSheet] = useState(null);
+  const [toast, setToast] = useState(null);
+  const [rest, setRest] = useState(null);
+  const [pop, setPop] = useState(null);
+
+  const goal = state.settings.goal || 3;
+  const gstats = useMemo(() => gameStats(index, goal), [index, goal]);
+  const metNow = ACH.filter(a => achValue(a, gstats) >= a.target).map(a => a.id);
+  const seen = state.seenAch;
+  const game = { ...gstats, goal, unlocked: seen ? [...seen, ...metNow.filter(id => !seen.includes(id))] : metNow };
+
+  // Announce newly unlocked achievements, but not mid-workout (PR toasts own that moment)
+  useEffect(() => {
+    if (!seen) { setState(s => ({ ...s, seenAch: metNow })); return; }
+    const fresh = metNow.filter(id => !seen.includes(id));
+    if (!fresh.length || nav.screen === 'workout') return;
+    update(s => ({ ...s, seenAch: [...(s.seenAch || []), ...fresh.filter(id => !(s.seenAch || []).includes(id))] }));
+    if (sheet && sheet.type === 'summary') return;
+    const a = ACH.find(x => x.id === fresh[fresh.length - 1]);
+    showToast(fresh.length > 1 ? `Открыто достижений: ${fresh.length}` : `Достижение: ${a.title}`, null, a.icon);
+  }, [metNow.join(','), !!seen, nav.screen]);
+
+  useEffect(() => { if (!pop) return; const t = setTimeout(() => setPop(null), 1300); return () => clearTimeout(t); }, [pop]);
+
+  useEffect(() => { window.scrollTo(0, 0); }, [stack.length, nav.screen, nav.id, nav.key]);
+
+  const push = n => setStack(s => [...s, n]);
+  const back = () => setStack(s => s.length > 1 ? s.slice(0, -1) : s);
+  const home = () => setStack([{ screen: 'home' }]);
+  const showToast = (text, undo, icon) => setToast({ text, undo, icon, key: uid() });
+
+  const patchWorkout = (id, fn) => update(s => s.workouts[id] ? { ...s, workouts: { ...s.workouts, [id]: fn(s.workouts[id]) } } : s);
+  const patchExercise = (wid, eid, fn) => patchWorkout(wid, w => ({ ...w, exercises: w.exercises.map(e => e.id === eid ? fn(e) : e) }));
+  const patchSet = (wid, eid, sid, fn) => patchExercise(wid, eid, e => ({ ...e, sets: e.sets.map(x => x.id === sid ? fn(x) : x) }));
+  const withUndo = (text, fn) => { const before = state; update(fn); showToast(text, () => setState({ ...before, updatedAt: Date.now() })); };
+
+  const createWorkout = (date, name, src) => {
+    const id = uid(), isToday = date === dkey(new Date());
+    const w = {
+      id, date, name: name.trim(), createdAt: Date.now(), startedAt: isToday ? Date.now() : null, finishedAt: null,
+      exercises: (src || []).map(e => ({ id: uid(), name: e.name, sets: (e.sets.length ? e.sets : [{}]).map(s => ({ id: uid(), reps: '', weight: '', done: false, hint: num(s.reps) ? { reps: num(s.reps), weight: num(s.weight) } : null })) })),
+    };
+    update(s => ({ ...s, workouts: { ...s.workouts, [id]: w } }));
+    setSelDay(date);
+    push({ screen: 'workout', id });
+  };
+
+  const ctx = {
+    pop, setSheet, back, patchWorkout, patchExercise, patchSet,
+    openWorkout: id => push({ screen: 'workout', id }),
+    openExercise: name => push({ screen: 'exercise', key: norm(name) }),
+    loadDemo: () => withUndo('Добавлены демо-данные за 8 недель', () => demoState()),
+    toggleSet: (w, e, s, ph) => {
+      if (s.done) return patchSet(w.id, e.id, s.id, x => ({ ...x, done: false }));
+      const reps = s.reps || (ph && ph.reps ? String(ph.reps) : '');
+      const weight = s.weight || (ph && ph.weight ? toInput(ph.weight) : '');
+      if (!num(reps)) { showToast('Сначала введите количество повторений'); return; }
+      patchSet(w.id, e.id, s.id, x => ({ ...x, reps, weight, done: true }));
+      const wt = num(weight), rp = num(reps), bb = bestBefore(index, e.name, w.id);
+      const others = e.sets.filter(x => x.id !== s.id && x.done && counts(x));
+      const topW = Math.max(bb.w, ...others.map(x => num(x.weight)));
+      const topE = Math.max(bb.e, ...others.map(x => epley(num(x.weight), num(x.reps))));
+      if (bb.w > 0 && wt > topW) { showToast(`Новый рекорд: ${e.name}, ${fmtKg(wt)}`, null, 'trophy'); setPop(s.id); }
+      else if (bb.e > 0 && wt > 0 && epley(wt, rp) > topE + 0.01) { showToast(`Рекорд по 1ПМ: ${e.name}, ${METRICS.e1rm.fmt(epley(wt, rp))}`, null, 'trophy'); setPop(s.id); }
+      if (!w.finishedAt) { const ms = (state.settings.rest || 90) * 1000; setRest({ endsAt: Date.now() + ms, total: ms }); }
+    },
+    finish: w => {
+      const at = Date.now();
+      const prs = w.exercises.map(e => {
+        const bb = bestBefore(index, e.name, w.id);
+        const mx = Math.max(0, ...e.sets.filter(counts).map(x => num(x.weight)));
+        return bb.w > 0 && mx > bb.w ? { name: e.name, weight: mx, prev: bb.w } : null;
+      }).filter(Boolean);
+      patchWorkout(w.id, x => ({ ...x, finishedAt: at }));
+      setRest(null); setToast(null); home();
+      setSheet({ type: 'summary', data: { name: w.name, vol: workoutVolume(w), sets: workoutSets(w), exercises: w.exercises.length, duration: w.startedAt ? at - w.startedAt : null, prs, seenBefore: seen || [] } });
+    },
+  };
+
+  const adjustRest = d => {
+    setRest(r => r && { endsAt: Math.max(Date.now(), r.endsAt) + d * 1000, total: Math.max(15000, r.total + d * 1000) });
+    update(s => ({ ...s, settings: { ...s.settings, rest: Math.max(15, Math.min(600, (s.settings.rest || 90) + d)) } }));
+  };
+
+  let screen;
+  const curW = nav.screen === 'workout' && state.workouts[nav.id];
+  const curE = nav.screen === 'exercise' && index.ex.get(nav.key);
+  if (curW) screen = html`<${WorkoutScreen} w=${curW} index=${index} ctx=${ctx} />`;
+  else if (curE) screen = html`<${ExerciseScreen} key=${nav.key} rec=${curE} ctx=${ctx} />`;
+  else screen = html`<${Home} state=${state} index=${index} ctx=${ctx} cloud=${cloud} game=${game} ui=${{ selDay, setSelDay, weekStart, setWeekStart }} />`;
+
+  const close = () => setSheet(null);
+  let sheetEl = null;
+  if (sheet) {
+    const sw = sheet.id && state.workouts[sheet.id];
+    if (sheet.type === 'summary') sheetEl = html`<${SummarySheet} data=${sheet.data} game=${game} onClose=${close} />`;
+    else if (sheet.type === 'achievements') sheetEl = html`<${AchievementsSheet} game=${game} onClose=${close} />`;
+    else if (sheet.type === 'goal') sheetEl = html`<${GoalSheet} goal=${goal} onClose=${close} onPick=${n => update(s => ({ ...s, settings: { ...s.settings, goal: n } }))} />`;
+    else if (sheet.type === 'menu') sheetEl = html`<${ActionSheet} title="Меню" onClose=${close} actions=${[
+      { label: 'Цель на неделю', sub: plural(goal, W_WO), onClick: () => setSheet({ type: 'goal' }) },
+      { label: 'Достижения', sub: `${game.unlocked.length} из ${ACH.length}`, onClick: () => setSheet({ type: 'achievements' }) },
+      { label: 'Шаблоны', sub: plural(Object.keys(state.templates).length, ['шаблон', 'шаблона', 'шаблонов']), onClick: () => setSheet({ type: 'templates' }) },
+      { label: 'Заполнить демо-данными', sub: 'Заменит текущие записи, можно отменить', onClick: ctx.loadDemo },
+      index.list.length ? { label: 'Удалить все данные', danger: true, onClick: () => { withUndo('Все данные удалены', s => ({ ...emptyState(), settings: s.settings })); home(); } } : null,
+    ]} />`;
+    else if (sheet.type === 'templates') sheetEl = html`<${TemplatesSheet} state=${state} onClose=${close} onDelete=${t => withUndo(`Шаблон «${t.name}» удалён`, s => { const n = { ...s.templates }; delete n[t.id]; return { ...s, templates: n }; })} />`;
+    else if (sheet.type === 'start') sheetEl = html`<${StartSheet} date=${sheet.date} state=${state} index=${index} onClose=${close} onCreate=${createWorkout} />`;
+    else if (sheet.type === 'addExercise' && sw) sheetEl = html`<${TextSheet} title="Упражнение" sub=${sw.name} placeholder="Например, жим лёжа" cta="Добавить" onClose=${close}
+      suggestions=${[...index.ex.values()].sort((a, b) => b.sessions.length - a.sessions.length).map(e => e.name).filter(n => !sw.exercises.some(x => norm(x.name) === norm(n)))}
+      onSubmit=${name => { const p = prevSession(index, name, sw.id); const n = p ? p.sets.length : 3;
+        patchWorkout(sw.id, w => ({ ...w, exercises: [...w.exercises, { id: uid(), name, sets: Array.from({ length: n }, () => ({ id: uid(), reps: '', weight: '', done: false })) }] })); }} />`;
+    else if (sheet.type === 'renameWorkout' && sw) sheetEl = html`<${TextSheet} title="Название тренировки" initial=${sw.name} cta="Сохранить" onClose=${close} onSubmit=${name => patchWorkout(sw.id, w => ({ ...w, name }))} />`;
+    else if (sheet.type === 'saveTemplate' && sw) sheetEl = html`<${TextSheet} title="Сохранить как шаблон" sub=${plural(sw.exercises.length, W_EX)} initial=${sw.name} cta="Сохранить" onClose=${close}
+      onSubmit=${name => { const id = uid(); update(s => ({ ...s, templates: { ...s.templates, [id]: { id, name, createdAt: Date.now(), exercises: sw.exercises.map(e => ({ name: e.name, sets: e.sets.map(x => ({ reps: num(x.reps) || (x.hint && x.hint.reps) || 0, weight: num(x.weight) || (x.hint && x.hint.weight) || 0 })) })) } } })); showToast(`Шаблон «${name}» сохранён`); }} />`;
+    else if (sheet.type === 'workoutMenu' && sw) sheetEl = html`<${ActionSheet} title=${sw.name} sub=${dayLabel(sw.date)} onClose=${close} actions=${[
+      { label: 'Переименовать', onClick: () => setSheet({ type: 'renameWorkout', id: sw.id }) },
+      sw.exercises.length ? { label: 'Сохранить как шаблон', onClick: () => setSheet({ type: 'saveTemplate', id: sw.id }) } : null,
+      sw.finishedAt ? { label: 'Продолжить тренировку', sub: 'Снять отметку «завершена»', onClick: () => patchWorkout(sw.id, w => ({ ...w, finishedAt: null })) } : null,
+      { label: 'Удалить тренировку', danger: true, onClick: () => { withUndo(`Тренировка «${sw.name}» удалена`, s => { const n = { ...s.workouts }; delete n[sw.id]; return { ...s, workouts: n }; }); setRest(null); home(); } },
+    ]} />`;
+    else if (sheet.type === 'exerciseMenu') {
+      const w = state.workouts[sheet.wid]; const e = w && w.exercises.find(x => x.id === sheet.eid);
+      const i = w ? w.exercises.indexOf(e) : -1;
+      const move = dir => patchWorkout(w.id, x => { const a = [...x.exercises]; [a[i], a[i + dir]] = [a[i + dir], a[i]]; return { ...x, exercises: a }; });
+      if (e) sheetEl = html`<${ActionSheet} title=${e.name} onClose=${close} actions=${[
+        { label: 'Переименовать', onClick: () => setSheet({ type: 'renameExercise', wid: w.id, eid: e.id }) },
+        i > 0 ? { label: 'Переместить выше', onClick: () => move(-1) } : null,
+        i < w.exercises.length - 1 ? { label: 'Переместить ниже', onClick: () => move(1) } : null,
+        { label: 'Удалить упражнение', danger: true, onClick: () => withUndo(`«${e.name}» удалено`, s => ({ ...s, workouts: { ...s.workouts, [w.id]: { ...s.workouts[w.id], exercises: s.workouts[w.id].exercises.filter(x => x.id !== e.id) } } })) },
+      ]} />`;
+    }
+    else if (sheet.type === 'renameExercise') {
+      const w = state.workouts[sheet.wid]; const e = w && w.exercises.find(x => x.id === sheet.eid);
+      if (e) sheetEl = html`<${TextSheet} title="Название упражнения" initial=${e.name} cta="Сохранить" onClose=${close}
+        suggestions=${[...index.ex.values()].map(x => x.name)} onSubmit=${name => patchExercise(w.id, e.id, x => ({ ...x, name }))} />`;
+    }
   }
 
-  // ─── Старт ────────────────────────────────────────────────
-  canvas.style.cursor = 'grab';
-  renderRail();
-  renderOptions(true);
-  renderLayers();
-  updateButtons();
-})();
+  return html`<${React.Fragment}>
+    ${screen}
+    ${sheetEl}
+    <div className="dock">
+      ${toast ? html`<${Toast} toast=${toast} onClose=${() => setToast(null)} />` : null}
+      ${rest ? html`<${RestTimer} rest=${rest} onAdjust=${adjustRest} onClose=${() => setRest(null)} />` : null}
+    </div>
+  <//>`;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App} />`);
 </script>
 </body>
 </html>
-
-</body></html>
